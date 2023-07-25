@@ -1,0 +1,10 @@
+*~
+*.o
+pacman-*.tar.gz
+
+.vscode
+.cache
+usr
+bin
+lib
+out

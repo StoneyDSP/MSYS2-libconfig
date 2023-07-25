@@ -1,0 +1,23 @@
+---
+Checks:
+	'
+	clang-diagnostic-*,
+	clang-analyzer-*,
+	clang-analyzer-core.*,
+	clang-analyzer-security.*,
+	bugprone-*,
+	concurrency-*,
+	misc-*,
+	modernize-*,
+	performance-*,
+	portability-*,
+	readability-*,
+	'
+WarningsAsErrors: false
+InheritParentConfig: true
+UseColor: true
+HeaderFilterRegex: ''
+AnalyzeTemporaryDtors: false
+FormatStyle:     none
+# User:            user
+# CheckOptions:

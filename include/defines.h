@@ -53,7 +53,7 @@ extern "C" {
 
 #if !defined(PATH_SEPERATOR)
 #	if defined(WIN32)
-#		define PATH_SEPERATOR STRINGIFY(\)
+#		define PATH_SEPERATOR STRINGIFY(\\)
 #	else
 #		define PATH_SEPERATOR STRINGIFY(/)
 #	endif

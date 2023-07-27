@@ -402,6 +402,18 @@ struct paths {
 
 };
 
+struct libChecks
+{
+	/** bool */
+	const bool have_libcurl = HAVE_LIBCURL;
+	const bool have_libgpgme = HAVE_LIBGPGME;
+	/** int */
+	const int* have_libssl = HAVE_LIBSSL;
+	const int* have_libnettle = HAVE_LIBNETTLE;
+
+};
+
+
 #if defined(__cplusplus)
 };
 #endif

@@ -366,3 +366,46 @@ set_target_properties (configuration
 )
 
 target_compile_features(configuration INTERFACE c_std_99)
+
+
+
+install(
+	TARGETS configuration
+	EXPORT LibConfigTargets
+	LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+	ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+	RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+	INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    FILE_SET configuration_PUBLIC_HEADERS
+)
+
+install (
+	EXPORT LibConfigTargets
+	FILE LibConfigTargets.cmake
+	NAMESPACE pacman::
+	DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/pacman/config"
+)
+
+
+# ##-- Create package config
+include (CMakePackageConfigHelpers)
+
+configure_package_config_file (
+	"${CMAKE_CURRENT_SOURCE_DIR}/share/LibConfigConfig.cmake.in"
+	"${CMAKE_CURRENT_BINARY_DIR}/share/LibConfigConfig.cmake"
+	INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/LibConfig"
+)
+
+install (
+	FILES
+		"${CMAKE_CURRENT_BINARY_DIR}/share/LibConfigConfig.cmake"
+		# "${CMAKE_CURRENT_BINARY_DIR}/share/LibConfigConfigVersion.cmake"
+	DESTINATION
+		"${CMAKE_INSTALL_LIBDIR}/cmake/LibConfig"
+)
+
+export(
+	EXPORT LibConfigTargets
+	FILE "${CMAKE_CURRENT_BINARY_DIR}/share/LibConfigTargets.cmake"
+	NAMESPACE pacman::
+)

@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 3.17...3.26 FATAL_ERROR)
 project(LibConfig)
 enable_language(C)
 
+include(GNUInstallDirs)
+
+set(LibConfig_INCLUDEDIR "${CMAKE_CURRENT_BINARY_DIR}/include")
+
 # Detect msys2.ini to figure MSYS_ROOT_DIR
 set(Z_MSYS_ROOT_DIR_CANDIDATE "${CMAKE_CURRENT_LIST_DIR}")
 while(NOT DEFINED Z_MSYS_ROOT_DIR)

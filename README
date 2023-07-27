@@ -11,3 +11,5 @@ Excellent overview here:
 And wih reference to one of the more useful parts of the official CMake documentation:
 
 <a href="https://cmake.org/cmake/help/latest/guide/importing-exporting/index.html">Importing and exporting guide</a>.
+
+Probably a nice touch would be to take this lib further by providing a compiled executable target, containing a command-line interface for querying the build-time config, much the same as <a href="https://github.com/llvm-project/LLVM">LLVM-config</a>

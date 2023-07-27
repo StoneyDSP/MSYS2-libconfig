@@ -25,7 +25,64 @@ while(NOT DEFINED Z_MSYS_ROOT_DIR)
 endwhile()
 unset(Z_MSYS_ROOT_DIR_CANDIDATE)
 
+##############################################################################
+##-- Dependency settings
+##############################################################################
 
+find_program(PYTHON python3)
+set(LDCONFIG "${ldconfig}")
+set(MESON_MAKE_SYMLINK "${PROJECT_BINARY_DIR}/build-aux/meson-make-symlink.sh")
+
+find_program(BASH bash
+	HINTS "${Z_MSYS_ROOT_DIR}/usr/bin" "/usr/bin"
+	REQUIRED
+	NO_DEFAULT_PATH
+)
+
+execute_process(
+	COMMAND ${BASH} -c "IFS=.; echo \"\${BASH_VERSINFO[*]:0:3}\""
+	# ECHO_OUTPUT_VARIABLE
+	OUTPUT_VARIABLE BASH_VERSION
+)
+string(STRIP "${BASH_VERSION}" BASH_VERSION)
+message(STATUS "Found BASH: ${BASH} (found version \"${BASH_VERSION}\")")
+
+if(NOT DEFINED BASH_MIN_VERSION_REQUIRED)
+	set(BASH_MIN_VERSION_REQUIRED "4.4.0")
+else()
+	if(BASH_MIN_VERSION_REQUIRED LESS "4.4.0")
+		set(BASH_MIN_VERSION_REQUIRED "4.4.0")
+	endif()
+endif()
+
+if(${BASH_VERSION} LESS_EQUAL ${BASH_MIN_VERSION_REQUIRED})
+	message(FATAL_ERROR "Failed: Bash >= v${BASH_MIN_VERSION_REQUIRED} is required for libmakepkg scripts.")
+endif()
+
+
+
+# bashcompletion = dependency('bash-completion', required : false)
+# if bashcompletion.found()
+#   BASHCOMPDIR = bashcompletion.get_pkgconfig_variable('completionsdir')
+# else
+#   BASHCOMPDIR = join_paths(DATAROOTDIR, 'bash-completion/completions')
+# endif
+
+include(FindCURL)
+include(FindLibArchive)
+include(FindIntl)
+include(FindOpenSSL) # crypto provider
+set(ALPM_DEPS)
+list(APPEND ALPM_DEPS "OpenSSL::Crypto")
+list(APPEND ALPM_DEPS "LibArchive::LibArchive")
+list(APPEND ALPM_DEPS "CURL::libcurl")
+list(APPEND ALPM_DEPS "Intl::Intl")
+set(ALPM_DEPS "${ALPM_DEPS}" CACHE STRING "")
+
+# set(HAVE_LIBCURL false)
+if(CURL_FOUND)
+	set(HAVE_LIBCURL true CACHE STRING "") # Stored as a string for lower-case C syntax
+endif()
 
 ##############################################################################
 ##-- Meson options
@@ -123,21 +180,7 @@ set(MANDIR "${MANDIR}" CACHE PATH "Man documentation (DATAROOTDIR/man)" FORCE)
 set(LIBMAKEPKGDIR "${LIBMAKEPKGDIR}" CACHE PATH "" FORCE)
 set(PKGDATADIR "${PKGDATADIR}" CACHE PATH "" FORCE)
 
-find_program(PYTHON python3)
-set(LDCONFIG "${ldconfig}")
-set(MESON_MAKE_SYMLINK "${PROJECT_BINARY_DIR}/build-aux/meson-make-symlink.sh")
 
-find_program(BASH bash
-	HINTS "${Z_MSYS_ROOT_DIR}/usr/bin"
-	NO_DEFAULT_PATH
-)
-
-# bashcompletion = dependency('bash-completion', required : false)
-# if bashcompletion.found()
-#   BASHCOMPDIR = bashcompletion.get_pkgconfig_variable('completionsdir')
-# else
-#   BASHCOMPDIR = join_paths(DATAROOTDIR, 'bash-completion/completions')
-# endif
 
 # # required join_paths() operations for the section after...
 # cmake_path(APPEND LIBDIR "${PREFIX}" "/lib")

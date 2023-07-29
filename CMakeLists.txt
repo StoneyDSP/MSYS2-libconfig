@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.17...3.26 FATAL_ERROR)
 
 project(LibConfig)
 enable_language(C)
+enable_language(CXX)
+enable_language(ASM)
+enable_language(Fortran)
+enable_language(OBJC)
+enable_language(OBJCXX)
 
 include(GNUInstallDirs)
 
@@ -34,11 +39,11 @@ unset(Z_MSYS_ROOT_DIR_CANDIDATE)
 ##############################################################################
 
 find_program(PYTHON python3)
-set(LDCONFIG "${ldconfig}")
-set(MESON_MAKE_SYMLINK "${PROJECT_BINARY_DIR}/build-aux/meson-make-symlink.sh")
+
+# set(MESON_MAKE_SYMLINK "${PROJECT_BINARY_DIR}/build-aux/meson-make-symlink.sh")
 
 find_program(BASH bash
-	HINTS "${Z_MSYS_ROOT_DIR}/usr/bin" "/usr/bin"
+	HINTS "/usr/bin"
 	REQUIRED
 	NO_DEFAULT_PATH
 )
@@ -63,8 +68,6 @@ if(${BASH_VERSION} LESS_EQUAL ${BASH_MIN_VERSION_REQUIRED})
 	message(FATAL_ERROR "Failed: Bash >= v${BASH_MIN_VERSION_REQUIRED} is required for libmakepkg scripts.")
 endif()
 
-
-
 # bashcompletion = dependency('bash-completion', required : false)
 # if bashcompletion.found()
 #   BASHCOMPDIR = bashcompletion.get_pkgconfig_variable('completionsdir')
@@ -83,9 +86,19 @@ list(APPEND ALPM_DEPS "CURL::libcurl")
 list(APPEND ALPM_DEPS "Intl::Intl")
 set(ALPM_DEPS "${ALPM_DEPS}" CACHE STRING "")
 
-# set(HAVE_LIBCURL false)
+set(HAVE_LIBCURL false)
 if(CURL_FOUND)
 	set(HAVE_LIBCURL true CACHE STRING "") # Stored as a string for lower-case C syntax
+endif()
+
+set(HAVE_LIBARCHIVE false)
+if(LibArchive_FOUND)
+	set(HAVE_LIBARCHIVE true CACHE STRING "") # Stored as a string for lower-case C syntax
+endif()
+
+set(HAVE_LIBSSL false)
+if(OPENSSL_FOUND)
+	set(HAVE_LIBSSL true CACHE STRING "") # Stored as a string for lower-case C syntax
 endif()
 
 ##############################################################################
@@ -96,30 +109,38 @@ endif()
 if(NOT DEFINED root_dir)
 	set(root_dir "/") # CACHE PATH "Sets the location of the root operating directory.")
 endif()
+set(ROOTDIR "${root_dir}") #  CACHE PATH ""
 
 if(NOT DEFINED pkg_ext)
 	set(pkg_ext ".pkg.tar.gz") # CACHE STRING "Sets the file extension used by packages.")
 endif()
+set(PKG_EXT "${pkg_ext}") # CACHE STRING "The file extension used by packages."
 
 if(NOT DEFINED src_ext)
 	set(src_ext ".src.tar.gz") # CACHE STRING "set the file extension used by source packages")
 endif()
+set(SRC_EXT "${src_ext}") # CACHE STRING "The file extension used by source packages."
 
 if(NOT DEFINED scriptlet_shell)
 	set(scriptlet_shell "/bin/sh") # CACHE FILEPATH "The full path of the shell used to run install scriptlets.")
 endif()
+set(SCRIPTLET_SHELL "${scriptlet_shell}") # CACHE FILEPATH ""
 
 if(NOT DEFINED ldconfig)
 	set(ldconfig "/sbin/ldconfig") # CACHE FILEPATH "set the full path to ldconfig")
 endif()
+set(LDCONFIG "${ldconfig}") # CACHE FILEPATH "The full path to ldconfig."
 
 if(NOT DEFINED buildscript)
-	set(buildscript "PKGBUILD")# CACHE STRING "set the build script name used by makepkg")
+	set(buildscript "PKGBUILD") # CACHE STRING "set the build script name used by makepkg")
 endif()
+set(BUILDSCRIPT "${buildscript}") # CACHE FILEPATH "The build script name used by makepkg."
 
 if(NOT DEFINED datarootdir)
 	set(datarootdir "share") # CACHE PATH "FIXME")
 endif()
+cmake_path(APPEND DATAROOTDIR "${PREFIX}" "${datarootdir}")
+set(DATAROOTDIR "${DATAROOTDIR}" CACHE PATH "Read-only architecture-independent data root (share)")
 
 if(NOT DEFINED makepkg_template_dir)
 	set(makepkg_template_dir "/usr/share/makepkg-template") # CACHE FILEPATH "template dir used by makepkg-template")
@@ -142,99 +163,101 @@ endif()
 if(NOT DEFINED libalpm_version)
 	set(libalpm_version "13.0.2")
 endif()
+set(LIB_VERSION "${libalpm_version}")
 
 if(NOT DEFINED prefix)
 	set(prefix "/usr")
 endif()
+set(PREFIX "${prefix}") # CACHE PATH ""
 
 if(NOT DEFINED sysconfdir)
 	set(sysconfdir "/etc")
 endif()
+cmake_path(APPEND SYSCONFDIR "${PREFIX}" "${sysconfdir}")
+set(SYSCONFDIR "${SYSCONFDIR}") #  CACHE PATH "Read-only single-machine data (etc)"
 
 if(NOT DEFINED localstatedir)
 	set(localstatedir "/var")
 endif()
-
+cmake_path(APPEND LOCALSTATEDIR "${PREFIX}" "${localstatedir}")
+set(LOCALSTATEDIR "${LOCALSTATEDIR}" CACHE PATH "Modifiable single-machine data (var)" FORCE)
 
 ##############################################################################
 ##-- Directory settings
 ##############################################################################
 
-set(PREFIX "${Z_MSYS_ROOT_DIR}${prefix}")
-cmake_path(APPEND DATAROOTDIR "${PREFIX}" "${datarootdir}")
-cmake_path(APPEND SYSCONFDIR "${PREFIX}" "${sysconfdir}")
-cmake_path(APPEND LOCALSTATEDIR "${PREFIX}" "${localstatedir}")
 cmake_path(APPEND LOCALEDIR "${PREFIX}" "${DATAROOTDIR}/locale")
-set(ROOTDIR "${Z_MSYS_ROOT_DIR}${root_dir}")
-cmake_path(APPEND BINDIR "${PREFIX}" "/bin")
-cmake_path(APPEND MANDIR "${PREFIX}" "${DATAROOTDIR}/man")
-cmake_path(APPEND LIBMAKEPKGDIR "${PREFIX}" "${DATAROOTDIR}/makepkg")
-cmake_path(APPEND PKGDATADIR "${PREFIX}" "${DATAROOTDIR}/${PROJECT_NAME}")
-
-cmake_path(APPEND SCRIPTLET_SHELL "${BINDIR}" "${scriptlet_shell}")
-
-# Put the above in the cache...
-set(DATAROOTDIR "${DATAROOTDIR}" CACHE PATH "Read-only architecture-independent data root (share)" FORCE)
-set(SYSCONFDIR "${SYSCONFDIR}" CACHE PATH "Read-only single-machine data (etc)" FORCE)
-set(LOCALSTATEDIR "${LOCALSTATEDIR}" CACHE PATH "Modifiable single-machine data (var)" FORCE)
 set(LOCALEDIR "${LOCALEDIR}" CACHE PATH "Locale-dependent data (DATAROOTDIR/locale)" FORCE)
-set(ROOTDIR "${ROOTDIR}" CACHE PATH "" FORCE)
+
+cmake_path(APPEND BINDIR "${PREFIX}" "/bin")
 set(BINDIR "${BINDIR}" CACHE PATH "User executables (bin)" FORCE)
+
+cmake_path(APPEND MANDIR "${PREFIX}" "${DATAROOTDIR}/man")
 set(MANDIR "${MANDIR}" CACHE PATH "Man documentation (DATAROOTDIR/man)" FORCE)
+
+cmake_path(APPEND LIBDIR "${PREFIX}" "/lib")
+set(LIBDIR "${LIBDIR}" CACHE PATH "Object code libraries (lib)")
+
+cmake_path(APPEND SBINDIR "${PREFIX}" "/sbin")
+set(SBINDIR "${SBINDIR}" CACHE PATH "System admin executables (sbin)")
+
+cmake_path(APPEND LIBEXECDIR "${PREFIX}" "/libexec")
+set(LIBEXECDIR "${LIBEXECDIR}" CACHE PATH "Program executables (libexec)")
+
+cmake_path(APPEND SHAREDSTATEDIR "${PREFIX}" "/com")
+set(SHAREDSTATEDIR "${SHAREDSTATEDIR}" CACHE PATH "Modifiable architecture-independent data (com)")
+
+cmake_path(APPEND INCLUDEDIR "${PREFIX}" "/include")
+set(INCLUDEDIR "${INCLUDEDIR}" CACHE PATH "C header files (include)")
+
+set(DATADIR "${DATAROOTDIR}" CACHE PATH "Read-only architecture-independent data (DATAROOTDIR)")
+
+cmake_path(APPEND INFODIR "${DATAROOTDIR}" "/info")
+set(INFODIR "${INFODIR}" CACHE PATH "Info documentation (DATAROOTDIR/info)")
+
+cmake_path(APPEND DOCDIR "${DATAROOTDIR}" "/doc" "/${PROJECT_NAME}")
+set(DOCDIR "${DOCDIR}" CACHE PATH "Documentation root (DATAROOTDIR/doc/PROJECT_NAME)")
+
+cmake_path(APPEND RUNSTATEDIR "${LOCALSTATEDIR}" "/run")
+set(RUNSTATEDIR "${RUNSTATEDIR}" CACHE PATH "Run-time variable data (LOCALSTATEDIR/run)")
+
+# set(_GNU_SOURCE TRUE CACHE BOOL "")
+set(PACKAGE "${PROJECT_NAME}" CACHE STRING "")
+set(PACKAGE_VERSION "${PROJECT_VERSION}" CACHE STRING "")
+
+cmake_path(APPEND LIBMAKEPKGDIR "${PREFIX}" "${DATAROOTDIR}/makepkg")
 set(LIBMAKEPKGDIR "${LIBMAKEPKGDIR}" CACHE PATH "" FORCE)
+
+cmake_path(APPEND PKGDATADIR "${PREFIX}" "${DATAROOTDIR}/${PROJECT_NAME}")
 set(PKGDATADIR "${PKGDATADIR}" CACHE PATH "" FORCE)
 
-
-
-# # required join_paths() operations for the section after...
-# cmake_path(APPEND LIBDIR "${PREFIX}" "/lib")
-# cmake_path(APPEND SBINDIR "${PREFIX}" "/sbin")
-# cmake_path(APPEND LIBEXECDIR "${PREFIX}" "/libexec")
-# cmake_path(APPEND SHAREDSTATEDIR "${PREFIX}" "/com")
-# cmake_path(APPEND INCLUDEDIR "${PREFIX}" "/include")
-
-# # commandline options
-# set(LIBDIR "${LIBDIR}" CACHE PATH "Object code libraries (lib)")
-# set(SBINDIR "${SBINDIR}" CACHE PATH "System admin executables (sbin)")
-# set(LIBEXECDIR "${LIBEXECDIR}" CACHE PATH "Program executables (libexec)")
-# set(SHAREDSTATEDIR "${SHAREDSTATEDIR}" CACHE PATH "Modifiable architecture-independent data (com)")
-# set(INCLUDEDIR "${INCLUDEDIR}" CACHE PATH "C header files (include)")
-
-# set(DATADIR "${DATAROOTDIR}" CACHE PATH "Read-only architecture-independent data (DATAROOTDIR)")
-# set(INFODIR "${DATAROOTDIR}/info" CACHE PATH "Info documentation (DATAROOTDIR/info)")
-# set(DOCDIR "${DATAROOTDIR}/doc/${PROJECT_NAME}" CACHE PATH "Documentation root (DATAROOTDIR/doc/PROJECT_NAME)")
-# set(RUNSTATEDIR "${LOCALSTATEDIR}/run" CACHE PATH "Run-time variable data (LOCALSTATEDIR/run)")
-
-
-set(PREFIX "${PREFIX}" CACHE PATH "")
-set(_GNU_SOURCE TRUE CACHE BOOL "")
-set(PACKAGE "${CMAKE_PROJECT_NAME}" CACHE STRING "")
-set(PACKAGE_VERSION "${CMAKE_PROJECT_VERSION}" CACHE STRING "")
-set(LOCALEDIR "${LOCALEDIR}" CACHE PATH "")
-set(SCRIPTLET_SHELL "${SCRIPTLET_SHELL}" CACHE FILEPATH "")
-set(LDCONFIG "${LDCONFIG}" CACHE FILEPATH "")
-set(LIB_VERSION "${libalpm_version}" CACHE STRING "")
 cmake_path(APPEND SYSHOOKDIR "${DATAROOTDIR}" "/libalpm/hooks/")
-cmake_path(APPEND CONFFILE "${SYSCONFDIR}" "/pacman.conf")
-cmake_path(APPEND DBPATH "${LOCALSTATEDIR}" "lib/pacman/")
-cmake_path(APPEND GPGDIR "${SYSCONFDIR}" "/pacman.d/gnupg/")
-cmake_path(APPEND LOGFILE "${LOCALSTATEDIR}" "/log/pacman.log")
-cmake_path(APPEND CACHEDIR "${LOCALSTATEDIR}" "/cache/pacman/pkg/")
-cmake_path(APPEND HOOKDIR "${SYSCONFDIR}" "/pacman.d/hooks/")
 set(SYSHOOKDIR "${SYSHOOKDIR}" CACHE PATH "")
+
+cmake_path(APPEND CONFFILE "${SYSCONFDIR}" "/pacman.conf")
 set(CONFFILE "${CONFFILE}" CACHE PATH "")
+
+cmake_path(APPEND DBPATH "${LOCALSTATEDIR}" "lib/pacman/")
 set(DBPATH "${DBPATH}" CACHE PATH "")
+
+cmake_path(APPEND GPGDIR "${SYSCONFDIR}" "/pacman.d/gnupg/")
 set(GPGDIR "${GPGDIR}" CACHE PATH "")
+
+cmake_path(APPEND LOGFILE "${LOCALSTATEDIR}" "/log/pacman.log")
 set(LOGFILE "${LOGFILE}" CACHE FILEPATH "")
+
+cmake_path(APPEND CACHEDIR "${LOCALSTATEDIR}" "/cache/pacman/pkg/")
 set(CACHEDIR "${CACHEDIR}" CACHE FILEPATH "")
+
+cmake_path(APPEND HOOKDIR "${SYSCONFDIR}" "/pacman.d/hooks/")
 set(HOOKDIR "${HOOKDIR}" CACHE FILEPATH "")
-set(ROOTDIR "${ROOTDIR}" CACHE PATH "")
+
 
 ##############################################################################
 ##-- Compiler settings
 ##############################################################################
 
-# set(CMAKE_REQUIRED_DEFINITIONS "-D_GNU_SOURCE")
+set(CMAKE_REQUIRED_DEFINITIONS "-D_GNU_SOURCE")
 set(CMAKE_REQUIRED_INCLUDES "${CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES}" CACHE PATH "")
 set(CMAKE_REQUIRED_LINK_OPTION "${CMAKE_C_IMPLICIT_LINK_DIRECTORIES}" CACHE STRING "")
 set(CMAKE_REQUIRED_LIBRARIES "${CMAKE_C_IMPLICIT_LINK_LIBRARIES}" CACHE STRING "")
@@ -280,7 +303,7 @@ list(APPEND PACMAN_REQUIRED_SYSTEM_FUNCTIONS "strsep")
 list(APPEND PACMAN_REQUIRED_SYSTEM_FUNCTIONS "swprintf")
 list(APPEND PACMAN_REQUIRED_SYSTEM_FUNCTIONS "tcflush")
 foreach (_symbol IN LISTS PACMAN_REQUIRED_SYSTEM_FUNCTIONS)
-	set(CMAKE_REQUIRED_DEFINITIONS "-D_GNU_SOURCE")
+	set(CMAKE_REQUIRED_DEFINITIONS "_GNU_SOURCE")
 	check_function_exists("${_symbol}" has_${_symbol})
 	if(has_${_symbol})
 		##-- These shall print integer 0's or 1's
@@ -293,23 +316,26 @@ unset(_symbol)
 
 
 include(CheckStructHasMember)
+set(HAVE_STRUCT_STAT_ST_BLKSIZE false)
 CHECK_STRUCT_HAS_MEMBER("struct stat" st_blksize "sys/stat.h" has_struct_stat_st_blksize LANGUAGE C)
 if(has_struct_stat_st_blksize)
-	set(HAVE_STRUCT_STAT_ST_BLKSIZE true CACHE BOOL "" FORCE)
+	set(HAVE_STRUCT_STAT_ST_BLKSIZE true CACHE STRING "" FORCE)
 endif()
 
+set(HAVE_STRUCT_STATVFS_F_FLAG false)
 CHECK_STRUCT_HAS_MEMBER("struct statvfs" f_flag "sys/statvfs.h" has_struct_statvfs_f_flag LANGUAGE C)
 if(has_struct_statvfs_f_flag)
-	set(HAVE_STRUCT_STATVFS_F_FLAG true CACHE BOOL "" FORCE)
+	set(HAVE_STRUCT_STATVFS_F_FLAG true CACHE STRING "" FORCE)
 endif()
 
+set(HAVE_STRUCT_STATFS_F_FLAGS false)
 CHECK_STRUCT_HAS_MEMBER("struct statfs" f_flags "sys/param.h" has_struct_statfs_f_flags LANGUAGE C)
 if(has_struct_statfs_f_flags)
-	set(HAVE_STRUCT_STATFS_F_FLAGS true CACHE BOOL "" FORCE)
+	set(HAVE_STRUCT_STATFS_F_FLAGS true CACHE STRING "" FORCE)
 else()
 	CHECK_STRUCT_HAS_MEMBER("struct statfs" f_flags "sys/mount.h" has_struct_statfs_f_flags_sys_mount LANGUAGE C)
 	if(has_struct_statfs_f_flags_sys_mount)
-		set(HAVE_STRUCT_STATFS_F_FLAGS true CACHE BOOL "" FORCE)
+		set(HAVE_STRUCT_STATFS_F_FLAGS true CACHE STRING "" FORCE)
 	endif()
 endif()
 
@@ -362,10 +388,43 @@ if(CMAKE_BUILD_STYPE STREQUAL "Debug")
 	set(PACMAN_DEBUG 1)
 endif()
 
+# ###############################################################################
+# ##-- Targets: 'libmakepkg::<libmakepkg_modules>'
+# ###############################################################################
+
 if (NOT ${PROJECT_SOURCE_DIR} EQUAL ${PROJECT_BINARY_DIR})
 
-	configure_file("include/config.h" 			"include/config.h" @ONLY)
-	configure_file("include/defines.h" 			"include/defines.h" @ONLY)
+	configure_file(
+		##-- Input
+		"build-aux/configure.sh.in"
+		##-- Output
+		"configure.sh"
+		##-- Modifier
+		@ONLY
+	)
+endif ()
+set(PACMAN_CONFIGURATION_SCRIPT "${PROJECT_BINARY_DIR}/configure.sh")
+
+set(INPUT "${CMAKE_CURRENT_LIST_DIR}/include/pacman-defines.h")
+set(OUTPUT "${CMAKE_BINARY_DIR}/include/pacman-defines.h")
+
+add_custom_target(
+	configure
+	ALL ${BASH} -e ${PACMAN_CONFIGURATION_SCRIPT} "${INPUT}" "${OUTPUT}"
+	SOURCES "${INPUT}"
+	BYPRODUCTS "${OUTPUT}"
+	WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+	USES_TERMINAL
+)
+
+unset(INPUT)
+unset(OUTPUT)
+
+
+if (NOT ${PROJECT_SOURCE_DIR} EQUAL ${PROJECT_BINARY_DIR})
+
+	configure_file("include/pacman-defines.h" 			"include/pacman-defines.h" @ONLY)
+	configure_file("include/pacman-config.h" 			"include/pacman-config.h" @ONLY)
 
 endif()
 
@@ -391,11 +450,11 @@ target_sources (configuration
             $<INSTALL_INTERFACE:include>
         FILES
             # include/application/configuration.h
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/config.h>
-            $<INSTALL_INTERFACE:include/config.h>
+            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/pacman-config.h>
+            $<INSTALL_INTERFACE:include/pacman-config.h>
 			# include/application/defines.h
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/defines.h>
-            $<INSTALL_INTERFACE:include/defines.h>
+            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/pacman-defines.h>
+            $<INSTALL_INTERFACE:include/pacman-defines.h>
 )
 
 set_target_properties (configuration
@@ -412,9 +471,15 @@ set_target_properties (configuration
 		HAS_CXX FALSE
 )
 
-target_compile_features(configuration INTERFACE c_std_99)
+target_compile_features(configuration
+	INTERFACE
+		c_std_99
+)
 
-
+target_compile_definitions(configuration
+	INTERFACE
+		_GNU_SOURCE
+)
 
 install(
 	TARGETS configuration
@@ -432,7 +497,6 @@ install (
 	NAMESPACE pacman::
 	DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/pacman/config"
 )
-
 
 # ##-- Create package config
 include (CMakePackageConfigHelpers)

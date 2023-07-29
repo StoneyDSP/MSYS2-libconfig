@@ -1,0 +1,58 @@
+#!@BASH@
+
+input=$1
+output=$2
+mode=$3
+
+/usr/bin/sed \
+  -e "s|@PACKAGE[@]|@PACKAGE@|g" \
+  -e "s|@PACKAGE_VERSION[@]|@PACKAGE_VERSION@|g" \
+  -e "s|@ROOTDIR[@]|@ROOTDIR@|g" \
+  -e "s|@prefix[@]|@PREFIX@|g" \
+  -e "s|@bindir[@]|@BINDIR@|g" \
+  -e "s|@datadir[@]|@DATADIR@|g" \
+  -e "s|@includedir[@]|@INCLUDEDIR@|g" \
+  -e "s|@infodir[@]|@INFODIR@|g" \
+  -e "s|@libdir[@]|@LIBDIR@|g" \
+  -e "s|@LICENSEDIR[@]|@LICENSEDIR@|g" \
+  -e "s|@LIBEXECDIR[@]|@LIBEXECDIR@|g" \
+  -e "s|@LOCALEDIR[@]|@LOCALEDIR@|g" \
+  -e "s|@LOCALSTATEDIR[@]|@LOCALSTATEDIR@|g" \
+  -e "s|@MANDIR[@]|@MANDIR@|g" \
+  -e "s|@SBINDIR[@]|@SBINDIR@|g" \
+  -e "s|@SHAREDSTATEDIR[@]|@SHAREDSTATEDIR@|g" \
+  -e "s|@SYSCONFDIR[@]|@SYSCONFDIR@|g" \
+  -e "s|@LIBMAKEPKGDIR[@]|@LIBMAKEPKGDIR@|g" \
+  -e "s|@PKGDATADIR[@]|@PKGDATADIR@|g" \
+  -e "s|@PKG_EXT[@]|@PKG_EXT@|g" \
+  -e "s|@SRC_EXT[@]|@SRC_EXT@|g" \
+  -e "s|@SCRIPTLET_SHELL[@]|@SCRIPTLET_SHELL@|g" \
+  -e "s|@LDCONFIG[@]|@LDCONFIG@|g" \
+  -e "s|@BUILDSCRIPT[@]|@BUILDSCRIPT@|g" \
+  -e "s|@LIB_VERSION[@]|@LIB_VERSION@|g" \
+  -e "s|@SYSHOOKDIR[@]|@SYSHOOKDIR@|g" \
+  -e "s|@CONFFILE[@]|@CONFFILE@|g" \
+  -e "s|@DBPATH[@]|@DBPATH@|g" \
+  -e "s|@GPGDIR[@]|@GPGDIR@|g" \
+  -e "s|@LOGFILE[@]|@LOGFILE@|g" \
+  -e "s|@CACHEDIR[@]|@CACHEDIR@|g" \
+  -e "s|@HOOKDIR[@]|@HOOKDIR@|g" \
+  -e "s|@HAVE_LIBCURL[@]|@HAVE_LIBCURLCURL@|g" \
+  -e "s|@HAVE_LIBGPGME[@]|@HAVE_LIBGPGME@|g" \
+  -e "s|@HAVE_LIBSSL[@]|@HAVE_LIBSSL@|g" \
+  -e "s|@HAVE_LIBNETTLE[@]|@HAVE_LIBNETTLE@|g" \
+  -e "s|@HAVE_MNTENT_H[@]|@HAVE_MNTENT_H@|g" \
+  -e "s|@HAVE_SYS_MNTTAB_H[@]|@HAVE_SYS_MNTTAB_H@|g" \
+  -e "s|@HAVE_SYS_MOUNT_H[@]|@HAVE_SYS_MOUNT_H@|g" \
+  -e "s|@HAVE_SYS_PARAM_H[@]|@HAVE_SYS_PARAM_H@|g" \
+  -e "s|@HAVE_SYS_STATVFS_H[@]|@HAVE_SYS_STATVFS_H@|g" \
+  -e "s|@HAVE_SYS_TYPES_H[@]|@HAVE_SYS_TYPES_H@|g" \
+  -e "s|@HAVE_SYS_UCRED_H[@]|@HAVE_SYS_UCRED_H@|g" \
+  -e "s|@HAVE_TERMIOS_H[@]|@HAVE_TERMIOS_H@|g" \
+  -e "s|@FSSTATSTYPE@[@]|@FSSTATSTYPE@|g" \
+  -e "s|@PACMAN_DEBUG[@]|@PACMAN_DEBUG@|g" \
+  "$input" > "$output"
+
+if [[ $mode ]]; then
+  /usr/bin/chmod "$mode" "$output"
+fi

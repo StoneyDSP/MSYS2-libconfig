@@ -1,23 +1,14 @@
 ---
-Checks:
-	'
-	clang-diagnostic-*,
-	clang-analyzer-*,
-	clang-analyzer-core.*,
-	clang-analyzer-security.*,
-	bugprone-*,
-	concurrency-*,
-	misc-*,
-	modernize-*,
-	performance-*,
-	portability-*,
-	readability-*,
-	'
-WarningsAsErrors: false
-InheritParentConfig: true
-UseColor: true
+Checks: ''
+WarningsAsErrors: ''
+HeaderFileExtensions: ['h', 'hh', 'hpp', 'h++', 'hxx']
+ImplementationFileExtensions: ['c', 'cc', 'cpp', 'c++', 'cxx', 'cppm']
 HeaderFilterRegex: ''
 AnalyzeTemporaryDtors: false
-FormatStyle:     none
-# User:            user
-# CheckOptions:
+FormatStyle:     'file'
+InheritParentConfig: true
+SystemHeaders: true
+UseColor: true
+# User:            @USER@
+CheckOptions:
+...

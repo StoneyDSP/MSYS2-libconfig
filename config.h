@@ -1,11 +1,11 @@
 /***************************************************************************//**
  * @file config.h
- * @author your name (you@domain.com)
- * @brief
+ * @author Nathan J. Hood <nathanjhood@googlemail.com>
+ * @brief Modern C configuration header for pacman/pkgman
  * @version 0.1
  * @date 2023-08-07
  *
- * @copyright Copyright (c) 2023
+ * @copyright Copyright (c) 2023 GNU GPL2.0 - Nathan J. Hood <nathanjhood@googlemail.com>
  *
  ******************************************************************************/
 

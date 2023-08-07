@@ -340,13 +340,42 @@ else()
 endif()
 
 include(CheckTypeSize)
-CHECK_TYPE_SIZE("unsigned int" "mode_t" LANGUAGE C)
-CHECK_TYPE_SIZE("unsigned int" "uid_t" LANGUAGE C)
-CHECK_TYPE_SIZE("signed int" "off_t" LANGUAGE C)
-CHECK_TYPE_SIZE("signed int" "pid_t" LANGUAGE C)
-CHECK_TYPE_SIZE("unsigned int" "size_t" LANGUAGE C)
-CHECK_TYPE_SIZE("signed int" "ssize_t" LANGUAGE C)
-CHECK_TYPE_SIZE("signed int long" "int64_t" BUILTIN_TYPES_ONLY LANGUAGE C)
+set(PACMAN_REQUIRED_TYPES)
+list(APPEND PACMAN_REQUIRED_TYPES
+	mode_t
+	uid_t
+	off_t
+	pid_t
+	size_t
+	ssize_t
+	int64_t
+)
+
+foreach(_typedef IN LISTS PACMAN_REQUIRED_TYPES)
+	if(NOT DEFINED HAVE_${_typedef})
+		check_type_size(${_typedef} ${_typedef} LANGUAGE C)
+		if (DEFINED ${_typedef})
+		else ()
+			# Set 'unsigned int' types
+			if( _typedef STREQUAL mode_t OR
+				_typedef STREQUAL uid_t OR
+				_typedef STREQUAL size_t
+			)
+				set(${_typedef} "unsigned int" CACHE STRING "" FORCE)
+			# Set 'unsigned int' types
+			elseif( _typedef STREQUAL off_t OR
+					_typedef STREQUAL pid_t OR
+					_typedef STREQUAL ssize_t
+			)
+				set(${_typedef} "signed int" CACHE STRING "" FORCE)
+			elseif(_typedef STREQUAL int64_t)
+				set(${_typedef} "signed long int" CACHE STRING "" FORCE)
+			endif()
+			set(${_typedef}_CODE "#define ${_typedef} ${${_typedef}}" CACHE STRING "" FORCE)
+		endif ()
+	endif()
+endforeach()
+unset(_typedef)
 
 if (HAVE_STRUCT_STATVFS_F_FLAG)
   	set(FSSTATSTYPE "struct statvfs" CACHE STRING "")

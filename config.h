@@ -241,6 +241,23 @@
  *
  ******************************************************************************/
 
+/** STDLIB */
+#if (PKGMAN_CPLUSPLUS == 0)
+#  if PKGMAN_HAS_INCLUDE(<cstdlib>)
+#    include <cstdlib>
+#    define HAVE_CSTDLIB 1
+#  else
+#    undef HAVE_CSTLIB
+#  endif
+#else
+#  if PKGMAN_HAS_INCLUDE(<stdlib.h>)
+#    include <stdlib.h>
+#    define HAVE_STDLIB_H 1
+#  else
+#    undef HAVE_STDLIB_H
+#  endif
+#endif
+
 /** STDIO */
 #ifdef PKGMAN_CPLUSPLUS
 #  if PKGMAN_HAS_INCLUDE(<cstdio>)

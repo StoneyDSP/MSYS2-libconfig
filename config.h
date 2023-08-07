@@ -362,16 +362,37 @@
  *
  ******************************************************************************/
 
+#ifdef __CYGWIN__
+#  include <dlfcn.h>
+#  include <cygwin/version.h>
+#endif
+
+#if defined(__CYGWIN__) && CYGWIN_VERSION_API_MINOR < 262
+  void *libc = dlopen ("cygwin1.dll", 0);
+  struct mntent *(*getmntent_r) (FILE *, struct mntent *, char *, int)
+    = dlsym (libc, "getmntent_r");
+#endif
+
 #if PKGMAN_HAS_INCLUDE(<curl/curl.h>)
-#    include <curl/curl.h>
-#    define CURL_FOUND 1
-#    define HAVE_LIBCURL 1
+#  include <curl/curl.h>
+#  define CURL_FOUND 1
+#  define HAVE_LIBCURL 1
 #endif
 
 #if PKGMAN_HAS_INCLUDE(<openssl/crypto.h>)
-#    include <openssl/crypto.h>
-#    define OPENSSL_FOUND 1
-#    define HAVE_OPENSSL 1
+#  include <openssl/crypto.h>
+#  define OPENSSL_FOUND 1
+#  define HAVE_OPENSSL 1
+#endif
+
+#if HAVE_LIBCURL
+  void *libcurl = dlopen ("libcurl.dll", 0);
+  struct mntent *(*f_init) (FILE *, struct mntent *, char *, int) = dlsym (libcurl, "f_init");
+#endif
+
+#if HAVE_OPENSSL
+  void *openssl = dlopen ("libcrypto.dll", 0);
+  struct mntent *(*getmntent_r) (FILE *, struct mntent *, char *, int) = dlsym (openssl, "getmntent_r");
 #endif
 
 /***************************************************************************//**

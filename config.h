@@ -259,7 +259,7 @@
 #endif
 
 /** STDIO */
-#ifdef PKGMAN_CPLUSPLUS
+#if (PKGMAN_CPLUSPLUS == 0)
 #  if PKGMAN_HAS_INCLUDE(<cstdio>)
 #    include <cstdio>
 #    define HAVE_CSTDIO 1
@@ -276,7 +276,7 @@
 #endif
 
 /** STDINT */
-#ifdef PKGMAN_CPLUSPLUS
+#if (PKGMAN_CPLUSPLUS == 0)
 #  if PKGMAN_HAS_INCLUDE(<cstdint>)
 #    include <cstdint>
 #    define HAVE_CSTDINT 1
@@ -289,7 +289,7 @@
 #endif
 
 /** STDDEF */
-#ifdef PKGMAN_CPLUSPLUS
+#if (PKGMAN_CPLUSPLUS == 0)
 #  if PKGMAN_HAS_INCLUDE(<cstddef>)
 #    include <cstddef>
 #    define HAVE_CSTDDEF 1
@@ -306,7 +306,7 @@
 #endif
 
 /** WCHAR - fwprintf(), swprintf(), wprintf() */
-#ifdef PKGMAN_CPLUSPLUS
+#if (PKGMAN_CPLUSPLUS == 0)
 #  if PKGMAN_HAS_INCLUDE(<cwchar>)
 #    include <cwchar>
 #    define HAVE_CWCHAR 1
@@ -354,6 +354,16 @@
 #if PKGMAN_HAS_INCLUDE(<sys/ucred.h>)
 #    include <sys/ucred.h>
 #    define HAVE_SYS_UCRED_H 1
+#endif
+
+/** Additional headers... */
+#if PKGMAN_HAS_INCLUDE(<termios.h>)
+#    include <termios.h>
+#    define HAVE_TERMIOS_H 1
+#endif
+#if PKGMAN_HAS_INCLUDE(<mntent.h>)
+#    include <mntent.h>
+#    define HAVE_MNTENT_H 1
 #endif
 
 /***************************************************************************//**

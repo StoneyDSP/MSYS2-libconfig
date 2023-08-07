@@ -2,11 +2,11 @@ cmake_minimum_required(VERSION 3.17...3.26 FATAL_ERROR)
 
 project(LibConfig)
 enable_language(C)
-enable_language(CXX)
-enable_language(ASM)
-enable_language(Fortran)
-enable_language(OBJC)
-enable_language(OBJCXX)
+# enable_language(CXX)
+# enable_language(ASM)
+# enable_language(Fortran)
+# enable_language(OBJC)
+# enable_language(OBJCXX)
 
 include(GNUInstallDirs)
 

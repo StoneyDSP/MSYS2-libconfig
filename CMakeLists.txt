@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 3.17...3.26 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.17...3.27 FATAL_ERROR)
+
+set(CMAKE_SYSTEM_NAME MSYS CACHE STRING "The name of the operating system for which CMake is to build." FORCE)
 
 project(LibConfig)
 enable_language(C)
@@ -12,27 +14,7 @@ include(GNUInstallDirs)
 
 set(LibConfig_INCLUDEDIR "${CMAKE_CURRENT_BINARY_DIR}/include")
 
-# Detect msys2.ini to figure MSYS_ROOT_DIR
-set(Z_MSYS_ROOT_DIR_CANDIDATE "${CMAKE_CURRENT_LIST_DIR}")
-while(NOT DEFINED Z_MSYS_ROOT_DIR)
-    if(EXISTS "${Z_MSYS_ROOT_DIR_CANDIDATE}msys2.ini")
-        set(Z_MSYS_ROOT_DIR "${Z_MSYS_ROOT_DIR_CANDIDATE}msys64" CACHE INTERNAL "msys root directory")
-    elseif(EXISTS "${Z_MSYS_ROOT_DIR_CANDIDATE}msys64/msys2.ini")
-        set(Z_MSYS_ROOT_DIR "${Z_MSYS_ROOT_DIR_CANDIDATE}msys64" CACHE INTERNAL "msys root directory")
-    elseif(IS_DIRECTORY "${Z_MSYS_ROOT_DIR_CANDIDATE}")
-        get_filename_component(Z_MSYS_ROOT_DIR_TEMP "${Z_MSYS_ROOT_DIR_CANDIDATE}" DIRECTORY)
-        if(Z_MSYS_ROOT_DIR_TEMP STREQUAL Z_MSYS_ROOT_DIR_CANDIDATE)
-			message(FATAL_ERROR "Unable to determine default msys64 installation files directory!")
-            #z_msys_add_fatal_error("Unable to determine default msys64 installation files directory!")
-            break() # If unchanged, we have reached the root of the drive without finding msys64.
-        endif()
-        set(Z_MSYS_ROOT_DIR_CANDIDATE "${Z_MSYS_ROOT_DIR_TEMP}")
-        unset(Z_MSYS_ROOT_DIR_TEMP)
-    else()
-        break()
-    endif()
-endwhile()
-unset(Z_MSYS_ROOT_DIR_CANDIDATE)
+include(FindMsys)
 
 ##############################################################################
 ##-- Dependency settings
@@ -257,7 +239,7 @@ set(HOOKDIR "${HOOKDIR}" CACHE FILEPATH "")
 ##-- Compiler settings
 ##############################################################################
 
-set(CMAKE_REQUIRED_DEFINITIONS "-D_GNU_SOURCE")
+set(CMAKE_REQUIRED_DEFINITIONS "_GNU_SOURCE")
 set(CMAKE_REQUIRED_INCLUDES "${CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES}" CACHE PATH "")
 set(CMAKE_REQUIRED_LINK_OPTION "${CMAKE_C_IMPLICIT_LINK_DIRECTORIES}" CACHE STRING "")
 set(CMAKE_REQUIRED_LIBRARIES "${CMAKE_C_IMPLICIT_LINK_LIBRARIES}" CACHE STRING "")

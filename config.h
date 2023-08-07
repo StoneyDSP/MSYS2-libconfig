@@ -527,11 +527,23 @@ typedef	signed long int int64_t;
 
 /***************************************************************************//**
  *
+ *  ... Downstream required macros
+ *
+ ******************************************************************************/
+
+#if defined(HAVE_STRUCT_STATVFS_F_FLAG)
+#	define FSSTATSTYPE struct statvfs
+#elif defined(HAVE_STRUCT_STATFS_F_FLAGS)
+#	define FSSTATSTYPE struct statfs
+#endif
+
+/***************************************************************************//**
+ *
  *  ... Propagation
  *
  ******************************************************************************/
 
-#ifdef PKGMAN_CPLUSPLUS
+#if (PKGMAN_CPLUSPLUS == 0)
 extern "C" {
 #endif
 
@@ -539,8 +551,6 @@ const char* path_seperator = PATH_SEPERATOR;
 const char* string_seperator = STRING_SEPERATOR;
 const char* homedrive = HOMEDRIVE;
 const char* rootdir = ROOTDIR;
-
-
 
 #if (PKGMAN_INTELLISENSE == 0)
 
@@ -573,7 +583,7 @@ const char* cachedir = CACHEDIR;
 const char* hookdir = HOOKDIR;
 #endif /** #if (PKGMAN_INTELLISENSE == 0) */
 
-#ifdef PKGMAN_CPLUSPLUS
+#if (PKGMAN_CPLUSPLUS == 0)
 }
 #endif
 

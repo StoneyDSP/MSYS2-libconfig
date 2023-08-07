@@ -213,7 +213,7 @@
 #endif
 
 /**
- * @name PKGMAN_INTELLISENSE
+ * @name PKGMAN_INTELLISENSE_GUARD
  * @brief This macro is set to a truthy value by your IDE
  * when generating intellisense data. It is useful to block
  * code from the intellisense engine in your IDE, if for example
@@ -229,9 +229,9 @@
  * Use with care!
  *
  */
-#define PKGMAN_INTELLISENSE __INTELLISENSE__
+#define PKGMAN_INTELLISENSE_GUARD __INTELLISENSE__
 
-#if (PKGMAN_INTELLISENSE == 0)
+#if !(PKGMAN_INTELLISENSE_GUARD)
 #cmakedefine PKGMAN_CONFIGURED @CMAKE_C_COMPILER_WORKS@
 #endif
 
@@ -583,7 +583,7 @@ const char* string_seperator = STRING_SEPERATOR;
 const char* homedrive = HOMEDRIVE;
 const char* rootdir = ROOTDIR;
 
-#if (PKGMAN_INTELLISENSE == 0)
+#if !(PKGMAN_INTELLISENSE_GUARD)
 
 const char* prefix = PREFIX;
 
@@ -612,9 +612,9 @@ const char* gpgdir = GPGDIR;
 const char* logfile = LOGFILE;
 const char* cachedir = CACHEDIR;
 const char* hookdir = HOOKDIR;
-#endif /** #if (PKGMAN_INTELLISENSE == 0) */
+#endif /** !(PKGMAN_INTELLISENSE_GUARD) */
 
-#if (PKGMAN_CPLUSPLUS == 0)
+#ifdef PKGMAN_CPLUSPLUS
 }
 #endif
 

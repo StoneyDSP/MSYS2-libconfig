@@ -242,12 +242,12 @@
  ******************************************************************************/
 
 /** STDLIB */
-#if (PKGMAN_CPLUSPLUS == 0)
+#ifdef PKGMAN_CPLUSPLUS
 #  if PKGMAN_HAS_INCLUDE(<cstdlib>)
 #    include <cstdlib>
 #    define HAVE_CSTDLIB 1
 #  else
-#    undef HAVE_CSTLIB
+#    undef HAVE_CSTDLIB
 #  endif
 #else
 #  if PKGMAN_HAS_INCLUDE(<stdlib.h>)
@@ -259,7 +259,7 @@
 #endif
 
 /** STDIO */
-#if (PKGMAN_CPLUSPLUS == 0)
+#ifdef PKGMAN_CPLUSPLUS
 #  if PKGMAN_HAS_INCLUDE(<cstdio>)
 #    include <cstdio>
 #    define HAVE_CSTDIO 1
@@ -276,10 +276,12 @@
 #endif
 
 /** STDINT */
-#if (PKGMAN_CPLUSPLUS == 0)
+#ifdef PKGMAN_CPLUSPLUS
 #  if PKGMAN_HAS_INCLUDE(<cstdint>)
 #    include <cstdint>
 #    define HAVE_CSTDINT 1
+#  else
+#    undef HAVE_CSTDINT
 #  endif
 #else
 #  if PKGMAN_HAS_INCLUDE(<stdint.h>)
@@ -289,7 +291,7 @@
 #endif
 
 /** STDDEF */
-#if (PKGMAN_CPLUSPLUS == 0)
+#ifdef PKGMAN_CPLUSPLUS
 #  if PKGMAN_HAS_INCLUDE(<cstddef>)
 #    include <cstddef>
 #    define HAVE_CSTDDEF 1
@@ -306,7 +308,7 @@
 #endif
 
 /** WCHAR - fwprintf(), swprintf(), wprintf() */
-#if (PKGMAN_CPLUSPLUS == 0)
+#ifdef PKGMAN_CPLUSPLUS
 #  if PKGMAN_HAS_INCLUDE(<cwchar>)
 #    include <cwchar>
 #    define HAVE_CWCHAR 1

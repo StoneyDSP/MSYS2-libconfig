@@ -502,13 +502,13 @@ set_target_properties (configuration
 
 target_compile_features(configuration
 	INTERFACE
-		c_std_99
+		c_std_17
 )
 
-target_compile_definitions(configuration
-	INTERFACE
-		_GNU_SOURCE
-)
+# target_compile_definitions(configuration
+# 	INTERFACE
+# 		_GNU_SOURCE
+# )
 
 install(
 	TARGETS configuration
@@ -532,13 +532,13 @@ include (CMakePackageConfigHelpers)
 
 configure_package_config_file (
 	"${CMAKE_CURRENT_SOURCE_DIR}/share/LibConfigConfig.cmake.in"
-	"${CMAKE_CURRENT_BINARY_DIR}/share/LibConfigConfig.cmake"
+	"${CMAKE_CURRENT_BINARY_DIR}/LibConfigConfig.cmake"
 	INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/LibConfig"
 )
 
 install (
 	FILES
-		"${CMAKE_CURRENT_BINARY_DIR}/share/LibConfigConfig.cmake"
+		"${CMAKE_CURRENT_BINARY_DIR}/LibConfigConfig.cmake"
 		# "${CMAKE_CURRENT_BINARY_DIR}/share/LibConfigConfigVersion.cmake"
 	DESTINATION
 		"${CMAKE_INSTALL_LIBDIR}/cmake/LibConfig"
@@ -546,6 +546,6 @@ install (
 
 export(
 	EXPORT LibConfigTargets
-	FILE "${CMAKE_CURRENT_BINARY_DIR}/share/LibConfigTargets.cmake"
+	FILE "${CMAKE_CURRENT_BINARY_DIR}/LibConfigTargets.cmake"
 	NAMESPACE pacman::
 )

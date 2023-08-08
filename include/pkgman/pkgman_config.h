@@ -671,6 +671,18 @@ const char* rootdir = { ROOTDIR };
 
 const char* sysroot = { SYSROOT };
 
+/**
+ * TODO: @StoneyDSP With all this char array macro-string business, everything
+ * is fine when relying on these internal definitions. However, if we open the
+ * macro definitions to the possibility of command-line instruction, which
+ * would be very ideal, then the definitions recieved from the command line
+ * ALSO need to be parsed into some 'stringified' format, UNLESS we save
+ * the 'stringification' until the assignment to char array. But in this
+ * approach, we end up stringifying the macro itself, instead of it's contents!
+ *
+ * Tricky...
+ */
+
 const char* prefix = { PREFIX };
 const char* sysconfdir = { SYSCONFDIR };
 const char* localstatedir = { LOCALSTATEDIR };

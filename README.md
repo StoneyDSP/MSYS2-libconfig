@@ -1,5 +1,164 @@
 # MSYS2-libconfig
 
+## latest...
+
+So, after quite some R'n'D in the form of digging through the GNUC docs, some well-established C-based libraries, and heavy empirical testing, I've discovered the joys of 'feature test macros' and their friends.
+
+```
+#ifdef PKGMAN_CPLUSPLUS
+#  if PKGMAN_HAS_INCLUDE(<cstdlib>)
+#    include <cstdlib>
+#    define HAVE_CSTDLIB 1
+#  else
+#    undef HAVE_CSTDLIB
+#  endif
+#else
+#  if PKGMAN_HAS_INCLUDE(<stdlib.h>)
+#    include <stdlib.h>
+#    define HAVE_STDLIB_H 1
+#  else
+#    undef HAVE_STDLIB_H
+#  endif
+#endif
+
+void *libc = dlopen ("msys-2.0.dll", 0);
+
+#ifndef _MODE_T_DECLARED
+typedef	unsigned int mode_t; /* permissions */
+#define _MODE_T_DECLARED
+#endif
+
+```
+
+This excellent slice of modernism is well-supported, according to my current tests, and potentially saves us from being bound to these brittle build systems and lengthy build scripts - as much as we do love them, of course.
+
+
+One of the beauties of having so much of our config in place at the source-file level is that our IDE intellisense engines alone should be able to detect errors that we ourselves have defined as such, using the pre-processor. For example, if our intellisense compiler cannot find '``` <stdlib.h> ```' in the above example, we can fallback to a '``` # error "<stdlib.h> not found!" ```' warning, which will raise a red flag in the IDE before we even attempt to run a build :)
+
+Another highly interesting up-skill I've uncovered in this project is the use of the '```dlopen()```' function and family, from '```<dlfcn.h>```', which allows us to dynamically load libraries that our compiler is linking with using its '-l' args, essentially working as a sort-of '```#include <>```' mechanism that allows us to pull things like functions out of these libraries and use them in our code.
+
+
+In the same vein as ```dlopen()``` comes the even more handy ```opendir()``` from the ```<dirent.h>``` header (also in the \*nix-only ```<unistd.h>``` header). With this, and its sibling functions, it seems we have the full means to at least *check* our dependencies - and, write logical error handling/fall-through support! - without needing to build, nor even build-system configure, the project! :D
+
+Well, the above should hopefully be true - and achievable - at least for our main dependencies such as curl, libarchive, and whichever crypto provider is chosen (or found!).
+
+Some good old psuedo-code to demonstrate:
+
+```
+#ifdef __CYGWIN__
+#  include <dlfcn.h>
+#  include <cygwin/version.h>
+#endif
+
+
+#  if PKGMAN_HAS_INCLUDE(<openssl/crypto.h>)
+#    include <cstdlib>
+#    define HAVE_CSTDLIB 1
+#  elif PKGMAN_HAS_INCLUDE(<nettle/crypto.h>)
+#    include <stdlib.h>
+#    define HAVE_STDLIB_H 1
+#  else
+#    error "No crypto provider found!?"
+#  endif
+
+
+#define PKGMAN_CRYPTO_LIB "libcrypto.dll"
+
+
+#if (__WIN32__) || (__CYGWIN__)
+int WinMain()
+{
+#else
+int main()
+{
+#endif
+
+	/** Check for msys64 install path... this could be more thorough, of course... */
+
+	DIR *dip;
+    struct dirent *dit;
+    struct stat lsbuf;
+    char currentPath[__FILENAME_MAX__];
+
+	const char* msys_install_path = {"C:/msys64"};
+
+    if((dip = opendir(msys_install_path)) == NULL)
+    {
+        perror("opendir()");
+        return errno;
+    }
+
+    if((getcwd(currentPath, FILENAME_MAX)) == NULL)
+    {
+        perror("getcwd()");
+        return errno;
+    }
+
+    /* stat the file - if it exists, do some checks */
+    if(stat(currentPath, &lsbuf) == -1)
+    {
+        perror("stat()");
+        return errno;
+    }
+
+    if(S_ISDIR(lsbuf.st_mode)) {
+		printf("\n");
+		printf("msys_install_path <%d> exists on this system.\n", msys_install_path);
+		printf("\n");
+    } else {
+		printf("\n");
+		printf("msys_install_path <%d> does not exist on this system.\n", msys_install_path);
+		printf("\n");
+	}
+
+
+	/** Get some sort of lib */
+	void* handle;
+	char *error;
+
+	handle = dlopen(PKGMAN_CRYPTO_LIB, RTLD_LAZY);
+	error = dlerror();
+
+	if (!handle || error != NULL)
+	{
+		printf("\n");
+		fprintf(stderr, "Loading 'libcrypto.dll' attempt failed: %s\n", error);
+		printf("\n");
+		exit(EXIT_FAILURE);
+	} else {
+		printf("\n");
+		printf("Loaded 'libcrypto.dll' successfully.\n");
+		printf("\n");
+#define HAVE_OPENSSL 1
+	}
+
+	dlclose(handle);
+
+	return (EXIT_SUCCESS);
+}
+```
+
+The author is a little tempted to add a project to the pipeline in the fashion of the above, as a sort-of 'portable dependency tester', possibly powered by a shebang to make it executable (and semi-configurable):
+
+```
+#!/usr/bin/env sh -e cc -I${cwd} -l${syslib_arg} --include ${sysheader_arg}
+
+/**
+ * cli args:
+ *
+ * syslib_arg=$1
+ * sysheader_arg=$2
+ * output=$3
+ *
+ * etc...
+ *
+ */
+
+```
+
+## initial log...
+
+
 See <a href="https://github.com/facebook/folly">facebook/folly</a> for inspiration and guidance...
 
 This library will need to implement a complete set of checks and associated pre-processor macros/defines needed to build the components of our custom <a href="https://github.com/StoneyDSP/MSYS2-pacman">'pacman' package manager for Msys64</a> using CMake and the <a href="https://github.com/StoneyDSP/MSYS2-toolchain">'MSYS2-toolchain'</a> project.

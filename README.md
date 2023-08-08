@@ -42,28 +42,31 @@ In the same vein as ```dlopen()``` comes the even more handy ```opendir()``` fro
 
 Well, the above should hopefully be true - and achievable - at least for our main dependencies such as curl, libarchive, and whichever crypto provider is chosen (or found!).
 
-Some good old psuedo-code to demonstrate:
+Some good old psuedo-code (for *nix) to demonstrate:
 
 ```
-#ifdef __CYGWIN__
-#  include <dlfcn.h>
-#  include <cygwin/version.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <dlfcn.h>
+#include <unistd.h>
+
+#if __has_include(<openssl/crypto.h>)
+#  include <openssl/crypto.h>
+#  define HAVE_OPENSSL 1
+#elif __has_include(<nettle/crypto.h>)
+#  include <nettle/crypto.h>
+#  define HAVE_LIBNETTLE 1
+#else
+#  error "No crypto provider found!?"
 #endif
 
+#define CRYPTO_LIB "libcrypto.dll"
 
-#  if PKGMAN_HAS_INCLUDE(<openssl/crypto.h>)
-#    include <cstdlib>
-#    define HAVE_CSTDLIB 1
-#  elif PKGMAN_HAS_INCLUDE(<nettle/crypto.h>)
-#    include <stdlib.h>
-#    define HAVE_STDLIB_H 1
-#  else
-#    error "No crypto provider found!?"
-#  endif
-
-
-#define PKGMAN_CRYPTO_LIB "libcrypto.dll"
-
+#if HAVE_OPENSSL
+#  define CRYPTO_H_PATH "C:/msys64/usr/include/openssl/crypto.h"
+#elif HAVE_LIBNETTLE
+#  define CRYPTO_H_PATH "C:/msys64/usr/include/nettle/crypto.h"
+#endif
 
 #if (__WIN32__) || (__CYGWIN__)
 int WinMain()
@@ -73,16 +76,16 @@ int main()
 {
 #endif
 
-	/** Check for msys64 install path... this could be more thorough, of course... */
+	/** Check for header path... this could be more thorough, of course... */
 
 	DIR *dip;
     struct dirent *dit;
     struct stat lsbuf;
     char currentPath[__FILENAME_MAX__];
 
-	const char* msys_install_path = {"C:/msys64"};
+	const char* crypto_header_path[] = {CRYPTO_H_PATH};
 
-    if((dip = opendir(msys_install_path)) == NULL)
+    if((dip = opendir(crypto_header_path)) == NULL)
     {
         perror("opendir()");
         return errno;
@@ -103,20 +106,22 @@ int main()
 
     if(S_ISDIR(lsbuf.st_mode)) {
 		printf("\n");
-		printf("msys_install_path <%d> exists on this system.\n", msys_install_path);
+		printf("crypto_header_path <%d> exists on this system.\n", crypto_header_path);
 		printf("\n");
     } else {
 		printf("\n");
-		printf("msys_install_path <%d> does not exist on this system.\n", msys_install_path);
+		printf("crypto_header_path does not exist on this system.\n");
 		printf("\n");
+
+		exit(EXIT_FAILURE);
 	}
 
 
-	/** Get some sort of lib */
+	/** Get the chosen crypto lib */
 	void* handle;
 	char *error;
 
-	handle = dlopen(PKGMAN_CRYPTO_LIB, RTLD_LAZY);
+	handle = dlopen(CRYPTO_LIB, RTLD_LAZY);
 	error = dlerror();
 
 	if (!handle || error != NULL)
@@ -129,7 +134,6 @@ int main()
 		printf("\n");
 		printf("Loaded 'libcrypto.dll' successfully.\n");
 		printf("\n");
-#define HAVE_OPENSSL 1
 	}
 
 	dlclose(handle);

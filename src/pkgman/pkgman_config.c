@@ -127,7 +127,106 @@ int checkForLibCrytpo()
 	return (0);
 }
 
+/**
+ * @brief https://gist.github.com/mandrews/200842
+ */
+int checkForLibCurl()
+{
+	printf("Checking for LibCurl (this feature needs some work...)...\n");
 
+	void *handle;
+
+    static CURL *(*f_init)(void) = NULL;
+    static CURLcode (*f_setopt)(CURL *, CURLoption, ...) = NULL;
+    static CURLcode (*f_perform)(CURL *) = NULL;
+#if 0
+    static CURLcode (*f_getinfo)(CURL *, CURLINFO, ...) = NULL;
+#endif
+    static void (*f_cleanup)(CURL *) = NULL;
+
+    CURL *curl;
+    CURLcode res;
+
+    char *error;
+    int i = 1000;
+
+    /** printf("ok %d\n", i); */
+
+	handle = dlopen ("libcurl.so.3", RTLD_LAZY);
+
+    /** printf("ok %d\n", i); */
+
+    if (!handle) {
+
+        fprintf (stderr, "%s\n", dlerror());
+
+		return(1);
+		/** exit(1); */
+    }
+
+    dlerror();    /* Clear any existing error */
+
+    if ((error = dlerror()) != NULL)  {
+
+		fprintf (stderr, "%s\n", error);
+
+		return(1);
+		/** exit(1); */
+    }
+
+    /** printf("ok %d\n", i); */
+
+    f_init = dlsym(handle, "curl_easy_init");
+    if ((error = dlerror()) != NULL)  {
+
+		fprintf (stderr, "%s\n", error);
+
+		return(1);
+		/** exit(1); */
+    }
+
+    f_setopt = dlsym(handle, "curl_easy_setopt");
+    if ((error = dlerror()) != NULL)  {
+
+		fprintf (stderr, "%s\n", error);
+
+		return(1);
+		/** exit(1); */
+    }
+
+    f_perform = dlsym(handle, "curl_easy_perform");
+    if ((error = dlerror()) != NULL)  {
+
+		fprintf (stderr, "%s\n", error);
+
+		return(1);
+		/** exit(1); */
+    }
+
+    f_cleanup = dlsym(handle, "curl_easy_cleanup");
+    if ((error = dlerror()) != NULL)  {
+
+		fprintf (stderr, "%s\n", error);
+
+		return(1);
+		/** exit(1); */
+    }
+
+    /** printf("ok %d\n", i); */
+
+    curl = (*f_init)();
+
+    if (curl) {
+       (*f_setopt)(curl, CURLOPT_URL, "curl.haxx.se");
+       res = (*f_perform)(curl);
+
+       (*f_cleanup)(curl);
+    }
+
+    dlclose(handle);
+
+    return 0;
+}
 
 /**
  * Get the chosen lib
@@ -485,6 +584,13 @@ int main()
 	/** printf("\n"); */
 
 	checkForLib(CRYPTO_H_PATH, CRYPTO_LIB);
+
+	printf("\n");
+
+	checkForLibCurl();
+
+	printf("\n");
+	printf("...pkgman_config > Exiting succesfully.\n");
 
 	return(EXIT_SUCCESS);
 }

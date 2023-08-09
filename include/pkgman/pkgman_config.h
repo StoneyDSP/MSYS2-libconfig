@@ -516,21 +516,21 @@
  *
  *  ... Dependency check macros
  *
-
+ ******************************************************************************/
 
 #if PKGMAN_HAS_INCLUDE(<curl/curl.h>)
 #  include <curl/curl.h>
 #  define CURL_FOUND 1
-#  define HAVE_LIBCURL 1
 #endif
 
-#if PKGMAN_HAS_INCLUDE(<openssl/crypto.h>)
-#  include <openssl/crypto.h>
-#  define OPENSSL_FOUND 1
-#  define PKGMAN_CRYPTO_LIB __PM_STRING(libcrypto.dll)
-#endif
+/**
+ * #if PKGMAN_HAS_INCLUDE(<openssl/crypto.h>)
+ * #  include <openssl/crypto.h>
+ * #  define OPENSSL_FOUND 1
+ * #  define PKGMAN_CRYPTO_LIB __PM_STRING(libcrypto.dll)
+ * #endif
+*/
 
- ******************************************************************************/
 
 /***************************************************************************//**
  *

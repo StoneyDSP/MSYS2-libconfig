@@ -31,15 +31,44 @@
 #define PKGMAN_VERSION_TWEAK
 #define PKGMAN_VERSION PKGMAN_VERSION_MAJOR * 10000 + PKGMAN_VERSION_MINOR * 100 + PKGMAN_VERSION_PATCH
 
-#define _GNU_SOURCE 1
+/***************************************************************************//**
+ *  ... C Requirements...
+ ******************************************************************************/
 
-#define __need_mode_t
-#define __need_uid_t
-#define __need_off_t
-#define __need_pid_t
-#define __need_size_t
-#define __need_ssize_t
-#define __need_int64_t
+#ifndef   _XOPEN_SOURCE
+#  define _XOPEN_SOURCE 500
+#endif
+#ifndef   _GNU_SOURCE
+#  define _GNU_SOURCE 1
+#endif
+#ifndef   _DEFAULT_SOURCE
+#  define _DEFAULT_SOURCE 1
+#endif
+
+#ifndef   __need_mode_t
+#  define __need_mode_t 1
+#endif
+#ifndef   __need_uid_t
+#  define __need_uid_t 1
+#endif
+#ifndef   __need_off_t
+#  define __need_off_t 1
+#endif
+#ifndef   __need_pid_t
+#  define __need_pid_t 1
+#endif
+#ifndef   __need_size_t
+#  define __need_size_t 1
+#endif
+#ifndef   __need_ssize_t
+#  define __need_ssize_t 1
+#endif
+#ifndef   __need_int64_t
+#  define __need_int64_t 1
+#endif
+#ifndef   __need_NULL
+#  define __need_NULL 1
+#endif
 
 #ifndef	__has_attribute
 #define	__has_attribute(x)	0
@@ -166,26 +195,51 @@
  ******************************************************************************/
 
 #if		(__STDC_VERSION__ >= 201710L)
-#	define _C_STANDARD_ STRINGIFY(C18)
+#	define PKGMAN_STANDARD_C_ STRINGIFY(C18)
 #elif	(__STDC_VERSION__ >= 201112L)
-#	define _C_STANDARD_ STRINGIFY(C11)
+#	define PKGMAN_STANDARD_C_ STRINGIFY(C11)
 #elif	(__STDC_VERSION__ >= 199901L)
-#	define _C_STANDARD_ STRINGIFY(C99)
+#	define PKGMAN_STANDARD_C_ STRINGIFY(C99)
 #elif	(__STDC_VERSION__ >= 199409L)
-#	define _C_STANDARD_ STRINGIFY(C94)
+#	define PKGMAN_STANDARD_C_ STRINGIFY(C94)
 #endif
 
-#if defined(__STDC__)
-# define PREDEF_STANDARD_C_1989
-# if defined(__STDC_VERSION__)
-#  if (__STDC_VERSION__ >= 199409L)
-#   define PREDEF_STANDARD_C_1994
+#ifdef __STDC__
+#  define     PKGMAN_STANDARD_C_1989 1
+#  ifdef __STDC_VERSION__
+#    if (__STDC_VERSION__ >= 199409L)
+#      define PKGMAN_STANDARD_C_1994 1
+#    endif
+#    if (__STDC_VERSION__ >= 199901L)
+#      define PKGMAN_STANDARD_C_1999 1
+#    endif
 #  endif
-#  if (__STDC_VERSION__ >= 199901L)
-#   define PREDEF_STANDARD_C_1999
-#  endif
-# endif
 #endif
+
+#if defined(unix) || defined(__unix__) || defined(__unix)
+#  define PKGMAN_PLATFORM_UNIX 1
+#  ifdef _XOPEN_VERSION
+#    if (_XOPEN_VERSION >= 3)
+#      define PKGMAN_STANDARD_XOPEN_1989 1
+#    endif
+#    if (_XOPEN_VERSION >= 4)
+#      define PKGMAN_STANDARD_XOPEN_1992 1
+#    endif
+#    if (_XOPEN_VERSION >= 4) && defined(_XOPEN_UNIX)
+#      define PKGMAN_STANDARD_XOPEN_1995
+#    endif
+#    if (_XOPEN_VERSION >= 500)
+#      define PKGMAN_STANDARD_XOPEN_1998 1
+#    endif
+#    if (_XOPEN_VERSION >= 600)
+#      define PKGMAN_STANDARD_XOPEN_2003 1
+#    endif
+#    if (_XOPEN_VERSION >= 700)
+#      define PKGMAN_STANDARD_XOPEN_2008 1
+#    endif
+#  endif
+#endif
+
 
 /***************************************************************************//**
  *
@@ -447,6 +501,15 @@
 #if PKGMAN_HAS_INCLUDE(<mntent.h>)
 #    include <mntent.h>
 #    define HAVE_MNTENT_H 1
+#endif
+
+#if (PKGMAN_PLATFORM_UNIX)
+#  if PKGMAN_HAS_INCLUDE(<unistd.h>)
+#    include <unistd.h>
+#    define HAVE_UNISTD_H 1
+#  else
+#    error "Error! Unix platform in use, but cannot locate standard Unix header <unistd.h>?"
+#  endif
 #endif
 
 /***************************************************************************//**

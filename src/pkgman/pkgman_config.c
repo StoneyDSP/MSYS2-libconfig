@@ -12,26 +12,12 @@ int main()
 {
 #endif
 
-	void* handle;
-	char *error;
+	printf("\n");
+	printf("pkgman_config\n");
 
-	handle = dlopen(PKGMAN_CRYPTO_LIB, RTLD_LAZY);
-	error = dlerror();
-
-	if (!handle || error != NULL)
-	{
-		printf("\n");
-		fprintf(stderr, "Loading 'libcrypto.dll' attempt failed: %s\n", error);
-		printf("\n");
-		exit(EXIT_FAILURE);
-	} else {
-		printf("\n");
-		printf("Loaded 'libcrypto.dll' successfully.\n");
-		printf("\n");
-#define HAVE_OPENSSL 1
-	}
-
-	dlclose(handle);
+	#ifdef PKGMAN_VERSION
+		printf("PKGMAN_VERSION: %d\n", PKGMAN_VERSION);
+	#endif
 
 #if defined(__CYGWIN__) && CYGWIN_VERSION_API_MINOR < 262
 		void *libc = dlopen ("cygwin1.dll", 0);
@@ -39,12 +25,50 @@ int main()
 #endif
 
 	printf("\n");
-	printf("pkgman_config:\n");
+
+	printf("Build information:\n\n");
+
+	printf("prefix                  : %s\n", prefix);
+  	printf("sysconfdir              : %s\n", SYSCONFDIR);
+  	printf("conf file           	: %s/pacman.conf\n", SYSCONFDIR);
+  	printf("localstatedir           : %s\n", LOCALSTATEDIR);
+  	printf("database dir        	: %s/lib/pacman/\n", LOCALSTATEDIR);
+  	printf("cache dir           	: %s/cache/pacman/pkg/\n", LOCALSTATEDIR);
+  	printf("compiler                : @0@ @1@'.format(cc.get_id(), cc.version())\n");
+
 	printf("\n");
 
-#ifdef PKGMAN_VERSION
-	printf("PKGMAN_VERSION: %d\n", PKGMAN_VERSION);
-#endif
+	printf("Architecture            : @0@'.format(carch)\n");
+  	printf("Host Type               : @0@'.format(chost)\n");
+  	printf("File inode command      : @0@'.format(inodecmd)\n");
+  	printf("File seccomp command    : @0@'.format(filecmd)\n");
+  	printf("libalpm version         : @0@'.format(libalpm_version)\n");
+    printf("pacman version          : @0@'.format(PACKAGE_VERSION)\n");
+
+	printf("\n");
+
+	printf("Directory and file information:\n\n");
+
+	printf("root working directory  : %d\n", ROOTDIR);
+  	printf("package extension       : @0@'.format(get_option('pkg-ext'))\n");
+    printf("  source pkg extension  : @0@'.format(get_option('src-ext'))\n");
+    printf("build script name       : @0@'.format(BUILDSCRIPT)\n");
+    printf("template directory      : @0@'.format(get_option('makepkg-template-dir'))\n");
+
+	printf("\n");
+
+	printf("Compilation options:\n\n");
+
+	printf("i18n support            : @0@'.format(get_option('i18n'))\n");
+    printf("Build docs              : @0@'.format(build_doc)\n");
+  	printf("debug build             : @0@'.format(get_option('buildtype') == 'debug')\n");
+  	printf("Use libcurl             : @0@'.format(conf.get('HAVE_LIBCURL'))\n");
+  	printf("Use GPGME               : @0@'.format(conf.get('HAVE_LIBGPGME'))\n");
+  	printf("Use OpenSSL             : @0@'.format(conf.has('HAVE_LIBSSL') and conf.get('HAVE_LIBSSL') == 1)\n");
+  	printf("Use nettle              : @0@'.format(conf.has('HAVE_LIBNETTLE') and conf.get('HAVE_LIBNETTLE') == 1)\n");
+
+	printf("\n");
+
 
 	printf("\n");
 
@@ -141,51 +165,6 @@ int main()
 #ifdef _FORTIFY_SOURCE
 	printf("_FORTIFY_SOURCE defined\n");
 #endif
-
-	printf("\n");
-
-	printf("Build information:\n\n");
-
-	printf("prefix                  : %d\n", prefix);
-  	printf("sysconfdir              : %d\n", SYSCONFDIR);
-  	printf("conf file           	: %d/pacman.conf\n", SYSCONFDIR);
-  	printf("localstatedir           : %d\n", LOCALSTATEDIR);
-  	printf("database dir        	: %d/lib/pacman/\n", LOCALSTATEDIR);
-  	printf("cache dir           	: %d/cache/pacman/pkg/\n", LOCALSTATEDIR);
-  	printf("compiler                : @0@ @1@'.format(cc.get_id(), cc.version())\n");
-
-	printf("\n");
-
-	printf("Architecture            : @0@'.format(carch)\n");
-  	printf("Host Type               : @0@'.format(chost)\n");
-  	printf("File inode command      : @0@'.format(inodecmd)\n");
-  	printf("File seccomp command    : @0@'.format(filecmd)\n");
-  	printf("libalpm version         : @0@'.format(libalpm_version)\n");
-    printf("pacman version          : @0@'.format(PACKAGE_VERSION)\n");
-
-	printf("\n");
-
-	printf("Directory and file information:\n\n");
-
-	printf("root working directory  : %d\n", ROOTDIR);
-  	printf("package extension       : @0@'.format(get_option('pkg-ext'))\n");
-    printf("  source pkg extension  : @0@'.format(get_option('src-ext'))\n");
-    printf("build script name       : @0@'.format(BUILDSCRIPT)\n");
-    printf("template directory      : @0@'.format(get_option('makepkg-template-dir'))\n");
-
-	printf("\n");
-
-	printf("Compilation options:\n\n");
-
-	printf("i18n support            : @0@'.format(get_option('i18n'))\n");
-    printf("Build docs              : @0@'.format(build_doc)\n");
-  	printf("debug build             : @0@'.format(get_option('buildtype') == 'debug')\n");
-  	printf("Use libcurl             : @0@'.format(conf.get('HAVE_LIBCURL'))\n");
-  	printf("Use GPGME               : @0@'.format(conf.get('HAVE_LIBGPGME'))\n");
-  	printf("Use OpenSSL             : @0@'.format(conf.has('HAVE_LIBSSL') and conf.get('HAVE_LIBSSL') == 1)\n");
-  	printf("Use nettle              : @0@'.format(conf.has('HAVE_LIBNETTLE') and conf.get('HAVE_LIBNETTLE') == 1)\n");
-
-	printf("\n");
 
 	return(EXIT_SUCCESS);
 }

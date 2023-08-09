@@ -208,23 +208,21 @@ int checkForLib(const char* pathToHeader, const char* libName)
 	printf("Compiler info:\n");
 	printf("\n");
 
-#ifdef PKGMAN_CLANG_VERSION
+#if defined(PKGMAN_CLANG_VERSION) && (PKGMAN_CLANG_VERSION != 0)
 	printf("PKGMAN_CLANG_VERSION: %d\n", PKGMAN_CLANG_VERSION);
 #endif
 
-#ifdef PKGMAN_GCC_VERSION
+#if defined(PKGMAN_GCC_VERSION) && (PKGMAN_GCC_VERSION != 0)
 	printf("PKGMAN_GCC_VERSION: %d\n", PKGMAN_GCC_VERSION);
 #endif
 
-#ifdef PKGMAN_ICC_VERSION
+#if defined(PKGMAN_ICC_VERSION) && (PKGMAN_ICC_VERSION != 0)
 	printf("PKGMAN_ICC_VERSION: %d\n", PKGMAN_ICC_VERSION);
 #endif
 
-#ifdef PKGMAN_MSC_VERSION
+#if defined(PKGMAN_MSC_VERSION) && (PKGMAN_MSC_VERSION != 0)
 	printf("PKGMAN_MSC_VERSION: %d\n", PKGMAN_MSC_VERSION);
 #endif
-
-	printf("\n");
 
 	printf("\n");
 	printf("Feature detection macros:\n");

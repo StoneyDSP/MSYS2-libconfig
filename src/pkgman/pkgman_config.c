@@ -231,70 +231,106 @@ int checkForLib(const char* pathToHeader, const char* libName)
 	printf("\n");
 
 #ifdef _POSIX_SOURCE
-	printf("_POSIX_SOURCE defined\n");
+	printf("_POSIX_SOURCE 			: defined\n");
+#else
+	printf("_POSIX_SOURCE	 		: undefined\n");
 #endif
 
 #ifdef _POSIX_C_SOURCE
-	printf("_POSIX_C_SOURCE defined: %jdL\n", (intmax_t) _POSIX_C_SOURCE);
+	printf("_POSIX_C_SOURCE 		: defined = %jdL\n", (intmax_t) _POSIX_C_SOURCE);
+#else
+	printf("_POSIX_C_SOURCE 		: undefined\n");
 #endif
 
 #ifdef _ISOC99_SOURCE
-	printf("_ISOC99_SOURCE defined\n");
+	printf("_ISOC99_SOURCE 			: defined\n");
+#else
+	printf("_ISOC99_SOURCE 			: undefined\n");
 #endif
 
 #ifdef _ISOC11_SOURCE
-	printf("_ISOC11_SOURCE defined\n");
+	printf("_ISOC11_SOURCE 			: defined\n");
+#else
+	printf("_ISOC11_SOURCE	 		: undefined\n");
 #endif
 
 #ifdef _XOPEN_SOURCE
-	printf("_XOPEN_SOURCE defined: %d\n", _XOPEN_SOURCE);
+	printf("_XOPEN_SOURCE 			: defined = %d\n", _XOPEN_SOURCE);
+#else
+	printf("_XOPEN_SOURCE	 		: undefined\n");
 #endif
 
 #ifdef _XOPEN_SOURCE_EXTENDED
-	printf("_XOPEN_SOURCE_EXTENDED defined\n");
+	printf("_XOPEN_SOURCE_EXTENDED		: defined\n");
+#else
+	printf("_XOPEN_SOURCE_EXTENDED		: undefined\n");
 #endif
 
 #ifdef _LARGEFILE64_SOURCE
-	printf("_LARGEFILE64_SOURCE defined\n");
+	printf("_LARGEFILE64_SOURCE		: defined\n");
+#else
+	printf("_LARGEFILE64_SOURCE		: undefined\n");
 #endif
 
 #ifdef _FILE_OFFSET_BITS
-	printf("_FILE_OFFSET_BITS defined: %d\n", _FILE_OFFSET_BITS);
+	printf("_FILE_OFFSET_BITS 		: defined = %d\n", _FILE_OFFSET_BITS);
+#else
+	printf("_FILE_OFFSET_BITS 		: undefined\n");
 #endif
 
 #ifdef _TIME_BITS
-	printf("_TIME_BITS defined: %d\n", _TIME_BITS);
+	printf("_TIME_BITS 			: defined = %d\n", _TIME_BITS);
+#else
+	printf("_TIME_BITS		 	: undefined\n");
 #endif
 
 #ifdef _BSD_SOURCE
-	printf("_BSD_SOURCE defined\n");
+	printf("_BSD_SOURCE 			: defined\n");
+#else
+	printf("_BSD_SOURCE 			: undefined\n");
 #endif
 
 #ifdef _SVID_SOURCE
-	printf("_SVID_SOURCE defined\n");
+	printf("_SVID_SOURCE 			: defined\n");
+#else
+	printf("_SVID_SOURCE 			: undefined\n");
 #endif
 
 #ifdef _DEFAULT_SOURCE
-	printf("_DEFAULT_SOURCE defined\n");
+	printf("_DEFAULT_SOURCE 		: defined\n");
+#else
+	printf("_DEFAULT_SOURCE 		: undefined\n");
 #endif
 
 #ifdef _ATFILE_SOURCE
-	printf("_ATFILE_SOURCE defined\n");
+	printf("_ATFILE_SOURCE 			: defined\n");
+#else
+	printf("_ATFILE_SOURCE 			: undefined\n");
 #endif
 
 #ifdef _GNU_SOURCE
-	printf("_GNU_SOURCE defined\n");
+	printf("_GNU_SOURCE 			: defined\n");
+#else
+	printf("_GNU_SOURCE		 		: undefined\n");
 #endif
 
 #ifdef _REENTRANT
-	printf("_REENTRANT defined\n");
+	printf("_REENTRANT 			: defined\n");
+#else
+	printf("_REENTRANT		 	: undefined\n");
 #endif
 
 #ifdef _THREAD_SAFE
-	printf("_THREAD_SAFE defined\n");
+	printf("_THREAD_SAFE 			: defined\n");
+#else
+	printf("_THREAD_SAFE 			: undefined\n");
 #endif
 
 #ifdef _FORTIFY_SOURCE
+	printf("_FORTIFY_SOURCE 		: defined\n");
+#else
+	printf("_FORTIFY_SOURCE 		: undefined\n");
+#endif
 
 	printf("\n");
 	printf("Checking for required system headers...\n");

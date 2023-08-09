@@ -27,7 +27,7 @@
 #  define HAVE_LIBNETTLE 1
 #elif __has_include(<openssl/crypto.h>)
 #  include <openssl/crypto.h>
-#  define HAVE_OPENSSL 1
+#  define HAVE_LIBSSL 1
 #else
 #  error "No crypto provider found!?"
 #endif
@@ -38,116 +38,55 @@
 #endif
 
 #if (HAVE_LIBNETTLE)
-#  define CRYPTO_INCLUDE_SYMBOL __TO_STRING(<nettle/crypto.h>)
-#elif (HAVE_OPENSSL)
-#  define CRYPTO_INCLUDE_SYMBOL __TO_STRING(<openssl/crypto.h>)
+#  define CRYPTO_INCLUDE_SYMBOL __PM_STRING(<nettle/crypto.h>)
+#elif (HAVE_LIBSSL)
+#  define CRYPTO_INCLUDE_SYMBOL __PM_STRING(<openssl/crypto.h>)
 #endif
 
-#define CRYPTO_LIB __TO_STRING(libcrypto.dll)
+#define CRYPTO_LIB __PM_STRING(libcrypto.dll)
 
-#if HAVE_OPENSSL
-#  define CRYPTO_H_PATH __TO_STRING(C:/msys64/usr/include/openssl)
+#if HAVE_LIBSSL
+#  define CRYPTO_H_PATH __PM_STRING(C:/msys64/usr/include/openssl)
 #elif HAVE_LIBNETTLE
-#  define CRYPTO_H_PATH __TO_STRING(C:/msys64/usr/include/nettle)
+#  define CRYPTO_H_PATH __PM_STRING(C:/msys64/usr/include/nettle)
 #endif
 
 
-#if (__WIN32__) || (__CYGWIN__)
-int WinMain()
+
+/**
+ * Get the chosen crypto lib
+*/
+int checkForLibCrytpo()
 {
-#else
-int main()
-{
-#endif
-
-	printf("\n");
-	printf("pkgman_config\n");
-
-	#ifdef PKGMAN_VERSION
-		printf("PKGMAN_VERSION: %d\n", PKGMAN_VERSION);
-	#endif
-
-#if defined(__CYGWIN__) && CYGWIN_VERSION_API_MINOR < 262
-		void *libc = dlopen ("cygwin1.dll", 0);
-		struct mntent *(*getmntent_r) (FILE *, struct mntent *, char *, int) = dlsym (libc, "getmntent_r");
-#endif
-
-	printf("\n");
-
-	printf("Build information:\n\n");
-
-	printf("prefix                  : %s\n", prefix);
-  	printf("sysconfdir              : %s\n", SYSCONFDIR);
-  	printf("conf file           	: %s/pacman.conf\n", SYSCONFDIR);
-  	printf("localstatedir           : %s\n", LOCALSTATEDIR);
-  	printf("database dir        	: %s/lib/pacman/\n", LOCALSTATEDIR);
-  	printf("cache dir           	: %s/cache/pacman/pkg/\n", LOCALSTATEDIR);
-  	printf("compiler                : @0@ @1@'.format(cc.get_id(), cc.version())\n");
-
-	printf("\n");
-
-	printf("Architecture            : @0@'.format(carch)\n");
-  	printf("Host Type               : @0@'.format(chost)\n");
-  	printf("File inode command      : @0@'.format(inodecmd)\n");
-  	printf("File seccomp command    : @0@'.format(filecmd)\n");
-  	printf("libalpm version         : @0@'.format(libalpm_version)\n");
-    printf("pacman version          : @0@'.format(PACKAGE_VERSION)\n");
-
-	printf("\n");
-
-	printf("Directory and file information:\n\n");
-
-	printf("root working directory  : %d\n", ROOTDIR);
-  	printf("package extension       : @0@'.format(get_option('pkg-ext'))\n");
-    printf("  source pkg extension  : @0@'.format(get_option('src-ext'))\n");
-    printf("build script name       : @0@'.format(BUILDSCRIPT)\n");
-    printf("template directory      : @0@'.format(get_option('makepkg-template-dir'))\n");
-
-	printf("\n");
-
-	printf("Compilation options:\n\n");
-
-	printf("i18n support            : @0@'.format(get_option('i18n'))\n");
-    printf("Build docs              : @0@'.format(build_doc)\n");
-  	printf("debug build             : @0@'.format(get_option('buildtype') == 'debug')\n");
-  	printf("Use libcurl             : @0@'.format(conf.get('HAVE_LIBCURL'))\n");
-  	printf("Use GPGME               : @0@'.format(conf.get('HAVE_LIBGPGME'))\n");
-  	printf("Use OpenSSL             : @0@'.format(conf.has('HAVE_LIBSSL') and conf.get('HAVE_LIBSSL') == 1)\n");
-  	printf("Use nettle              : @0@'.format(conf.has('HAVE_LIBNETTLE') and conf.get('HAVE_LIBNETTLE') == 1)\n");
-
-	printf("\n");
-
-	printf("\n");
-	printf("Checking for dependencies...\n");
-	printf("\n");
-/** Check for header path... this could be more thorough, of course... */
-
+	/** Check for header path... this could be more thorough, of course... */
 	DIR *dip;
-    struct dirent *dit;
-    struct stat lsbuf;
-    char currentPath[__FILENAME_MAX__];
+	struct dirent *dit;
+	struct stat lsbuf;
+	char currentPath[__FILENAME_MAX__];
 
-	const char* crypto_header_path = {CRYPTO_H_PATH};
+	const char* crypto_header_path = { CRYPTO_H_PATH };
 
-    if((dip = opendir(CRYPTO_H_PATH)) == NULL)
-    {
-        perror("opendir()");
-        return errno;
-    }
+	dip = opendir(CRYPTO_H_PATH);
 
-    if((getcwd(currentPath, FILENAME_MAX)) == NULL)
-    {
-        perror("getcwd()");
-        return errno;
-    }
+	if((dip) == NULL)
+	{
+		perror("opendir()");
+		return errno;
+	}
 
-    /* stat the file - if it exists, do some checks */
+	if((getcwd(currentPath, FILENAME_MAX)) == NULL)
+	{
+		perror("getcwd()");
+		return errno;
+	}
+
+	/* stat the file - if it exists, do some checks */
 		if(stat(currentPath, &lsbuf) == -1)
-    {
-        perror("stat()");
+	{
+		perror("stat()");
 		return errno;
 
-    } else {
+	} else {
 
 		if(S_ISDIR(lsbuf.st_mode)) {
 
@@ -164,7 +103,6 @@ int main()
 
 		printf("Included '%s' successfully.\n", CRYPTO_INCLUDE_SYMBOL);
 	}
-
 
 	/** Get the chosen crypto lib */
 	void* handle;
@@ -185,6 +123,84 @@ int main()
 	}
 
 	dlclose(handle);
+
+	return (0);
+}
+
+
+
+/**
+ * Get the chosen lib
+*/
+int checkForLib(const char* pathToHeader, const char* libName)
+{
+	/** Check for header path... this could be more thorough, of course... */
+	DIR *dip;
+	struct dirent *dit;
+	struct stat lsbuf;
+	char currentPath[__FILENAME_MAX__];
+
+	const char* header_path = pathToHeader;
+
+	dip = opendir(header_path);
+
+	if((dip) == NULL)
+	{
+		perror("opendir()");
+		return errno;
+	}
+
+	if((getcwd(currentPath, FILENAME_MAX)) == NULL)
+	{
+		perror("getcwd()");
+		return errno;
+	}
+
+	/* stat the file - if it exists, do some checks */
+		if(stat(currentPath, &lsbuf) == -1)
+	{
+		perror("stat()");
+		return errno;
+
+	} else {
+
+		if(S_ISDIR(lsbuf.st_mode)) {
+
+			printf("\"%s\" exists on this system.\n", header_path);
+
+		} else {
+
+			printf("\"%s\" does not exist on this system.\n", header_path);
+
+			printf("\n");
+		}
+	}
+
+	/** Get the chosen crypto lib */
+	void* handle;
+	char *error;
+
+	handle = dlopen(libName, RTLD_LAZY);
+	error = dlerror();
+
+	if (!handle || error != NULL)
+	{
+		/** fprintf(stderr, "Loading 'libcrypto.dll' attempt failed: %s\n", error); */
+
+		printf("Loading '%s' attempt failed.\n", libName);
+
+		/** exit(EXIT_FAILURE); */
+
+	} else {
+
+		printf("Loaded '%s' successfully.\n", libName);
+	}
+
+	dlclose(handle);
+
+	return (0);
+}
+
 
 	printf("\n");
 
@@ -281,6 +297,16 @@ int main()
 #ifdef _FORTIFY_SOURCE
 	printf("_FORTIFY_SOURCE defined\n");
 #endif
+
+	printf("\n");
+	printf("Checking for dependencies...\n");
+	printf("\n");
+
+	/** checkForLibCrytpo(); */
+
+	/** printf("\n"); */
+
+	checkForLib(CRYPTO_H_PATH, CRYPTO_LIB);
 
 	return(EXIT_SUCCESS);
 }

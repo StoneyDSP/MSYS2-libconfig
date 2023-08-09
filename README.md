@@ -2,6 +2,96 @@
 
 ## latest...
 
+## Log 09.08.2023 - part II
+
+With a few more defs in place, the config.exe readout is starting to take shape nicely;
+
+```
+$ ./bin/pkgman_config.exe
+
+pkgman_config v.60002-81c0a15465cc6197b913e761833d2b486fc0c4fa
+
+Build information:
+
+prefix                  : /usr
+sysconfdir              : /etc
+conf file               : /etc/pacman.conf
+localstatedir           : /var
+database dir            : /var/lib/pacman/
+cache dir               : /var/cache/pacman/pkg/
+compiler                : @0@ @1@'.format(cc.get_id(), cc.version())
+
+Architecture            : @0@'.format(carch)
+Host Type               : @0@'.format(chost)
+File inode command      : @0@'.format(inodecmd)
+File seccomp command    : @0@'.format(filecmd)
+libalpm version         : @0@'.format(libalpm_version)
+pacman version          : @0@'.format(PACKAGE_VERSION)
+
+Directory and file information:
+
+root working directory  : /
+package extension       : .pkg.tar.gz
+source pkg extension    : .src.tar.gz
+build script name       : PKGBUILD
+template directory      : /usr/share/makepkg-template
+
+Compilation options:
+
+i18n support            : @0@'.format(get_option('i18n'))
+Build docs              : @0@'.format(build_doc)
+debug build             : @0@'.format(get_option('buildtype') == 'debug')
+Use libcurl             : false
+Use GPGME               : false
+Use OpenSSL             : true
+Use nettle              : false
+
+Compiler info:
+
+PKGMAN_GCC_VERSION: 1103
+
+Feature detection macros:
+
+_POSIX_SOURCE                   : defined
+_POSIX_C_SOURCE                 : defined = 200809L
+_ISOC99_SOURCE                  : undefined
+_ISOC11_SOURCE                  : undefined
+_XOPEN_SOURCE                   : defined = 500
+_XOPEN_SOURCE_EXTENDED          : undefined
+_LARGEFILE64_SOURCE             : undefined
+_FILE_OFFSET_BITS               : undefined
+_TIME_BITS                      : undefined
+_BSD_SOURCE                     : undefined
+_SVID_SOURCE                    : undefined
+_DEFAULT_SOURCE                 : defined
+_ATFILE_SOURCE                  : defined
+_GNU_SOURCE                     : defined
+_REENTRANT                      : undefined
+_THREAD_SAFE                    : undefined
+_FORTIFY_SOURCE                 : undefined
+
+Checking for required system headers...
+
+<mntent.h>                      : Success
+<sys/mnttab.h>                  : Fail
+<sys/mount.h>                   : Success
+<sys/param.h>                   : Success
+<sys/param.h>                   : Success
+<sys/statvfs.h>                 : Success
+<sys/types.h>                   : Success
+<sys/ucred.h>                   : Fail
+<termios.h>                     : Success
+
+Checking for dependencies...
+
+"C:/msys64/usr/include/openssl" exists on this system.
+Loaded 'libcrypto.dll' successfully.
+
+```
+The code will benefit from some refactoring - a good few functions and perhaps structs would be really efficient here, but it's all in the pipeline, of course.
+
+Would be nice to have some description strings (pulled from the meson build options and so forth) and perhaps an indicator of which '-D' to use to control the options, too...
+
 ## Log 09.08.2023
 
 Ah, glorious C. Wish I had learned Unix C programming long ago... Currently, based on the previous two entries, our configuration header no longer actually requires any sort of build system in order to prepare the main package manager source files for building.

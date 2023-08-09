@@ -1,8 +1,56 @@
-#include "pkgman/pkgman_config.h"
+/**
+ * @file pkgman_config.cs
+ * @author your name (you@domain.com)
+ * @brief
+ * @version 0.1
+ * @date 2023-08-09
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
 
+#ifdef __CYGWIN__
+#  include <dlfcn.h>
+#  include <dirent.h>
+#  include <unistd.h>
+#  include <cygwin/version.h>
+#endif
+
+// #include <sys/types.h>
+// #include <sys/stat.h>
+
+
+
+
+#if __has_include(<nettle/crypto.h>)
+#  include <nettle/crypto.h>
+#  define HAVE_LIBNETTLE 1
+#elif __has_include(<openssl/crypto.h>)
+#  include <openssl/crypto.h>
+#  define HAVE_OPENSSL 1
+#else
+#  error "No crypto provider found!?"
+#endif
+
+#include "pkgman/pkgman_config.h"
 #ifndef PKGMAN_CONFIGURATION_H
 # error "No config header found?"
 #endif
+
+#if (HAVE_LIBNETTLE)
+#  define CRYPTO_INCLUDE_SYMBOL __TO_STRING(<nettle/crypto.h>)
+#elif (HAVE_OPENSSL)
+#  define CRYPTO_INCLUDE_SYMBOL __TO_STRING(<openssl/crypto.h>)
+#endif
+
+#define CRYPTO_LIB __TO_STRING(libcrypto.dll)
+
+#if HAVE_OPENSSL
+#  define CRYPTO_H_PATH __TO_STRING(C:/msys64/usr/include/openssl)
+#elif HAVE_LIBNETTLE
+#  define CRYPTO_H_PATH __TO_STRING(C:/msys64/usr/include/nettle)
+#endif
+
 
 #if (__WIN32__) || (__CYGWIN__)
 int WinMain()
@@ -69,6 +117,74 @@ int main()
 
 	printf("\n");
 
+	printf("\n");
+	printf("Checking for dependencies...\n");
+	printf("\n");
+/** Check for header path... this could be more thorough, of course... */
+
+	DIR *dip;
+    struct dirent *dit;
+    struct stat lsbuf;
+    char currentPath[__FILENAME_MAX__];
+
+	const char* crypto_header_path = {CRYPTO_H_PATH};
+
+    if((dip = opendir(CRYPTO_H_PATH)) == NULL)
+    {
+        perror("opendir()");
+        return errno;
+    }
+
+    if((getcwd(currentPath, FILENAME_MAX)) == NULL)
+    {
+        perror("getcwd()");
+        return errno;
+    }
+
+    /* stat the file - if it exists, do some checks */
+		if(stat(currentPath, &lsbuf) == -1)
+    {
+        perror("stat()");
+		return errno;
+
+    } else {
+
+		if(S_ISDIR(lsbuf.st_mode)) {
+
+			printf("\"%s\" exists on this system.\n", CRYPTO_H_PATH);
+
+		} else {
+
+			printf("\"%s\" does not exist on this system.\n", CRYPTO_H_PATH);
+
+			printf("\n");
+
+			exit(EXIT_FAILURE);
+		}
+
+		printf("Included '%s' successfully.\n", CRYPTO_INCLUDE_SYMBOL);
+	}
+
+
+	/** Get the chosen crypto lib */
+	void* handle;
+	char *error;
+
+	handle = dlopen(CRYPTO_LIB, RTLD_LAZY);
+	error = dlerror();
+
+	if (!handle || error != NULL)
+	{
+		fprintf(stderr, "Loading 'libcrypto.dll' attempt failed: %s\n", error);
+
+		exit(EXIT_FAILURE);
+
+	} else {
+
+		printf("Loaded '%s' successfully.\n", CRYPTO_LIB);
+	}
+
+	dlclose(handle);
 
 	printf("\n");
 

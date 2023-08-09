@@ -62,12 +62,24 @@
  *  ... Custom function macros
  *
  ******************************************************************************/
-#if !defined(__TO_STRING)
-#	define __TO_STRING(X) #X
+
+#ifndef _PM_STRINGIZE
+#define __PM_STRINGIZE(_Value) #_Value
+#define _PM_STRINGIZE(_Value) __PM_STRINGIZE(_Value)
+#endif /* _CRT_STRINGIZE */
+
+#ifndef _PM_WIDE
+#define __PM_WIDE(_String) L ## _String
+#define _PM_WIDE(_String) __PM_WIDE(_String)
+#endif /* _PM_WIDE */
+
+
+#if !defined(__PM_TO_STRING)
+#	define __PM_TO_STRING(X) #X
 #endif
 
-#if !defined(__STRING)
-#	define __STRING(X) __TO_STRING(X)
+#if !defined(__PM_STRING)
+#	define __PM_STRING(X) __PM_TO_STRING(X)
 #endif
 
 /**
@@ -441,12 +453,7 @@
  *
  *  ... Dependency check macros
  *
- ******************************************************************************/
 
-#ifdef __CYGWIN__
-#  include <dlfcn.h>
-#  include <cygwin/version.h>
-#endif
 
 #if PKGMAN_HAS_INCLUDE(<curl/curl.h>)
 #  include <curl/curl.h>
@@ -457,8 +464,10 @@
 #if PKGMAN_HAS_INCLUDE(<openssl/crypto.h>)
 #  include <openssl/crypto.h>
 #  define OPENSSL_FOUND 1
-#  define PKGMAN_CRYPTO_LIB __STRING(libcrypto.dll)
+#  define PKGMAN_CRYPTO_LIB __PM_STRING(libcrypto.dll)
 #endif
+
+ ******************************************************************************/
 
 /***************************************************************************//**
  *
@@ -560,17 +569,17 @@ typedef	signed long int int64_t;
 
 #if !defined(PATH_SEPERATOR)
 #  if defined(WIN32) || defined(_WIN32)
-#    define PATH_SEPERATOR __STRING(\\) /** @name PATH_SEPERATOR @details This quote keeps the code intact :) */
+#    define PATH_SEPERATOR __PM_STRING(\\) /** @name PATH_SEPERATOR @details This quote keeps the code intact :) */
 #  else
-#    define PATH_SEPERATOR __STRING(/) /** @name PATH_SEPERATOR @details This quote keeps the code intact :) */
+#    define PATH_SEPERATOR __PM_STRING(/) /** @name PATH_SEPERATOR @details This quote keeps the code intact :) */
 #  endif
 #endif
 
 #if !defined(STRING_SEPERATOR)
 #  if defined(WIN32) || defined(_WIN32)
-#    define STRING_SEPERATOR __STRING(;) /** @name STRING_SEPERATOR @details This quote keeps the code intact :) */
+#    define STRING_SEPERATOR __PM_STRING(;) /** @name STRING_SEPERATOR @details This quote keeps the code intact :) */
 #  else
-#    define STRING_SEPERATOR __STRING(:) /** @name STRING_SEPERATOR @details This quote keeps the code intact :) */
+#    define STRING_SEPERATOR __PM_STRING(:) /** @name STRING_SEPERATOR @details This quote keeps the code intact :) */
 #  endif
 #endif
 
@@ -579,7 +588,7 @@ typedef	signed long int int64_t;
 
 #if !defined(HOMEDRIVE)
 #  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
-#    define HOMEDRIVE __STRING(C:) /** @name HOMEDRIVE @details This quote keeps the code intact :) */
+#    define HOMEDRIVE __PM_STRING(C:) /** @name HOMEDRIVE @details This quote keeps the code intact :) */
 #  else
 #    define HOMEDRIVE PATH_SEPERATOR /** @name HOMEDRIVE @details This quote keeps the code intact :) */
 #  endif
@@ -595,15 +604,15 @@ typedef	signed long int int64_t;
 
 #if !defined(PREFIX)
 #  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
-#    define PREFIX HOMEDRIVE PATH_SEPERATOR msys64 PATH_SEPERATOR usr /** (default value for Win32/MinGW). */
+#    define PREFIX HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR __PM_STRING(usr) /** (default value for Win32/MinGW). */
 #  else
-#    define PREFIX HOMEDRIVE __STRING(usr) /** < */
+#    define PREFIX HOMEDRIVE __PM_STRING(usr) /**  */
 #  endif
 #endif
 
 #if !defined(SYSROOT)
 #  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
-#    define SYSROOT HOMEDRIVE PATH_SEPERATOR __STRING(msys64) PATH_SEPERATOR __STRING(etc)
+#    define SYSROOT HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR __PM_STRING(etc)
 #  else
 #    define SYSROOT HOMEDRIVE
 #  endif
@@ -611,17 +620,17 @@ typedef	signed long int int64_t;
 
 #if !defined(SYSCONFDIR)
 #  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
-#    define SYSCONFDIR HOMEDRIVE PATH_SEPERATOR __STRING(msys64) PATH_SEPERATOR __STRING(etc)
+#    define SYSCONFDIR HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR __PM_STRING(etc)
 #  else
-#    define SYSCONFDIR HOMEDRIVE __STRING(etc)
+#    define SYSCONFDIR HOMEDRIVE __PM_STRING(etc)
 #  endif
 #endif
 
 #if !defined(LOCALSTATEDIR)
 #  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
-#    define LOCALSTATEDIR HOMEDRIVE PATH_SEPERATOR __STRING(msys64) PATH_SEPERATOR __STRING(var) /** (default value for Win32/MinGW). */
+#    define LOCALSTATEDIR HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR __PM_STRING(var) /** (default value for Win32/MinGW). */
 #  else
-#    define LOCALSTATEDIR HOMEDRIVE __STRING(var) /** < */
+#    define LOCALSTATEDIR HOMEDRIVE __PM_STRING(var) /** < */
 #  endif
 #endif
 

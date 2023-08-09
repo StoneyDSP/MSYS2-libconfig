@@ -360,6 +360,22 @@
 #  endif
 #endif
 
+#ifdef PKGMAN_CPLUSPLUS
+#  if PKGMAN_HAS_INCLUDE(<cerrno>)
+#    include <cerrno>
+#    define HAVE_CERRNO 1
+#  else
+#    undef HAVE_CERRNO
+#  endif
+#else
+#  if PKGMAN_HAS_INCLUDE(<errno.h>)
+#    include <errno.h>
+#    define HAVE_ERRNO_H 1
+#  else
+#    undef HAVE_ERRNO_H
+#  endif
+#endif
+
 /** WCHAR - fwprintf(), swprintf(), wprintf() */
 #ifdef PKGMAN_CPLUSPLUS
 #  if PKGMAN_HAS_INCLUDE(<cwchar>)

@@ -295,7 +295,66 @@ int checkForLib(const char* pathToHeader, const char* libName)
 #endif
 
 #ifdef _FORTIFY_SOURCE
-	printf("_FORTIFY_SOURCE defined\n");
+
+	printf("\n");
+	printf("Checking for required system headers...\n");
+	printf("\n");
+
+	const char* header_found = { "Success" };
+	const char* header_missing = { "Fail" };
+
+#if defined(HAVE_MNTENT_H)
+	printf("<mntent.h>			: %s\n", header_found);
+#else
+	printf("<mntent.h>			: %s\n", header_missing);
+#endif
+
+#if defined(HAVE_SYS_MNTTAB_H)
+    printf("<sys/mnttab.h>			: %s\n", header_found);
+#else
+	printf("<sys/mnttab.h>			: %s\n", header_missing);
+#endif
+
+#if defined(HAVE_SYS_MOUNT_H)
+    printf("<sys/mount.h>			: %s\n", header_found);
+#else
+    printf("<sys/mount.h>			: %s\n", header_missing);
+#endif
+
+#if defined(HAVE_SYS_PARAM_H)
+    printf("<sys/param.h>			: %s\n", header_found);
+#else
+    printf("<sys/param.h>			: %s\n", header_missing);
+#endif
+
+#if defined(HAVE_SYS_PARAM_H)
+    printf("<sys/param.h>			: %s\n", header_found);
+#else
+    printf("<sys/param.h>			: %s\n", header_missing);
+#endif
+
+#if defined(HAVE_SYS_STATVFS_H)
+    printf("<sys/statvfs.h>			: %s\n", header_found);
+#else
+    printf("<sys/statvfs.h>			: %s\n", header_missing);
+#endif
+
+#if defined(HAVE_SYS_TYPES_H)
+    printf("<sys/types.h>			: %s\n", header_found);
+#else
+    printf("<sys/types.h>			: %s\n", header_missing);
+#endif
+
+#if defined(HAVE_SYS_UCRED_H)
+    printf("<sys/ucred.h>			: %s\n", header_found);
+#else
+    printf("<sys/ucred.h>			: %s\n", header_missing);
+#endif
+
+#if defined(HAVE_TERMIOS_H)
+    printf("<termios.h>			: %s\n", header_found);
+#else
+	printf("<termios.h>			: %s\n", header_missing);
 #endif
 
 	printf("\n");

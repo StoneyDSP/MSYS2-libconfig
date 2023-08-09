@@ -28,8 +28,8 @@
 #define PKGMAN_VERSION_MAJOR 6
 #define PKGMAN_VERSION_MINOR 0
 #define PKGMAN_VERSION_PATCH 2
-#define PKGMAN_VERSION_TWEAK
-#define PKGMAN_VERSION PKGMAN_VERSION_MAJOR * 10000 + PKGMAN_VERSION_MINOR * 100 + PKGMAN_VERSION_PATCH
+#define PKGMAN_VERSION_TWEAK __PM_STRING(81c0a15465cc6197b913e761833d2b486fc0c4fa)
+#define PKGMAN_VERSION (PKGMAN_VERSION_MAJOR * 10000 + PKGMAN_VERSION_MINOR * 100 + PKGMAN_VERSION_PATCH)
 
 /***************************************************************************//**
  *  ... C Requirements...
@@ -697,6 +697,22 @@ typedef	signed long int int64_t;
 #  endif
 #endif
 
+#if !defined(BUILDSCRIPT)
+#  define BUILDSCRIPT __PM_STRING(PKGBUILD)
+#endif
+
+#if !defined(MAKEPKG_TEMPLATE_DIR)
+#  define MAKEPKG_TEMPLATE_DIR __PM_STRING(/usr/share/makepkg-template)
+#endif
+
+#if !defined(PKGEXT)
+#  define PKGEXT __PM_STRING(.pkg.tar.gz)
+#endif
+
+#if !defined(SRCEXT)
+#  define SRCEXT __PM_STRING(.src.tar.gz)
+#endif
+
 /***************************************************************************//**
  *
  *  ... Downstream required macros
@@ -774,6 +790,12 @@ const char* sysroot = { SYSROOT };
 const char* prefix = { PREFIX };
 const char* sysconfdir = { SYSCONFDIR };
 const char* localstatedir = { LOCALSTATEDIR };
+
+const char* buildscript = { BUILDSCRIPT };
+
+const char* makepg_template_dir = { MAKEPKG_TEMPLATE_DIR };
+const char* pkg_ext = { PKGEXT };
+const char* src_ext = { SRCEXT };
 
 #if !(PKGMAN_INTELLISENSE_GUARD)
 

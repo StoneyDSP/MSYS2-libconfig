@@ -202,7 +202,92 @@ int checkForLib(const char* pathToHeader, const char* libName)
 }
 
 
+
+#if (_WIN32) || (__CYGWIN__)
+int WinMain()
+{
+#else
+int main()
+{
+#endif
+
 	printf("\n");
+	printf("pkgman_config");
+
+	#ifdef PKGMAN_VERSION
+		printf(" v.%d", PKGMAN_VERSION);
+		printf("-%s", PKGMAN_VERSION_TWEAK);
+	#endif
+
+	printf("\n");
+
+#if defined(__CYGWIN__) && CYGWIN_VERSION_API_MINOR < 262
+		void *libc = dlopen ("cygwin1.dll", 0);
+		struct mntent *(*getmntent_r) (FILE *, struct mntent *, char *, int) = dlsym (libc, "getmntent_r");
+#endif
+
+	printf("\n");
+
+	printf("Build information:\n\n");
+
+	printf("prefix                  : %s\n", 									PREFIX);
+  	printf("sysconfdir              : %s\n", 									SYSCONFDIR);
+  	printf("conf file           	: %s/pacman.conf\n", 						SYSCONFDIR);
+  	printf("localstatedir           : %s\n", 									LOCALSTATEDIR);
+  	printf("database dir        	: %s/lib/pacman/\n", 						LOCALSTATEDIR);
+  	printf("cache dir           	: %s/cache/pacman/pkg/\n", 					LOCALSTATEDIR);
+  	printf("compiler                : @0@ @1@'.format(cc.get_id(), cc.version())\n");
+
+	printf("\n");
+
+	printf("Architecture            : @0@'.format(carch)\n");
+  	printf("Host Type               : @0@'.format(chost)\n");
+  	printf("File inode command      : @0@'.format(inodecmd)\n");
+  	printf("File seccomp command    : @0@'.format(filecmd)\n");
+  	printf("libalpm version         : @0@'.format(libalpm_version)\n");
+    printf("pacman version          : @0@'.format(PACKAGE_VERSION)\n");
+
+	printf("\n");
+
+	printf("Directory and file information:\n\n");
+
+	printf("root working directory  : %s\n", 									ROOTDIR);
+  	printf("package extension       : %s\n", 									PKGEXT);
+    printf("source pkg extension    : %s\n", 									SRCEXT);
+    printf("build script name       : %s\n", 									BUILDSCRIPT);
+    printf("template directory      : %s\n",	 								MAKEPKG_TEMPLATE_DIR);
+
+	printf("\n");
+
+	printf("Compilation options:\n\n");
+
+	printf("i18n support            : @0@'.format(get_option('i18n'))\n");
+    printf("Build docs              : @0@'.format(build_doc)\n");
+  	printf("debug build             : @0@'.format(get_option('buildtype') == 'debug')\n");
+
+#if (HAVE_LIBCURL == 1)
+  	printf("Use libcurl             : true\n");
+#else
+  	printf("Use libcurl             : false\n");
+#endif
+
+#if (HAVE_LIBGPGME == 1)
+  	printf("Use GPGME               : true\n");
+#else
+  	printf("Use GPGME               : false\n");
+#endif
+
+#if defined(HAVE_LIBSSL) && (HAVE_LIBSSL == 1)
+  	printf("Use OpenSSL             : true\n");
+#else
+  	printf("Use OpenSSL             : false\n");
+#endif
+
+#if defined(HAVE_LIBNETTLE) && (HAVE_LIBNETTLE == 1)
+  	printf("Use nettle              : true\n");
+#else
+  	printf("Use nettle              : false\n");
+#endif
 
 	printf("\n");
 	printf("Compiler info:\n");

@@ -36,7 +36,10 @@
  ******************************************************************************/
 
 #ifndef   _XOPEN_SOURCE
-#  define _XOPEN_SOURCE 500
+#  define _XOPEN_SOURCE 700
+#endif
+#ifndef   _XOPEN_VERSION
+#  define _XOPEN_VERSION _XOPEN_SOURCE
 #endif
 #ifndef   _GNU_SOURCE
 #  define _GNU_SOURCE 1
@@ -161,25 +164,6 @@
 	 	('0' + ((n)     & 0xF))
 #endif
 
-#define PKGMAN_INT(ID, VAL) int ID = VAL;
-
-/**
- * @name PKGMAN_INT_PTR
- * @brief Creates pointers to integer values using the pre-processor. PKGMAN_INT_PTR(one, 1)
- * @param ID Accepts a name for your integer.
- * @param VAL accepts a value for your integer.
- *
- */
-#define PKGMAN_INT_PTR(ID, VAL) int* ID = VAL;
-
-/**
- * @brief Creates hex numbers from integers using the pre-processor.
- *
- * PKGMAN_INT(fiveHex, PKGMAN_INT_TO_HEX(5))
- *
- * #define PKGMAN_INT_TO_HEX(INT) HEX(INT)
- */
-
 
 /***************************************************************************//**
  *
@@ -230,36 +214,43 @@
 #  define PKGMAN_PLATFORM_IS_CYGWIN 1
 #endif
 
-#if defined(unix) || defined(__unix__) || defined(__unix)
-#  define PKGMAN_PLATFORM_IS_UNIX 1
-#  ifdef _XOPEN_VERSION
-#    if (_XOPEN_VERSION >= 3)
-#      define PKGMAN_STANDARD_XOPEN_1989 1
-#    endif
-#    if (_XOPEN_VERSION >= 4)
-#      define PKGMAN_STANDARD_XOPEN_1992 1
-#    endif
-#    if (_XOPEN_VERSION >= 4) && defined(_XOPEN_UNIX)
-#      define PKGMAN_STANDARD_XOPEN_1995
-#    endif
-#    if (_XOPEN_VERSION >= 500)
-#      define PKGMAN_STANDARD_XOPEN_1998 1
-#    endif
-#    if (_XOPEN_VERSION >= 600)
-#      define PKGMAN_STANDARD_XOPEN_2003 1
-#    endif
-#    if (_XOPEN_VERSION >= 700)
-#      define PKGMAN_STANDARD_XOPEN_2008 1
-#    endif
-#  endif
-#endif
-
-#if defined(__MINGW__) || defined (MINGW)
+#if defined (__MINGW64__) || defined(__MINGW32__) || defined (MINGW)
 #  define PKGMAN_PLATFORM_IS_MINGW 1
 #endif
 
 #if defined(_WIN64) || defined(_WIN32) || defined (WIN32)
 #  define PKGMAN_PLATFORM_IS_WINDOWS 1
+#endif
+
+#if  defined(__unix__) || defined(__unix) || defined(unix)
+#  define PKGMAN_PLATFORM_IS_UNIX 1
+#endif
+
+#ifndef _XOPEN_UNIX
+#  if (PKGMAN_PLATFORM_IS_UNIX) && defined(_XOPEN_SOURCE)
+#    define _XOPEN_UNIX 1
+#  endif
+#endif
+
+#ifdef _XOPEN_VERSION
+#  if (_XOPEN_VERSION >= 3)
+#    define PKGMAN_STANDARD_XOPEN_1989 1
+#  endif
+#  if (_XOPEN_VERSION >= 4)
+#    define PKGMAN_STANDARD_XOPEN_1992 1
+#  endif
+#  if (_XOPEN_VERSION >= 4) && defined(_XOPEN_UNIX)
+#    define PKGMAN_STANDARD_XOPEN_1995
+#  endif
+#  if (_XOPEN_VERSION >= 500)
+#    define PKGMAN_STANDARD_XOPEN_1998 1
+#  endif
+#  if (_XOPEN_VERSION >= 600)
+#    define PKGMAN_STANDARD_XOPEN_2003 1
+#  endif
+#  if (_XOPEN_VERSION >= 700)
+#    define PKGMAN_STANDARD_XOPEN_2008 1
+#  endif
 #endif
 
 /***************************************************************************//**
@@ -269,15 +260,35 @@
  ******************************************************************************/
 
 #if defined(__clang__) && !defined(__ibxml__)
-#	define PKGMAN_CLANG_VERSION (__clang_major__ * 100 + __clang_minor__)
-#else
-#	define PKGMAN_CLANG_VERSION 0
+
+#  define PKGMAN_C_COMPILER_IS_CLANG 1
+
+#  define PKGMAN_CLANG_VERSION_MAJOR __clang_major__
+#  define PKGMAN_CLANG_VERSION_MINOR __clang_minor__
+#  define PKGMAN_CLANG_VERSION_PATCH __clang_patchlevel__
+#  define PKGMAN_CLANG_VERSION (__clang_major__ * 100 + __clang_minor__)
+
+#  define PKGMAN_C_COMPILER_NAME __PM_STRING(Clang)
+#  define PKGMAN_C_COMPILER_VERSION_MAJOR __clang_major__
+#  define PKGMAN_C_COMPILER_VERSION_MINOR __clang_minor__
+#  define PKGMAN_C_COMPILER_VERSION_PATCH __clang_patchlevel__
+
 #endif
 
 #if defined(__GNUC__) && !defined(__clang__) && !defined(__INTEL_COMPILER) && !defined(__NVCOMPILER)
-#	define PKGMAN_GCC_VERSION (__GNUC__ * 100 + __GNUC_MINOR__)
-#else
-#	define PKGMAN_GCC_VERSION 0
+
+#  define PKGMAN_C_COMPILER_IS_GNU 1
+
+#  define PKGMAN_GNU_VERSION_MAJOR __GNUC__
+#  define PKGMAN_GNU_VERSION_MINOR __GNUC_MINOR__
+#  define PKGMAN_GNU_VERSION_PATCH __GNUC_PATCHLEVEL__
+#  define PKGMAN_GNU_VERSION (__GNUC__ * 100 + __GNUC_MINOR__)
+
+#  define PKGMAN_C_COMPILER_NAME __PM_STRING(GNU)
+#  define PKGMAN_C_COMPILER_VERSION_MAJOR __GNUC__
+#  define PKGMAN_C_COMPILER_VERSION_MINOR __GNUC_MINOR__
+#  define PKGMAN_C_COMPILER_VERSION_PATCH __GNUC_PATCHLEVEL__
+
 #endif
 
 #ifdef __ICL
@@ -295,6 +306,9 @@
 #	define PKGMAN_MSC_VERSION 0
 #	define PKGMAN_MSC_WARNING(...)
 #endif
+
+#define PKGMAN_C_COMPILER_VERSION (PKGMAN_C_COMPILER_VERSION_MAJOR * 100 + PKGMAN_C_COMPILER_VERSION_MINOR)
+#define PKGMAN_C_COMPILER PKGMAN_C_COMPILER_NAME " " __PM_STRING(PKGMAN_C_COMPILER_VERSION_MAJOR) __PM_STRING(.) __PM_STRING(PKGMAN_C_COMPILER_VERSION_MINOR) __PM_STRING(.) __PM_STRING(PKGMAN_C_COMPILER_VERSION_PATCH)
 
 #ifdef _MSVC_LANG
 #	define PKGMAN_CPLUSPLUS _MSVC_LANG
@@ -344,6 +358,12 @@
 #	define PKGMAN_HAS_EXTENSION(x) __has_extension(x)
 #else
 #	define PKGMAN_HAS_EXTENSION(x) 0
+#endif
+
+#if defined(_DEBUG)
+#  define PKGMAN_DEBUG 1
+#else
+#  define PKGMAN_DEBUG 0
 #endif
 
 /**
@@ -957,24 +977,46 @@ extern "C" {
 
 
 #ifndef HAVE_STRSEP
-/**
- * @brief Replacement function for strsep()
- * @link https://stackoverflow.com/questions/58244300/getting-the-error-undefined-reference-to-strsep-with-clang-and-mingw
- * @param stringp
- * @param delim
- * @return char*
- */
-char *strsep(char **stringp, const char *delim) {
-    char *rv = *stringp;
-    if (rv) {
-        *stringp += strcspn(*stringp, delim);
-        if (**stringp)
-            *(*stringp)++ = '\0';
-        else
-            *stringp = 0; }
-    return rv;
-}
-#define HAVE_STRSEP 1
+	/**
+	 * @brief Replacement function for strsep()
+	 * @link https://stackoverflow.com/questions/58244300/getting-the-error-undefined-reference-to-strsep-with-clang-and-mingw
+	 * @param stringp
+	 * @param delim
+	 * @return char*
+	 */
+	char *strsep(char **stringp, const char *delim) {
+		char *rv = *stringp;
+		if (rv) {
+			*stringp += strcspn(*stringp, delim);
+			if (**stringp)
+				*(*stringp)++ = '\0';
+			else
+				*stringp = 0; }
+		return rv;
+	}
+#  define HAVE_STRSEP 1
+#endif
+
+#ifndef HAVE_STRNDUP
+	/** Copies a string.
+	* Returned string needs to be freed
+	* @param s string to be copied
+	* @param n maximum number of characters to copy
+	* @return pointer to the new string on success, NULL on error
+	*/
+	char *strndup(const char *s, size_t n)
+	{
+		size_t len = strnlen(s, n);
+		char *new = (char *) malloc(len + 1);
+
+		if(new == NULL) {
+			return NULL;
+		}
+
+		new[len] = '\0';
+		return (char *)memcpy(new, s, len);
+	}
+#  define HAVE_STRNDUP 1
 #endif
 
 const char* path_seperator = { PATH_SEPERATOR };

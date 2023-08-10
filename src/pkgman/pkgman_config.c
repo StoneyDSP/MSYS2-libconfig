@@ -9,8 +9,33 @@
  *
  */
 
-#ifdef __CYGWIN__
+#if (__CYGWIN__)
+#  if __has_include(<cygwin/version.h>)
+#    include <cygwin/version.h>
+#  endif
+#endif
+
+/**
+ * #if __has_include(<corecrt.h>)
+ * #  include <corecrt.h>
+ * #endif
+*/
+
+#if   (__has_include(<dlfcn.h>))
 #  include <dlfcn.h>
+#  define HAVE_DLFCN_H 1
+#elif (__has_include("dlfcn-win32/dlfcn.h"))
+#  include "dlfcn-win32/dlfcn.h"
+#  define HAVE_DLFCN_H 1
+#else
+#  error "Cannot find '<dlfcn.h>' - Please check your package manager for 'dlfcn.h', or go to 'https://github.com/dlfcn-win32/dlfcn-win32' for Windows!"
+#endif
+
+#if   (__has_include(<unistd.h>))
+#  include <unistd.h>
+#endif
+
+#if   (__has_include(<dirent.h>))
 #  include <dirent.h>
 #endif
 
@@ -49,7 +74,7 @@ int checkForLib(const char* pathToHeader, const char* libName)
 	DIR *dip;
 	struct dirent *dit;
 	struct stat lsbuf;
-	char currentPath[__FILENAME_MAX__];
+	char currentPath[FILENAME_MAX];
 
 	const char* header_path = pathToHeader;
 
@@ -119,9 +144,7 @@ int checkForLib(const char* pathToHeader, const char* libName)
 	return (0);
 }
 
-
-
-#if (_WIN32) || (__CYGWIN__)
+#if (__CYGWIN__)
 int WinMain()
 {
 #else
@@ -133,7 +156,7 @@ int main()
 	printf("pkgman_config");
 
 	#ifdef PKGMAN_VERSION
-		printf(" v.%d", PKGMAN_VERSION);
+		printf(" v%d.%d.%d", PKGMAN_VERSION_MAJOR, PKGMAN_VERSION_MINOR, PKGMAN_VERSION_PATCH);
 		printf("-%s", PKGMAN_VERSION_TWEAK);
 	#endif
 
@@ -421,23 +444,6 @@ int main()
 #else
 	printf("<termios.h>			: %s\n", header_missing);
 #endif
-
-	printf("\n");
-	printf("Checking for dependencies...\n");
-	printf("\n");
-
-	/** checkForLibCrytpo(); */
-	/** checkForLibCurl(); */
-	/** checkForMsysLib(); */
-
-	/** printf("\n"); */
-
-	checkForLib(MSYS_INSTALL_PATH, MSYSLIB);
-	printf("\n");
-	checkForLib(CRYPTO_H_PATH, CRYPTO_LIB);
-	printf("\n");
-	checkForLib(CURL_H_PATH, LIBCURL_LIB);
-	printf("\n");
 
 	printf("...pkgman_config > Exiting successfully.\n");
 

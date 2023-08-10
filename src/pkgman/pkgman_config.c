@@ -198,7 +198,7 @@ int main()
   	printf("sysconfdir              : %s\n", 									sysconfdir);
   	printf("conf file           	: %s\n", 									conffile);
   	printf("localstatedir           : %s\n", 									localstatedir);
-  	printf("database dir        	: %s/lib/pacman/\n", 						localstatedir);
+  	printf("database dir        	: %s\n", 									database_dir);
   	printf("cache dir           	: %s/cache/pacman/pkg/\n", 					localstatedir);
 	printf("compiler 		: %s\n", 	pkgman_c_compiler);
 
@@ -209,7 +209,7 @@ int main()
   	printf("File inode command      : @0@'.format(inodecmd)\n");
   	printf("File seccomp command    : @0@'.format(filecmd)\n");
   	printf("libalpm version         : @0@'.format(libalpm_version)\n");
-    printf("pacman version          : @0@'.format(PACKAGE_VERSION)\n");
+    printf("pacman version          : %s\n", pkgman_version );
 
 	printf("\n");
 
@@ -228,7 +228,7 @@ int main()
 	printf("i18n support            : @0@'.format(get_option('i18n'))\n");
     printf("Build docs              : @0@'.format(build_doc)\n");
 
-#if defined(PKGMAN_DEBUG)
+#if (PKGMAN_DEBUG == 1)
   	printf("debug build             : %s\n", "true");
 #else
   	printf("debug build             : %s\n", "false");

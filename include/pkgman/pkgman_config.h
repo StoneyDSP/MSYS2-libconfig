@@ -884,6 +884,10 @@
  *
  ******************************************************************************/
 
+#if !defined(PACKAGE_VERSION)
+#  define PACKAGE_VERSION __PM_STRING(PKGMAN_VERSION_MAJOR) __PM_STRING(.) __PM_STRING(PKGMAN_VERSION_MINOR) __PM_STRING(.) __PM_STRING(PKGMAN_VERSION_PATCH)
+#endif
+
 #if !defined(BINDIR)
 #  define BINDIR PREFIX PATH_SEPERATOR __PM_STRING(bin)
 #endif
@@ -906,6 +910,10 @@
 
 #if !defined(CONFFILE)
 #  define CONFFILE SYSCONFDIR PATH_SEPERATOR __PM_STRING(pkgman.conf)
+#endif
+
+#if !defined(DBPATH)
+#  define DBPATH LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(lib) PATH_SEPERATOR __PM_STRING(pacman) PATH_SEPERATOR
 #endif
 
 /** Need to fix the PREFIX > 'share' to be the correct Unix path var for 'share' */
@@ -1025,12 +1033,13 @@ const char* homedrive = { HOMEDRIVE };
 const char* rootdir = { ROOTDIR };
 
 const char* sysroot = { SYSROOT };
+const char* bindir = { BINDIR };
+const char* sbindir = { SBINDIR };
 
+const char* pkgman_version = { PACKAGE_VERSION };
 
 const char* msysLib = { MSYSLIB };
 const char* msys_install_path = { MSYS_INSTALL_PATH };
-
-
 
 /**
  * TODO: @StoneyDSP With all this char array macro-string business, everything

@@ -12,14 +12,12 @@
 #ifdef __CYGWIN__
 #  include <dlfcn.h>
 #  include <dirent.h>
-#  include <unistd.h>
-#  include <cygwin/version.h>
 #endif
 
-#if __has_include(<nettle/crypto.h>)
+#if   (__has_include(<nettle/crypto.h>))
 #  include <nettle/crypto.h>
 #  define HAVE_LIBNETTLE 1
-#elif __has_include(<openssl/crypto.h>)
+#elif (__has_include(<openssl/crypto.h>))
 #  include <openssl/crypto.h>
 #  define HAVE_LIBSSL 1
 #else
@@ -31,24 +29,16 @@
 # error "No config header found?"
 #endif
 
-#if (HAVE_LIBNETTLE)
-#  define CRYPTO_INCLUDE_SYMBOL __PM_STRING(<nettle/crypto.h>)
-#elif (HAVE_LIBSSL)
-#  define CRYPTO_INCLUDE_SYMBOL __PM_STRING(<openssl/crypto.h>)
-#endif
+/**
+ * #define MINGW_LIB_PATH __PM_STRING(C:/msys64)
+ * #define MINGW_LIB __PM_STRING(libmingw32.a)
+*/
 
-#if HAVE_LIBSSL
-#  define CRYPTO_H_PATH __PM_STRING(C:/msys64/usr/include/openssl)
-#  define CRYPTO_LIB __PM_STRING(libcrypto.dll)
-#elif HAVE_LIBNETTLE
-#  define CRYPTO_H_PATH __PM_STRING(C:/msys64/usr/include/nettle)
-#  define CRYPTO_LIB __PM_STRING(libcrypto.dll)
-#endif
+#define MSVCRT_LIB_PATH __PM_STRING(C:/Windows/System32)
+#define MSVCRT_DYNAMIC_LIB __PM_STRING(msvcrt.dll)
 
-#if HAVE_CURL_CURL_H
-#  define CURL_H_PATH __PM_STRING(C:/msys64/usr/include/curl)
-#  define LIBCURL_LIB __PM_STRING(libcurl)
-#endif
+#define UCRTBASE_LIB_PATH __PM_STRING(C:/Windows/System32)
+#define UCRTBASE_DYNAMIC_LIB __PM_STRING(ucrtbase.dll)
 
 /**
  * Get the chosen lib
@@ -148,14 +138,37 @@ int main()
 	#endif
 
 	printf("\n");
-
-#if defined(__CYGWIN__) && CYGWIN_VERSION_API_MINOR < 262
-		void *libc = dlopen ("cygwin1.dll", 0);
-		struct mntent *(*getmntent_r) (FILE *, struct mntent *, char *, int) = dlsym (libc, "getmntent_r");
-#endif
-
+	printf("Checking for dependencies...\n");
 	printf("\n");
 
+/**
+ * #if defined(__CYGWIN__) && CYGWIN_VERSION_API_MINOR < 262
+ * void *libc = dlopen ("cygwin1.dll", 0);
+ * struct mntent *(*getmntent_r) (FILE *, struct mntent *, char *, int) = dlsym (libc, "getmntent_r");
+ * #endif
+*/
+	int have_ucrtbase;
+	int have_libcrypto;
+	int have_libcurl;
+	int have_libgpgme;
+
+	have_ucrtbase = checkForLib(UCRTBASE_LIB_PATH, UCRTBASE_DYNAMIC_LIB);
+	printf("\n");
+	checkForLib(MSVCRT_LIB_PATH, MSVCRT_DYNAMIC_LIB);
+	printf("\n");
+	checkForLib(MSYS_INSTALL_PATH, MSYSLIB);
+	printf("\n");
+	have_libcrypto = checkForLib(CRYPTO_H_PATH, CRYPTO_LIB);
+	printf("\n");
+	have_libcurl = checkForLib(CURL_H_PATH, LIBCURL_LIB);
+	printf("\n");
+	have_libgpgme = checkForLib(GPGME_H_PATH, LIBGPGME_LIB);
+	printf("\n");
+
+	#define HAVE_LIBCURL have_libcurl
+	#define HAVE_LIBGPGME have_libcurl
+
+	printf("\n");
 	printf("Build information:\n\n");
 
 	printf("prefix                  : %s\n", 									PREFIX);
@@ -191,18 +204,23 @@ int main()
 
 	printf("i18n support            : @0@'.format(get_option('i18n'))\n");
     printf("Build docs              : @0@'.format(build_doc)\n");
-  	printf("debug build             : @0@'.format(get_option('buildtype') == 'debug')\n");
 
-#if (HAVE_LIBCURL == 1)
-  	printf("Use libcurl             : true\n");
+#if defined(PKGMAN_DEBUG)
+  	printf("debug build             : %s\n", "true");
 #else
-  	printf("Use libcurl             : false\n");
+  	printf("debug build             : %s\n", "false");
 #endif
 
-#if (HAVE_LIBGPGME == 1)
-  	printf("Use GPGME               : true\n");
+#if (have_libcurl != 0)
+  	printf("Use libcurl             : false\n");
 #else
+  	printf("Use libcurl             : true\n");
+#endif
+
+#if (have_libgpgme != 0)
   	printf("Use GPGME               : false\n");
+#else
+  	printf("Use GPGME               : true\n");
 #endif
 
 #if defined(HAVE_LIBSSL) && (HAVE_LIBSSL == 1)

@@ -390,12 +390,15 @@
 #    undef HAVE_CSTDLIB
 #  endif
 #else
-#  if PKGMAN_HAS_INCLUDE(<stdlib.h>)
+#  if (PKGMAN_HAS_INCLUDE(<stdlib.h>))
 #    include <stdlib.h>
 #    define HAVE_STDLIB_H 1
 #  else
 #    undef HAVE_STDLIB_H
 #  endif
+#endif
+#if !defined(HAVE_CSTDLIB) && !defined(HAVE_STDLIB_H)
+#  error "Cannot find C stdlib!"
 #endif
 
 /** STDIO */
@@ -414,6 +417,10 @@
 #    undef HAVE_STDIO_H
 #  endif
 #endif
+#if !defined(HAVE_CSTDIO) && !defined(HAVE_STDIO_H)
+#  error "Cannot find 'stdio.h'!"
+#endif
+
 
 /** STDINT */
 #ifdef PKGMAN_CPLUSPLUS
@@ -428,6 +435,9 @@
 #    include <stdint.h>
 #    define HAVE_STDINT_H 1
 #  endif
+#endif
+#if !defined(HAVE_CSTDINT) && !defined(HAVE_STDINT_H)
+#  error "Cannot find 'stdint.h'!"
 #endif
 
 /** STDDEF */
@@ -446,21 +456,33 @@
 #    undef HAVE_STDDEF_H
 #  endif
 #endif
+#if !defined(HAVE_CSTDDEF) && !defined(HAVE_STDDEF_H)
+#  error "Cannot find 'stddef.h'!"
+#endif
 
 #ifdef PKGMAN_CPLUSPLUS
 #  if PKGMAN_HAS_INCLUDE(<cerrno>)
 #    include <cerrno>
 #    define HAVE_CERRNO 1
+#  elif (PKGMAN_HAS_INCLUDE("cerrno"))
+#    include "cerrno"
+#    define HAVE_CERRNO 1
 #  else
 #    undef HAVE_CERRNO
 #  endif
 #else
-#  if PKGMAN_HAS_INCLUDE(<errno.h>)
+#  if (PKGMAN_HAS_INCLUDE(<errno.h>))
 #    include <errno.h>
+#    define HAVE_ERRNO_H 1
+#  elif (PKGMAN_HAS_INCLUDE("errno.h"))
+#    include "errno.h"
 #    define HAVE_ERRNO_H 1
 #  else
 #    undef HAVE_ERRNO_H
 #  endif
+#endif
+#if !defined(HAVE_CERRNO) && !defined(HAVE_ERRNO_H)
+#  error "Cannot find 'errno.h'!"
 #endif
 
 /** WCHAR - fwprintf(), swprintf(), wprintf() */
@@ -479,39 +501,50 @@
 #    undef HAVE_WCHAR_H
 #  endif
 #endif
+#if !defined(HAVE_CWCHAR) && !defined(HAVE_WCHAR_H)
+#  error "Cannot find 'wchar.h'!"
+#endif
 
 /** Check <sys/headers.h> */
-#if PKGMAN_HAS_INCLUDE(<sys/mnttab.h>)
-#    include <sys/mnttab.h>
-#    define HAVE_SYS_MNTTAB_H 1
+#if (PKGMAN_HAS_INCLUDE(<sys/mnttab.h>))
+#  include <sys/mnttab.h>
+#  define HAVE_SYS_MNTTAB_H 1
 #endif
-#if PKGMAN_HAS_INCLUDE(<sys/mount.h>)
-#    include <sys/mount.h>
-#    define HAVE_SYS_MOUNT_H 1
+#if (PKGMAN_HAS_INCLUDE(<sys/mount.h>))
+#  include <sys/mount.h>
+#  define HAVE_SYS_MOUNT_H 1
 #endif
-#if PKGMAN_HAS_INCLUDE(<sys/param.h>)
-#    include <sys/param.h>
-#    define HAVE_SYS_PARAM_H 1
+#if (PKGMAN_HAS_INCLUDE(<sys/param.h>))
+#  include <sys/param.h>
+#  define HAVE_SYS_PARAM_H 1
 #endif
-#if PKGMAN_HAS_INCLUDE(<sys/stat.h>)
-#    include <sys/stat.h>
-#    define HAVE_SYS_STAT_H 1
+#if (PKGMAN_HAS_INCLUDE(<sys/resource.h>))
+#  include <sys/resource.h>
+#  define HAVE_SYS_RESOURCE_H 1
 #endif
-#if PKGMAN_HAS_INCLUDE(<sys/statfs.h>)
-#    include <sys/statfs.h>
-#    define HAVE_SYS_STATFS_H 1
+#if (PKGMAN_HAS_INCLUDE(<sys/stat.h>))
+#  include <sys/stat.h>
+#  define HAVE_SYS_STAT_H 1
 #endif
-#if PKGMAN_HAS_INCLUDE(<sys/statvfs.h>)
-#    include <sys/statvfs.h>
-#    define HAVE_SYS_STATVFS_H 1
+#if (PKGMAN_HAS_INCLUDE(<sys/statfs.h>))
+#  include <sys/statfs.h>
+#  define HAVE_SYS_STATFS_H 1
 #endif
-#if PKGMAN_HAS_INCLUDE(<sys/types.h>)
-#    include <sys/types.h>
-#    define HAVE_SYS_TYPES_H 1
+#if (PKGMAN_HAS_INCLUDE(<sys/statvfs.h>))
+#  include <sys/statvfs.h>
+#  define HAVE_SYS_STATVFS_H 1
 #endif
-#if PKGMAN_HAS_INCLUDE(<sys/ucred.h>)
-#    include <sys/ucred.h>
-#    define HAVE_SYS_UCRED_H 1
+#if (PKGMAN_HAS_INCLUDE(<sys/types.h>))
+#  include <sys/types.h>
+#  define HAVE_SYS_TYPES_H 1
+#endif
+#if (PKGMAN_HAS_INCLUDE(<sys/time.h>))
+#  include <sys/time.h>
+#  define HAVE_SYS_TIME_H 1
+#endif
+#if (PKGMAN_HAS_INCLUDE(<sys/ucred.h>))
+#  include <sys/ucred.h>
+#  define HAVE_SYS_UCRED_H 1
 #endif
 
 /** Additional headers... */
@@ -544,6 +577,29 @@
 #  define HAVE_CURL_CURL_H 1
 #endif
 
+#if   (HAVE_CURL_CURL_H)
+#  define CURL_H_PATH __PM_STRING(C:/msys64/usr/include/curl)
+#  if (PKGMAN_PLATFORM_IS_MSYS)
+#    define LIBCURL_LIB __PM_STRING(msys-curl-4.dll)
+#  else
+#    define LIBCURL_LIB __PM_STRING(libcurl-4.dll)
+#  endif
+#endif
+
+#if PKGMAN_HAS_INCLUDE(<gpgme.h>)
+#  include <gpgme.h>
+#  define HAVE_GPGME_H 1
+#endif
+
+#if   (HAVE_GPGME_H)
+#  define GPGME_H_PATH __PM_STRING(C:/msys64/usr/include/gpgme++)
+#  if (PKGMAN_PLATFORM_IS_MSYS)
+#    define LIBGPGME_LIB __PM_STRING(msys-gpgme-11.dll)
+#  else
+#    define LIBGPGME_LIB __PM_STRING(libgpgme-11.dll)
+#  endif
+#endif
+
 /**
  * #if PKGMAN_HAS_INCLUDE(<openssl/crypto.h>)
  * #  include <openssl/crypto.h>
@@ -552,6 +608,23 @@
  * #endif
 */
 
+#if   (HAVE_LIBNETTLE)
+#  define CRYPTO_INCLUDE_SYMBOL __PM_STRING(<nettle/crypto.h>)
+#elif (HAVE_LIBSSL)
+#  define CRYPTO_INCLUDE_SYMBOL __PM_STRING(<openssl/crypto.h>)
+#endif
+
+#if   (HAVE_LIBSSL)
+#  define CRYPTO_H_PATH __PM_STRING(C:/msys64/usr/include/openssl)
+#elif (HAVE_LIBNETTLE)
+#  define CRYPTO_H_PATH __PM_STRING(C:/msys64/usr/include/nettle)
+#endif
+
+#if (PKGMAN_PLATFORM_IS_MSYS)
+#  define CRYPTO_LIB __PM_STRING(msys-crypto-3.dll)
+#else
+#  define CRYPTO_LIB __PM_STRING(libcrypto.dll)
+#endif
 
 /***************************************************************************//**
  *
@@ -608,41 +681,108 @@
  * ['int64_t',  '''#include <stdint.h>''',    'signed long int'],
  *
  ******************************************************************************/
+#if (PKGMAN_PLATFORM_IS_MSYS)
 
-#ifndef _MODE_T_DECLARED
-typedef	unsigned int mode_t; /* permissions */
-#define _MODE_T_DECLARED
+  #if !defined(_MODE_T_DECLARED)
+  #  define	_MODE_T_
+  typedef	unsigned int mode_t; /* permissions */
+  #  define _MODE_T_DECLARED
+  #endif
+
+  #if !defined(_UID_T_DECLARED)
+  #  define _UID_T_
+  typedef	unsigned int uid_t; /* user id */
+  #  define _UID_T_DECLARED
+  #endif
+
+  #if !defined(_OFF_T_DECLARED)
+  #  define _OFF_T_
+  typedef	signed int off_t; /* file offset */
+  #  define _OFF_T_DECLARED
+  #endif
+
+  #if !defined(_PID_T_DECLARED)
+  #  define _PID_T_
+  typedef	signed int pid_t; /* process id */
+  #  define _PID_T_DECLARED
+  #endif
+
+  #if !defined(_SSIZE_T_DECLARED)
+  #  define _SSIZE_T_
+  typedef signed int ssize_t; /** Signed size_t type */
+  #  define _SSIZE_T_DECLARED
+  #endif
+
+  #if !defined(_INT64_T_DECLARED)
+  #  define _INT64_T_
+  typedef	signed long int int64_t;
+  #  define _INT64_T_DECLARED
+  #endif
+
+#else /** !(PKGMAN_PLATFORM_IS_MSYS) */
+
+  #if !defined(_MODE_T_)
+  #  define	_MODE_T_
+  typedef	unsigned int mode_t; /* permissions */
+  #  define _MODE_T_
+  #endif
+
+  #if !defined(_UID_T_)
+  #  define _UID_T_
+  typedef	unsigned int uid_t; /* user id */
+  #  define _UID_T_DEFINED
+  #endif
+
+  #if !defined(_OFF_T_)
+  #  define _OFF_T_
+  typedef	signed int off_t; /* file offset */
+  #  define _OFF_T_DEFINED
+  #endif
+
+  #if !defined(_PID_T_)
+  #  define _PID_T_
+  typedef	signed int pid_t; /* process id */
+  #  define _PID_T_DEFINED
+  #endif
+
+  #if !defined(_SIZE_T_DEFINED)
+  #  define _SIZE_T_
+  typedef	unsigned int size_t;
+  #  define _SIZE_T_DEFINED
+  #endif
+
+  #if !defined(_SSIZE_T_DEFINED)
+  #  define _SSIZE_T_
+  typedef signed int ssize_t; /** Signed size_t type */
+  #  define _SSIZE_T_DEFINED
+  #endif
+
+  #if !defined(__int64)
+  #  define _INT64_T_
+  typedef	signed long int int64_t;
+  #  define _INT64_T_DEFINED
+  #endif
+
 #endif
 
-#ifndef _UID_T_DECLARED
-typedef	unsigned int uid_t; /* user id */
-#define _UID_T_DECLARED
-#endif
+#define PKGMAN_MODE_T mode_t
+#define PKGMAN_UID_T uid_t
+#define PKGMAN_OFF_T off_t
+#define PKGMAN_PID_T pid_t
+#define PKGMAN_SIZE_T size_t
+#define PKGMAN_SSIZE_T ssize_t
+#define PKGMAN_INT64_T int64_t
 
-#ifndef _OFF_T_DECLARED
-typedef	signed int off_t; /* file offset */
-#define _OFF_T_DECLARED
-#endif
+#define PKGMAN_INT(ID, VAL) int ID = VAL;
 
-#ifndef _PID_T_DECLARED
-typedef	signed int pid_t; /* process id */
-#define _PID_T_DECLARED
-#endif
-
-#ifndef _SIZE_T_DECLARED
-typedef	unsigned int size_t;
-#define _SIZE_T_DECLARED
-#endif
-
-#ifndef _SSIZE_T_DECLARED
-typedef signed int ssize_t;
-#define _SSIZE_T_DECLARED
-#endif
-
-#ifndef _INT64_T_DECLARED
-typedef	signed long int int64_t;
-#define _INT64_T_DECLARED
-#endif
+/**
+ * @name PKGMAN_INT_PTR
+ * @brief Creates pointers to integer values using the pre-processor. PKGMAN_INT_PTR(one, 1)
+ * @param ID Accepts a name for your integer.
+ * @param VAL accepts a value for your integer.
+ *
+ */
+#define PKGMAN_INT_PTR(ID, VAL) int* ID = VAL;
 
 
 /***************************************************************************//**
@@ -724,16 +864,33 @@ typedef	signed long int int64_t;
  *
  ******************************************************************************/
 
+#if !defined(BINDIR)
+#  define BINDIR PREFIX PATH_SEPERATOR __PM_STRING(bin)
+#endif
+
+#if !defined(SBINDIR)
+#  define SBINDIR PREFIX PATH_SEPERATOR __PM_STRING(sbin)
+#endif
+
 #if !defined(LDCONFIG)
-#  define LDCONFIG __PM_STRING(/sbin/ldconfig)
+#  define LDCONFIG SBINDIR PATH_SEPERATOR __PM_STRING(ldconfig)
+#endif
+
+#if !defined(SCRIPTLET_SHELL)
+#  define SCRIPTLET_SHELL BINDIR PATH_SEPERATOR __PM_STRING(sh)
 #endif
 
 #if !defined(BUILDSCRIPT)
 #  define BUILDSCRIPT __PM_STRING(PKGBUILD)
 #endif
 
+#if !defined(CONFFILE)
+#  define CONFFILE SYSCONFDIR PATH_SEPERATOR __PM_STRING(pkgman.conf)
+#endif
+
+/** Need to fix the PREFIX > 'share' to be the correct Unix path var for 'share' */
 #if !defined(MAKEPKG_TEMPLATE_DIR)
-#  define MAKEPKG_TEMPLATE_DIR __PM_STRING(/usr/share/makepkg-template)
+#  define MAKEPKG_TEMPLATE_DIR PREFIX PATH_SEPERATOR __PM_STRING(share) PATH_SEPERATOR __PM_STRING(makepkg-template)
 #endif
 
 #if !defined(PKGEXT)
@@ -751,7 +908,11 @@ typedef	signed long int int64_t;
  ******************************************************************************/
 
 #ifndef MSYS_INSTALL_PATH
-#  define MSYS_INSTALL_PATH __PM_STRING(C:/msys64)
+#  if (PKGMAN_PLATFORM_IS_CYGWIN)
+#    define MSYS_INSTALL_PATH SYSROOT
+#  else /** !(PKGMAN_PLATFORM_IS_CYGWIN) */
+#    define MSYS_INSTALL_PATH HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64)
+#  endif
 #endif
 
 #ifndef MSYSLIB
@@ -783,13 +944,16 @@ extern "C" {
 /**
  * @name dec
  * @brief Convert integer to decimal digit literals.
+ *
+ * double 	pkgman_dec(int n) { return DEC(n); };
  */
-double 	dec(int n) { return DEC(n); };
+
 /**
  * @name hex
  * @brief Convert integer to hex digit literals.
+ *
+ * int 	pkgman_hex(int n){ return HEX(n); };
  */
-int 	hex(int n){ return HEX(n); };
 
 
 #ifndef HAVE_STRSEP
@@ -839,11 +1003,17 @@ const char* msys_install_path = { MSYS_INSTALL_PATH };
  */
 
 const char* prefix = { PREFIX };
+const char* conffile = { CONFFILE };
+const char* ldconfig = { LDCONFIG };
 const char* sysconfdir = { SYSCONFDIR };
+
+const char* scriptlet_shell = { SCRIPTLET_SHELL };
 const char* localstatedir = { LOCALSTATEDIR };
 
 const char* buildscript = { BUILDSCRIPT };
 
+
+const char* pkgman_c_compiler = { PKGMAN_C_COMPILER };
 const char* makepg_template_dir = { MAKEPKG_TEMPLATE_DIR };
 const char* pkg_ext = { PKGEXT };
 const char* src_ext = { SRCEXT };

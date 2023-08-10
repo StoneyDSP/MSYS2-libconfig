@@ -1057,17 +1057,21 @@ const char* prefix = { PREFIX };
 const char* conffile = { CONFFILE };
 const char* ldconfig = { LDCONFIG };
 const char* sysconfdir = { SYSCONFDIR };
-
-const char* scriptlet_shell = { SCRIPTLET_SHELL };
 const char* localstatedir = { LOCALSTATEDIR };
 
+const char* conffile = { CONFFILE };
+const char* ldconfig = { LDCONFIG };
 const char* buildscript = { BUILDSCRIPT };
 
+const char* scriptlet_shell = { SCRIPTLET_SHELL };
 
-const char* pkgman_c_compiler = { PKGMAN_C_COMPILER };
+const char* database_dir = { DBPATH };
+
 const char* makepg_template_dir = { MAKEPKG_TEMPLATE_DIR };
 const char* pkg_ext = { PKGEXT };
 const char* src_ext = { SRCEXT };
+
+const char* pkgman_c_compiler = { PKGMAN_C_COMPILER };
 
 #if !(PKGMAN_INTELLISENSE_GUARD)
 

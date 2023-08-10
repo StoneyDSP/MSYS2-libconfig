@@ -364,6 +364,13 @@ int main()
  * #else
  *   printf("_FORTIFY_SOURCE 		: undefined\n");
  * #endif
+ *
+ * #ifdef __USE_MINGW_ANSI_STDIO
+ *   printf("__USE_MINGW_ANSI_STDIO 		: defined\n");
+ * #else
+ *   printf("__USE_MINGW_ANSI_STDIO 		: undefined\n");
+ * #endif
+ *
 */
 
 	printf("\n");
@@ -397,10 +404,10 @@ int main()
     printf("<sys/param.h>			: %s\n", header_missing);
 #endif
 
-#if defined(HAVE_SYS_PARAM_H)
-    printf("<sys/param.h>			: %s\n", header_found);
+#if defined(HAVE_SYS_STAT_H)
+    printf("<sys/stat.h>			: %s\n", header_found);
 #else
-    printf("<sys/param.h>			: %s\n", header_missing);
+    printf("<sys/stat.h>			: %s\n", header_missing);
 #endif
 
 #if defined(HAVE_SYS_STATVFS_H)
@@ -426,6 +433,8 @@ int main()
 #else
 	printf("<termios.h>			: %s\n", header_missing);
 #endif
+
+	printf("\n");
 
 	printf("...pkgman_config > Exiting successfully.\n");
 

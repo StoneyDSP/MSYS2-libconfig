@@ -16,12 +16,6 @@
 #  include <cygwin/version.h>
 #endif
 
-// #include <sys/types.h>
-// #include <sys/stat.h>
-
-
-
-
 #if __has_include(<nettle/crypto.h>)
 #  include <nettle/crypto.h>
 #  define HAVE_LIBNETTLE 1
@@ -43,190 +37,18 @@
 #  define CRYPTO_INCLUDE_SYMBOL __PM_STRING(<openssl/crypto.h>)
 #endif
 
-#define CRYPTO_LIB __PM_STRING(libcrypto.dll)
-
 #if HAVE_LIBSSL
 #  define CRYPTO_H_PATH __PM_STRING(C:/msys64/usr/include/openssl)
+#  define CRYPTO_LIB __PM_STRING(libcrypto.dll)
 #elif HAVE_LIBNETTLE
 #  define CRYPTO_H_PATH __PM_STRING(C:/msys64/usr/include/nettle)
+#  define CRYPTO_LIB __PM_STRING(libcrypto.dll)
 #endif
 
-
-
-/**
- * Get the chosen crypto lib
-*/
-int checkForLibCrytpo()
-{
-	/** Check for header path... this could be more thorough, of course... */
-	DIR *dip;
-	struct dirent *dit;
-	struct stat lsbuf;
-	char currentPath[__FILENAME_MAX__];
-
-	const char* crypto_header_path = { CRYPTO_H_PATH };
-
-	dip = opendir(CRYPTO_H_PATH);
-
-	if((dip) == NULL)
-	{
-		perror("opendir()");
-		return errno;
-	}
-
-	if((getcwd(currentPath, FILENAME_MAX)) == NULL)
-	{
-		perror("getcwd()");
-		return errno;
-	}
-
-	/* stat the file - if it exists, do some checks */
-		if(stat(currentPath, &lsbuf) == -1)
-	{
-		perror("stat()");
-		return errno;
-
-	} else {
-
-		if(S_ISDIR(lsbuf.st_mode)) {
-
-			printf("\"%s\" exists on this system.\n", CRYPTO_H_PATH);
-
-		} else {
-
-			printf("\"%s\" does not exist on this system.\n", CRYPTO_H_PATH);
-
-			printf("\n");
-
-			exit(EXIT_FAILURE);
-		}
-
-		printf("Included '%s' successfully.\n", CRYPTO_INCLUDE_SYMBOL);
-	}
-
-	/** Get the chosen crypto lib */
-	void* handle;
-	char *error;
-
-	handle = dlopen(CRYPTO_LIB, RTLD_LAZY);
-	error = dlerror();
-
-	if (!handle || error != NULL)
-	{
-		fprintf(stderr, "Loading 'libcrypto.dll' attempt failed: %s\n", error);
-
-		exit(EXIT_FAILURE);
-
-	} else {
-
-		printf("Loaded '%s' successfully.\n", CRYPTO_LIB);
-	}
-
-	dlclose(handle);
-
-	return (0);
-}
-
-/**
- * @brief https://gist.github.com/mandrews/200842
- */
-int checkForLibCurl()
-{
-	printf("Checking for LibCurl (this feature needs some work...)...\n");
-
-	void *handle;
-
-    static CURL *(*f_init)(void) = NULL;
-    static CURLcode (*f_setopt)(CURL *, CURLoption, ...) = NULL;
-    static CURLcode (*f_perform)(CURL *) = NULL;
-#if 0
-    static CURLcode (*f_getinfo)(CURL *, CURLINFO, ...) = NULL;
+#if HAVE_CURL_CURL_H
+#  define CURL_H_PATH __PM_STRING(C:/msys64/usr/include/curl)
+#  define LIBCURL_LIB __PM_STRING(libcurl)
 #endif
-    static void (*f_cleanup)(CURL *) = NULL;
-
-    CURL *curl;
-    CURLcode res;
-
-    char *error;
-    int i = 1000;
-
-    /** printf("ok %d\n", i); */
-
-	handle = dlopen ("libcurl.so.3", RTLD_LAZY);
-
-    /** printf("ok %d\n", i); */
-
-    if (!handle) {
-
-        fprintf (stderr, "%s\n", dlerror());
-
-		return(1);
-		/** exit(1); */
-    }
-
-    dlerror();    /* Clear any existing error */
-
-    if ((error = dlerror()) != NULL)  {
-
-		fprintf (stderr, "%s\n", error);
-
-		return(1);
-		/** exit(1); */
-    }
-
-    /** printf("ok %d\n", i); */
-
-    f_init = dlsym(handle, "curl_easy_init");
-    if ((error = dlerror()) != NULL)  {
-
-		fprintf (stderr, "%s\n", error);
-
-		return(1);
-		/** exit(1); */
-    }
-
-    f_setopt = dlsym(handle, "curl_easy_setopt");
-    if ((error = dlerror()) != NULL)  {
-
-		fprintf (stderr, "%s\n", error);
-
-		return(1);
-		/** exit(1); */
-    }
-
-    f_perform = dlsym(handle, "curl_easy_perform");
-    if ((error = dlerror()) != NULL)  {
-
-		fprintf (stderr, "%s\n", error);
-
-		return(1);
-		/** exit(1); */
-    }
-
-    f_cleanup = dlsym(handle, "curl_easy_cleanup");
-    if ((error = dlerror()) != NULL)  {
-
-		fprintf (stderr, "%s\n", error);
-
-		return(1);
-		/** exit(1); */
-    }
-
-    /** printf("ok %d\n", i); */
-
-    curl = (*f_init)();
-
-    if (curl) {
-       (*f_setopt)(curl, CURLOPT_URL, "curl.haxx.se");
-       res = (*f_perform)(curl);
-
-       (*f_cleanup)(curl);
-    }
-
-    dlclose(handle);
-
-    return 0;
-}
 
 /**
  * Get the chosen lib
@@ -243,35 +65,36 @@ int checkForLib(const char* pathToHeader, const char* libName)
 
 	dip = opendir(header_path);
 
-	if((dip) == NULL)
-	{
+	if (dip == NULL)  {
+
 		perror("opendir()");
+
 		return errno;
 	}
 
-	if((getcwd(currentPath, FILENAME_MAX)) == NULL)
-	{
+	if ((getcwd(currentPath, FILENAME_MAX)) == NULL)  {
+
 		perror("getcwd()");
+
 		return errno;
 	}
 
 	/* stat the file - if it exists, do some checks */
-		if(stat(currentPath, &lsbuf) == -1)
-	{
+	if (stat(currentPath, &lsbuf) == -1)  {
+
 		perror("stat()");
+
 		return errno;
 
 	} else {
 
-		if(S_ISDIR(lsbuf.st_mode)) {
+		if (S_ISDIR(lsbuf.st_mode))  {
 
 			printf("\"%s\" exists on this system.\n", header_path);
 
 		} else {
 
 			printf("\"%s\" does not exist on this system.\n", header_path);
-
-			printf("\n");
 		}
 	}
 
@@ -280,20 +103,26 @@ int checkForLib(const char* pathToHeader, const char* libName)
 	char *error;
 
 	handle = dlopen(libName, RTLD_LAZY);
+
+	if (!handle)  {
+
+		printf("Loading '%s' attempt failed: %s\n", libName, dlerror());
+
+		return errno;
+	}
+
+	dlerror();    /* Clear any existing error */
+
 	error = dlerror();
 
-	if (!handle || error != NULL)
-	{
-		/** fprintf(stderr, "Loading 'libcrypto.dll' attempt failed: %s\n", error); */
+	if (error != NULL)  {
 
-		printf("Loading '%s' attempt failed.\n", libName);
+		printf("Loading '%s' attempt failed: %s\n", libName, error);
 
-		/** exit(EXIT_FAILURE); */
-
-	} else {
-
-		printf("Loaded '%s' successfully.\n", libName);
+		return errno;
 	}
+
+	printf("Loaded '%s' successfully.\n", libName);
 
 	dlclose(handle);
 
@@ -580,17 +409,19 @@ int main()
 	printf("\n");
 
 	/** checkForLibCrytpo(); */
+	/** checkForLibCurl(); */
+	/** checkForMsysLib(); */
 
 	/** printf("\n"); */
 
+	checkForLib(MSYS_INSTALL_PATH, MSYSLIB);
+	printf("\n");
 	checkForLib(CRYPTO_H_PATH, CRYPTO_LIB);
-
+	printf("\n");
+	checkForLib(CURL_H_PATH, LIBCURL_LIB);
 	printf("\n");
 
-	checkForLibCurl();
-
-	printf("\n");
-	printf("...pkgman_config > Exiting succesfully.\n");
+	printf("...pkgman_config > Exiting successfully.\n");
 
 	return(EXIT_SUCCESS);
 }

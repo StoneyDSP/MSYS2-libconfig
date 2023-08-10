@@ -194,13 +194,13 @@ int main()
 	printf("\n");
 	printf("Build information:\n\n");
 
-	printf("prefix                  : %s\n", 									PREFIX);
-  	printf("sysconfdir              : %s\n", 									SYSCONFDIR);
-  	printf("conf file           	: %s/pacman.conf\n", 						SYSCONFDIR);
-  	printf("localstatedir           : %s\n", 									LOCALSTATEDIR);
-  	printf("database dir        	: %s/lib/pacman/\n", 						LOCALSTATEDIR);
-  	printf("cache dir           	: %s/cache/pacman/pkg/\n", 					LOCALSTATEDIR);
-  	printf("compiler                : @0@ @1@'.format(cc.get_id(), cc.version())\n");
+	printf("prefix                  : %s\n", 									prefix);
+  	printf("sysconfdir              : %s\n", 									sysconfdir);
+  	printf("conf file           	: %s\n", 									conffile);
+  	printf("localstatedir           : %s\n", 									localstatedir);
+  	printf("database dir        	: %s/lib/pacman/\n", 						localstatedir);
+  	printf("cache dir           	: %s/cache/pacman/pkg/\n", 					localstatedir);
+	printf("compiler 		: %s\n", 	pkgman_c_compiler);
 
 	printf("\n");
 
@@ -215,11 +215,11 @@ int main()
 
 	printf("Directory and file information:\n\n");
 
-	printf("root working directory  : %s\n", 									ROOTDIR);
-  	printf("package extension       : %s\n", 									PKGEXT);
-    printf("source pkg extension    : %s\n", 									SRCEXT);
-    printf("build script name       : %s\n", 									BUILDSCRIPT);
-    printf("template directory      : %s\n",	 								MAKEPKG_TEMPLATE_DIR);
+	printf("root working directory  : %s\n", 									rootdir);
+  	printf("package extension       : %s\n", 									pkg_ext);
+    printf("source pkg extension    : %s\n", 									src_ext);
+    printf("build script name       : %s\n", 									buildscript);
+    printf("template directory      : %s\n",	 								makepg_template_dir);
 
 	printf("\n");
 
@@ -258,131 +258,113 @@ int main()
   	printf("Use nettle              : false\n");
 #endif
 
-	printf("\n");
-	printf("Compiler info:\n");
-	printf("\n");
-
-#if defined(PKGMAN_CLANG_VERSION) && (PKGMAN_CLANG_VERSION != 0)
-	printf("PKGMAN_CLANG_VERSION: %d\n", PKGMAN_CLANG_VERSION);
-#endif
-
-#if defined(PKGMAN_GCC_VERSION) && (PKGMAN_GCC_VERSION != 0)
-	printf("PKGMAN_GCC_VERSION: %d\n", PKGMAN_GCC_VERSION);
-#endif
-
-#if defined(PKGMAN_ICC_VERSION) && (PKGMAN_ICC_VERSION != 0)
-	printf("PKGMAN_ICC_VERSION: %d\n", PKGMAN_ICC_VERSION);
-#endif
-
-#if defined(PKGMAN_MSC_VERSION) && (PKGMAN_MSC_VERSION != 0)
-	printf("PKGMAN_MSC_VERSION: %d\n", PKGMAN_MSC_VERSION);
-#endif
-
-	printf("\n");
-	printf("Feature detection macros:\n");
-	printf("\n");
-
-#ifdef _POSIX_SOURCE
-	printf("_POSIX_SOURCE 			: defined\n");
-#else
-	printf("_POSIX_SOURCE	 		: undefined\n");
-#endif
-
-#ifdef _POSIX_C_SOURCE
-	printf("_POSIX_C_SOURCE 		: defined = %jdL\n", (intmax_t) _POSIX_C_SOURCE);
-#else
-	printf("_POSIX_C_SOURCE 		: undefined\n");
-#endif
-
-#ifdef _ISOC99_SOURCE
-	printf("_ISOC99_SOURCE 			: defined\n");
-#else
-	printf("_ISOC99_SOURCE 			: undefined\n");
-#endif
-
-#ifdef _ISOC11_SOURCE
-	printf("_ISOC11_SOURCE 			: defined\n");
-#else
-	printf("_ISOC11_SOURCE	 		: undefined\n");
-#endif
-
-#ifdef _XOPEN_SOURCE
-	printf("_XOPEN_SOURCE 			: defined = %d\n", _XOPEN_SOURCE);
-#else
-	printf("_XOPEN_SOURCE	 		: undefined\n");
-#endif
-
-#ifdef _XOPEN_SOURCE_EXTENDED
-	printf("_XOPEN_SOURCE_EXTENDED		: defined\n");
-#else
-	printf("_XOPEN_SOURCE_EXTENDED		: undefined\n");
-#endif
-
-#ifdef _LARGEFILE64_SOURCE
-	printf("_LARGEFILE64_SOURCE		: defined\n");
-#else
-	printf("_LARGEFILE64_SOURCE		: undefined\n");
-#endif
-
-#ifdef _FILE_OFFSET_BITS
-	printf("_FILE_OFFSET_BITS 		: defined = %d\n", _FILE_OFFSET_BITS);
-#else
-	printf("_FILE_OFFSET_BITS 		: undefined\n");
-#endif
-
-#ifdef _TIME_BITS
-	printf("_TIME_BITS 			: defined = %d\n", _TIME_BITS);
-#else
-	printf("_TIME_BITS		 	: undefined\n");
-#endif
-
-#ifdef _BSD_SOURCE
-	printf("_BSD_SOURCE 			: defined\n");
-#else
-	printf("_BSD_SOURCE 			: undefined\n");
-#endif
-
-#ifdef _SVID_SOURCE
-	printf("_SVID_SOURCE 			: defined\n");
-#else
-	printf("_SVID_SOURCE 			: undefined\n");
-#endif
-
-#ifdef _DEFAULT_SOURCE
-	printf("_DEFAULT_SOURCE 		: defined\n");
-#else
-	printf("_DEFAULT_SOURCE 		: undefined\n");
-#endif
-
-#ifdef _ATFILE_SOURCE
-	printf("_ATFILE_SOURCE 			: defined\n");
-#else
-	printf("_ATFILE_SOURCE 			: undefined\n");
-#endif
-
-#ifdef _GNU_SOURCE
-	printf("_GNU_SOURCE 			: defined\n");
-#else
-	printf("_GNU_SOURCE		 		: undefined\n");
-#endif
-
-#ifdef _REENTRANT
-	printf("_REENTRANT 			: defined\n");
-#else
-	printf("_REENTRANT		 	: undefined\n");
-#endif
-
-#ifdef _THREAD_SAFE
-	printf("_THREAD_SAFE 			: defined\n");
-#else
-	printf("_THREAD_SAFE 			: undefined\n");
-#endif
-
-#ifdef _FORTIFY_SOURCE
-	printf("_FORTIFY_SOURCE 		: defined\n");
-#else
-	printf("_FORTIFY_SOURCE 		: undefined\n");
-#endif
+/**
+ * printf("\n");
+ * printf("Feature detection macros:\n");
+ * printf("\n");
+ *
+ * #ifdef _POSIX_SOURCE
+ *   printf("_POSIX_SOURCE 			: defined\n");
+ * #else
+ *   printf("_POSIX_SOURCE	 		: undefined\n");
+ * #endif
+ *
+ * #ifdef _POSIX_C_SOURCE
+ *   printf("_POSIX_C_SOURCE 		: defined = %jdL\n", (intmax_t) _POSIX_C_SOURCE);
+ * #else
+ *   printf("_POSIX_C_SOURCE 		: undefined\n");
+ * #endif
+ *
+ * #ifdef _ISOC99_SOURCE
+ *   printf("_ISOC99_SOURCE 			: defined\n");
+ * #else
+ *   printf("_ISOC99_SOURCE 			: undefined\n");
+ * #endif
+ *
+ * #ifdef _ISOC11_SOURCE
+ *   printf("_ISOC11_SOURCE 			: defined\n");
+ * #else
+ *   printf("_ISOC11_SOURCE	 		: undefined\n");
+ * #endif
+ *
+ * #ifdef _XOPEN_SOURCE
+ *   printf("_XOPEN_SOURCE 			: defined = %d\n", _XOPEN_SOURCE);
+ * #else
+ *   printf("_XOPEN_SOURCE	 		: undefined\n");
+ * #endif
+ *
+ * #ifdef _XOPEN_SOURCE_EXTENDED
+ *   printf("_XOPEN_SOURCE_EXTENDED		: defined\n");
+ * #else
+ *   printf("_XOPEN_SOURCE_EXTENDED		: undefined\n");
+ * #endif
+ *
+ * #ifdef _LARGEFILE64_SOURCE
+ *   printf("_LARGEFILE64_SOURCE		: defined\n");
+ * #else
+ *   printf("_LARGEFILE64_SOURCE		: undefined\n");
+ * #endif
+ *
+ * #ifdef _FILE_OFFSET_BITS
+ *   printf("_FILE_OFFSET_BITS 		: defined = %d\n", _FILE_OFFSET_BITS);
+ * #else
+ *   printf("_FILE_OFFSET_BITS 		: undefined\n");
+ * #endif
+ *
+ * #ifdef _TIME_BITS
+ *   printf("_TIME_BITS 			: defined = %d\n", _TIME_BITS);
+ * #else
+ *   printf("_TIME_BITS		 	: undefined\n");
+ * #endif
+ *
+ * #ifdef _BSD_SOURCE
+ *   printf("_BSD_SOURCE 			: defined\n");
+ * #else
+ *   printf("_BSD_SOURCE 			: undefined\n");
+ * #endif
+ *
+ * #ifdef _SVID_SOURCE
+ *   printf("_SVID_SOURCE 			: defined\n");
+ * #else
+ *   printf("_SVID_SOURCE 			: undefined\n");
+ * #endif
+ *
+ * #ifdef _DEFAULT_SOURCE
+ *   printf("_DEFAULT_SOURCE 		: defined\n");
+ * #else
+ *   printf("_DEFAULT_SOURCE 		: undefined\n");
+ * #endif
+ *
+ * #ifdef _ATFILE_SOURCE
+ *   printf("_ATFILE_SOURCE 			: defined\n");
+ * #else
+ *   printf("_ATFILE_SOURCE 			: undefined\n");
+ * #endif
+ *
+ * #ifdef _GNU_SOURCE
+ *   printf("_GNU_SOURCE 			: defined\n");
+ * #else
+ *   printf("_GNU_SOURCE		 		: undefined\n");
+ * #endif
+ *
+ * #ifdef _REENTRANT
+ *   printf("_REENTRANT 			: defined\n");
+ * #else
+ *   printf("_REENTRANT		 	: undefined\n");
+ * #endif
+ *
+ * #ifdef _THREAD_SAFE
+ *   printf("_THREAD_SAFE 			: defined\n");
+ * #else
+ *   printf("_THREAD_SAFE 			: undefined\n");
+ * #endif
+ *
+ * #ifdef _FORTIFY_SOURCE
+ *   printf("_FORTIFY_SOURCE 		: defined\n");
+ * #else
+ *   printf("_FORTIFY_SOURCE 		: undefined\n");
+ * #endif
+*/
 
 	printf("\n");
 	printf("Checking for required system headers...\n");

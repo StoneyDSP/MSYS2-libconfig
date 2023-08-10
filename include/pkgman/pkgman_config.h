@@ -216,8 +216,22 @@
 #  endif
 #endif
 
+/***************************************************************************//**
+ *
+ *  ... Platform check macros
+ *
+ ******************************************************************************/
+
+#if defined(__MSYS__) || defined(MSYS)
+#  define PKGMAN_PLATFORM_IS_MSYS 1
+#endif
+
+#if defined(__CYGWIN__) || defined (CYGWIN)
+#  define PKGMAN_PLATFORM_IS_CYGWIN 1
+#endif
+
 #if defined(unix) || defined(__unix__) || defined(__unix)
-#  define PKGMAN_PLATFORM_UNIX 1
+#  define PKGMAN_PLATFORM_IS_UNIX 1
 #  ifdef _XOPEN_VERSION
 #    if (_XOPEN_VERSION >= 3)
 #      define PKGMAN_STANDARD_XOPEN_1989 1
@@ -240,6 +254,13 @@
 #  endif
 #endif
 
+#if defined(__MINGW__) || defined (MINGW)
+#  define PKGMAN_PLATFORM_IS_MINGW 1
+#endif
+
+#if defined(_WIN64) || defined(_WIN32) || defined (WIN32)
+#  define PKGMAN_PLATFORM_IS_WINDOWS 1
+#endif
 
 /***************************************************************************//**
  *
@@ -503,7 +524,7 @@
 #    define HAVE_MNTENT_H 1
 #endif
 
-#if (PKGMAN_PLATFORM_UNIX)
+#if (PKGMAN_PLATFORM_IS_UNIX)
 #  if PKGMAN_HAS_INCLUDE(<unistd.h>)
 #    include <unistd.h>
 #    define HAVE_UNISTD_H 1
@@ -520,7 +541,7 @@
 
 #if PKGMAN_HAS_INCLUDE(<curl/curl.h>)
 #  include <curl/curl.h>
-#  define CURL_FOUND 1
+#  define HAVE_CURL_CURL_H 1
 #endif
 
 /**
@@ -631,17 +652,17 @@ typedef	signed long int int64_t;
  ******************************************************************************/
 
 #if !defined(PATH_SEPERATOR)
-#  if defined(WIN32) || defined(_WIN32)
+#  if defined(PKGMAN_PLATFORM_IS_WINDOWS)
 #    define PATH_SEPERATOR __PM_STRING(\\) /** @name PATH_SEPERATOR @details This quote keeps the code intact :) */
-#  else
+#  elif defined(PKGMAN_PLATFORM_IS_UNIX)
 #    define PATH_SEPERATOR __PM_STRING(/) /** @name PATH_SEPERATOR @details This quote keeps the code intact :) */
 #  endif
 #endif
 
 #if !defined(STRING_SEPERATOR)
-#  if defined(WIN32) || defined(_WIN32)
+#  if defined(PKGMAN_PLATFORM_IS_WINDOWS)
 #    define STRING_SEPERATOR __PM_STRING(;) /** @name STRING_SEPERATOR @details This quote keeps the code intact :) */
-#  else
+#  elif defined(PKGMAN_PLATFORM_IS_UNIX)
 #    define STRING_SEPERATOR __PM_STRING(:) /** @name STRING_SEPERATOR @details This quote keeps the code intact :) */
 #  endif
 #endif
@@ -697,6 +718,16 @@ typedef	signed long int int64_t;
 #  endif
 #endif
 
+/***************************************************************************//**
+ *
+ *  ... Other optional macros
+ *
+ ******************************************************************************/
+
+#if !defined(LDCONFIG)
+#  define LDCONFIG __PM_STRING(/sbin/ldconfig)
+#endif
+
 #if !defined(BUILDSCRIPT)
 #  define BUILDSCRIPT __PM_STRING(PKGBUILD)
 #endif
@@ -711,6 +742,20 @@ typedef	signed long int int64_t;
 
 #if !defined(SRCEXT)
 #  define SRCEXT __PM_STRING(.src.tar.gz)
+#endif
+
+/***************************************************************************//**
+ *
+ *  ... MSYS installation macros
+ *
+ ******************************************************************************/
+
+#ifndef MSYS_INSTALL_PATH
+#  define MSYS_INSTALL_PATH __PM_STRING(C:/msys64)
+#endif
+
+#ifndef MSYSLIB
+#  define MSYSLIB __PM_STRING(msys-2.0.dll)
 #endif
 
 /***************************************************************************//**
@@ -774,6 +819,12 @@ const char* homedrive = { HOMEDRIVE };
 const char* rootdir = { ROOTDIR };
 
 const char* sysroot = { SYSROOT };
+
+
+const char* msysLib = { MSYSLIB };
+const char* msys_install_path = { MSYS_INSTALL_PATH };
+
+
 
 /**
  * TODO: @StoneyDSP With all this char array macro-string business, everything

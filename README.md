@@ -2,6 +2,271 @@
 
 ## latest...
 
+## 11.08.23
+
+Now building our package manager configurator successfully for *all* Msys64 susbsystems! :D There are some quirks from one to the other that I hope I can address further within the code... some differences in system header availability, for example.
+
+It's really nice having ```dlopen()``` check the lib dependencies *on the executable platform*, instead of whatever got baked in during build time. It strikes me that ```fileopen()``` and family, not to mention ```getenv()```, should offer some similar run-time functionality... which suggests we could perhaps set the runtime checks (include dirs, lib loading, env vars, perhaps function symbol checks) as a callable function of the executable program, as a means of system introspection. This seems like a clever way of portable dependency management that perhaps we can hook back into later, when this is all subsumed back into my fork of vcpkg. For example, a failed header/lib check might trigger a package download to fetch the required content. Without trying to get too far ahead of oneself, but this might also pave the way to a simple GUI solution that does a simple task and doesn't need to do a whole lot more.
+
+Latest readout... for MSYS/Cygwin:
+
+```
+$ ./out/usr/bin/pkgman_config.exe
+
+pkgman_config v6.0.2-81c0a15465cc6197b913e761833d2b486fc0c4fa
+Checking for dependencies...
+
+"C:/Windows/System32" exists on this system.
+Loaded 'ucrtbase.dll' successfully.
+
+"C:/Windows/System32" exists on this system.
+Loaded 'msvcrt.dll' successfully.
+
+"/" exists on this system.
+Loaded 'msys-2.0.dll' successfully.
+
+"C:/msys64/usr/include/openssl" exists on this system.
+Loaded 'msys-crypto-3.dll' successfully.
+
+"C:/msys64/usr/include/curl" exists on this system.
+Loaded 'msys-curl-4.dll' successfully.
+
+"C:/msys64/usr/include/gpgme++" exists on this system.
+Loaded 'msys-gpgme-11.dll' successfully.
+
+
+Build information:
+
+prefix                  : /usr
+sysconfdir              : /etc
+conf file               : /etc/pkgman.conf
+localstatedir           : /var
+database dir            : /var/lib/pacman/
+cache dir               : /var/cache/pacman/pkg/
+compiler                : GNU 11.3.0
+
+Architecture            : @0@'.format(carch)
+Host Type               : @0@'.format(chost)
+File inode command      : @0@'.format(inodecmd)
+File seccomp command    : @0@'.format(filecmd)
+libalpm version         : 13.0.2
+pacman version          : 6.0.2
+
+Directory and file information:
+
+root working directory  : /
+package extension       : .pkg.tar.gz
+source pkg extension    : .src.tar.gz
+build script name       : PKGBUILD
+template directory      : /usr/share/makepkg-template
+
+Compilation options:
+
+i18n support            : @0@'.format(get_option('i18n'))
+Build docs              : @0@'.format(build_doc)
+debug build             : false
+Use libcurl             : true
+Use GPGME               : true
+Use OpenSSL             : true
+Use nettle              : false
+
+Checking for required system headers...
+
+<mntent.h>                      : Success
+<sys/mnttab.h>                  : Fail
+<sys/mount.h>                   : Success
+<sys/param.h>                   : Success
+<sys/stat.h>                    : Success
+<sys/statvfs.h>                 : Success
+<sys/types.h>                   : Success
+<sys/ucred.h>                   : Fail
+<termios.h>                     : Success
+
+...pkgman_config > Exiting successfully.
+```
+
+...and for UCRT64 (note the automatically-transformed paths from *nix to Windows style):
+
+```
+$ ./out/ucrt64/bin/pkgman_config.exe
+
+pkgman_config v6.0.2-81c0a15465cc6197b913e761833d2b486fc0c4fa
+Checking for dependencies...
+
+"C:/Windows/System32" exists on this system.
+Loaded 'ucrtbase.dll' successfully.
+
+"C:/Windows/System32" exists on this system.
+Loaded 'msvcrt.dll' successfully.
+
+"C:\msys64" exists on this system.
+Loaded 'msys-2.0.dll' successfully.
+
+"C:/msys64/usr/include/openssl" exists on this system.
+Loaded 'libcrypto.dll' successfully.
+
+"C:/msys64/usr/include/curl" exists on this system.
+Loaded 'libcurl-4.dll' successfully.
+
+"C:/msys64/usr/include/gpgme++" exists on this system.
+Loaded 'libgpgme-11.dll' successfully.
+
+
+Build information:
+
+prefix                  : C:\msys64\usr
+sysconfdir              : C:\msys64\etc
+conf file               : C:\msys64\etc\pkgman.conf
+localstatedir           : C:\msys64\var
+database dir            : C:\msys64\var\lib\pacman\
+cache dir               : C:\msys64\var\cache\pacman\pkg\
+compiler                : GNU 13.2.0
+
+Architecture            : @0@'.format(carch)
+Host Type               : @0@'.format(chost)
+File inode command      : @0@'.format(inodecmd)
+File seccomp command    : @0@'.format(filecmd)
+libalpm version         : 13.0.2
+pacman version          : 6.0.2
+
+Directory and file information:
+
+root working directory  : C:\
+package extension       : .pkg.tar.gz
+source pkg extension    : .src.tar.gz
+build script name       : PKGBUILD
+template directory      : C:\msys64\usr\share\makepkg-template
+
+Compilation options:
+
+i18n support            : @0@'.format(get_option('i18n'))
+Build docs              : @0@'.format(build_doc)
+debug build             : false
+Use libcurl             : true
+Use GPGME               : true
+Use OpenSSL             : true
+Use nettle              : false
+
+Checking for required system headers...
+
+<mntent.h>                      : Fail
+<sys/mnttab.h>                  : Fail
+<sys/mount.h>                   : Fail
+<sys/param.h>                   : Success
+<sys/stat.h>                    : Success
+<sys/statvfs.h>                 : Fail
+<sys/types.h>                   : Success
+<sys/ucred.h>                   : Fail
+<termios.h>                     : Fail
+
+...pkgman_config > Exiting successfully.
+```
+
+## 10.08.23
+
+The config executable is now building in both the 'MSYS2' *and* 'CLANG64' environments, including reporting correct(-ly portable) paths. In contrast to previous examples (under 'MSYS2'), here's the latest readout but compiler under 'CLANG64' - it's worth noting that the resulting binary can run in the 'CLANG64' bash shell, but it *also* runs happily from Windows Powershell, and *even* reports different linkages and paths when doing so :D This one is in fact taken from Powershell;
+
+```
+$ ./bin/pkgman_config.exe
+
+pkgman_config v6.0.2-81c0a15465cc6197b913e761833d2b486fc0c4fa
+Build information:
+
+prefix                  : C:\msys64\usr
+sysconfdir              : C:\msys64\etc
+conf file               : C:\msys64\etc\pkgman.conf
+localstatedir           : C:\msys64\var
+database dir            : C:\msys64\var/lib/pacman/
+cache dir               : C:\msys64\var/cache/pacman/pkg/
+compiler                : Clang 16.0.5
+
+Architecture            : @0@'.format(carch)
+Host Type               : @0@'.format(chost)
+File inode command      : @0@'.format(inodecmd)
+File seccomp command    : @0@'.format(filecmd)
+libalpm version         : @0@'.format(libalpm_version)
+pacman version          : @0@'.format(PACKAGE_VERSION)
+
+Directory and file information:
+
+root working directory  : C:\
+package extension       : .pkg.tar.gz
+source pkg extension    : .src.tar.gz
+build script name       : PKGBUILD
+template directory      : C:\msys64\usr\share\makepkg-template
+
+Compilation options:
+
+i18n support            : @0@'.format(get_option('i18n'))
+Build docs              : @0@'.format(build_doc)
+debug build             : @0@'.format(get_option('buildtype') == 'debug')
+Use libcurl             : false
+Use GPGME               : false
+Use OpenSSL             : true
+Use nettle              : false
+
+Feature detection macros:
+
+_POSIX_SOURCE                   : undefined
+_POSIX_C_SOURCE                 : undefined
+_ISOC99_SOURCE                  : undefined
+_ISOC11_SOURCE                  : undefined
+_XOPEN_SOURCE                   : defined = 500
+_XOPEN_SOURCE_EXTENDED          : defined
+_LARGEFILE64_SOURCE             : undefined
+_FILE_OFFSET_BITS               : defined = 64
+_TIME_BITS                      : undefined
+_BSD_SOURCE                     : undefined
+_SVID_SOURCE                    : undefined
+_DEFAULT_SOURCE                 : defined
+_ATFILE_SOURCE                  : undefined
+_GNU_SOURCE                     : defined
+_REENTRANT                      : undefined
+_THREAD_SAFE                    : undefined
+_FORTIFY_SOURCE                 : undefined
+
+Checking for required system headers...
+
+<mntent.h>                      : Fail
+<sys/mnttab.h>                  : Fail
+<sys/mount.h>                   : Fail
+<sys/param.h>                   : Success
+<sys/param.h>                   : Success
+<sys/statvfs.h>                 : Fail
+<sys/types.h>                   : Success
+<sys/ucred.h>                   : Fail
+<termios.h>                     : Fail
+
+Checking for dependencies...
+
+"C:/Windows/System32" exists on this system.
+Loaded 'msvcrt.dll' successfully.
+
+"C:\msys64" exists on this system.
+Loaded 'msys-2.0.dll' successfully.
+
+"C:/msys64" exists on this system.
+Loading 'libmingw32.a' attempt failed: "libmingw32.a": The specified module could not be found.
+
+"C:/msys64/usr/include/openssl" exists on this system.
+Loaded 'libcrypto.dll' successfully.
+
+"C:/msys64/usr/include/curl" exists on this system.
+Loaded 'libcurl-4.dll' successfully.
+
+...pkgman_config > Exiting successfully.
+```
+
+
+
+To get the missing 'dlfcn' functions (for POSIX platforms) on the Msys susbsystems, they can be installed like so:
+
+```
+pacman -S mingw-w64-clang-x86_64-dlfcn
+```
+
+Which is in fact a port of this fantastic project: <a href="https://github.com/dlfcn-win32/dlfcn-win32">dlfcn-win32</a>
+
 ## Log 09.08.2023 - part II
 
 With a few more defs in place, the config.exe readout is starting to take shape nicely;

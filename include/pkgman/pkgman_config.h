@@ -480,30 +480,33 @@
 #  error "Cannot find 'stddef.h'!"
 #endif
 
-#ifdef PKGMAN_CPLUSPLUS
-#  if PKGMAN_HAS_INCLUDE(<cerrno>)
-#    include <cerrno>
-#    define HAVE_CERRNO 1
-#  elif (PKGMAN_HAS_INCLUDE("cerrno"))
-#    include "cerrno"
-#    define HAVE_CERRNO 1
-#  else
-#    undef HAVE_CERRNO
-#  endif
-#else
-#  if (PKGMAN_HAS_INCLUDE(<errno.h>))
-#    include <errno.h>
-#    define HAVE_ERRNO_H 1
-#  elif (PKGMAN_HAS_INCLUDE("errno.h"))
-#    include "errno.h"
-#    define HAVE_ERRNO_H 1
-#  else
-#    undef HAVE_ERRNO_H
-#  endif
-#endif
-#if !defined(HAVE_CERRNO) && !defined(HAVE_ERRNO_H)
-#  error "Cannot find 'errno.h'!"
-#endif
+/**
+ * #ifdef PKGMAN_CPLUSPLUS
+ * #  if PKGMAN_HAS_INCLUDE(<cerrno>)
+ * #    include <cerrno>
+ * #    define HAVE_CERRNO 1
+ * #  elif (PKGMAN_HAS_INCLUDE("cerrno"))
+ * #    include "cerrno"
+ * #    define HAVE_CERRNO 1
+ * #  else
+ * #    undef HAVE_CERRNO
+ * #  endif
+ * #else
+ * #  if PKGMAN_HAS_INCLUDE(<errno.h>)
+ * #    include <errno.h>
+ * #    define HAVE_ERRNO_H 1
+ * #  elif PKGMAN_HAS_INCLUDE("errno.h")
+ * #    include "errno.h"
+ * #    define HAVE_ERRNO_H 1
+ * #  else
+ * #    undef HAVE_ERRNO_H
+ * #  endif
+ * #endif
+ * #if !defined(HAVE_CERRNO) && !defined(HAVE_ERRNO_H)
+ * #  error "Cannot find 'errno.h'!"
+ * #endif
+ *
+*/
 
 /** WCHAR - fwprintf(), swprintf(), wprintf() */
 #ifdef PKGMAN_CPLUSPLUS
@@ -884,6 +887,10 @@
  *
  ******************************************************************************/
 
+#define LIB_VERSION __PM_STRING(13.0.2)
+
+#define PACKAGE _PM_STRING(pkgman)
+
 #if !defined(PACKAGE_VERSION)
 #  define PACKAGE_VERSION __PM_STRING(PKGMAN_VERSION_MAJOR) __PM_STRING(.) __PM_STRING(PKGMAN_VERSION_MINOR) __PM_STRING(.) __PM_STRING(PKGMAN_VERSION_PATCH)
 #endif
@@ -894,6 +901,10 @@
 
 #if !defined(SBINDIR)
 #  define SBINDIR PREFIX PATH_SEPERATOR __PM_STRING(sbin)
+#endif
+
+#if !defined(DATAROOTDIR)
+#  define DATAROOTDIR PREFIX PATH_SEPERATOR __PM_STRING(share)
 #endif
 
 #if !defined(LDCONFIG)
@@ -908,6 +919,10 @@
 #  define BUILDSCRIPT __PM_STRING(PKGBUILD)
 #endif
 
+#if !defined(SYSHOOKDIR)
+#  define SYSHOOKDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(libalpm) PATH_SEPERATOR __PM_STRING(hooks) PATH_SEPERATOR
+#endif
+
 #if !defined(CONFFILE)
 #  define CONFFILE SYSCONFDIR PATH_SEPERATOR __PM_STRING(pkgman.conf)
 #endif
@@ -916,9 +931,16 @@
 #  define DBPATH LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(lib) PATH_SEPERATOR __PM_STRING(pacman) PATH_SEPERATOR
 #endif
 
-/** Need to fix the PREFIX > 'share' to be the correct Unix path var for 'share' */
+#if !defined(GPGDIR)
+#  define GPGDIR SYSCONFDIR PATH_SEPERATOR __PM_STRING(pacman.d) PATH_SEPERATOR __PM_STRING(gnupg) PATH_SEPERATOR
+#endif
+
+#if !defined(CACHEDIR)
+#  define CACHEDIR LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(cache) PATH_SEPERATOR __PM_STRING(pacman) PATH_SEPERATOR __PM_STRING(pkg) PATH_SEPERATOR
+#endif
+
 #if !defined(MAKEPKG_TEMPLATE_DIR)
-#  define MAKEPKG_TEMPLATE_DIR PREFIX PATH_SEPERATOR __PM_STRING(share) PATH_SEPERATOR __PM_STRING(makepkg-template)
+#  define MAKEPKG_TEMPLATE_DIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(makepkg-template)
 #endif
 
 #if !defined(PKGEXT)
@@ -943,8 +965,8 @@
 #  endif
 #endif
 
-#ifndef MSYSLIB
-#  define MSYSLIB __PM_STRING(msys-2.0.dll)
+#ifndef MSYS_LIB
+#  define MSYS_LIB __PM_STRING(msys-2.0.dll)
 #endif
 
 /***************************************************************************//**
@@ -1027,18 +1049,11 @@ extern "C" {
 #  define HAVE_STRNDUP 1
 #endif
 
-const char* path_seperator = { PATH_SEPERATOR };
-const char* string_seperator = { STRING_SEPERATOR };
-const char* homedrive = { HOMEDRIVE };
-const char* rootdir = { ROOTDIR };
 
-const char* sysroot = { SYSROOT };
-const char* bindir = { BINDIR };
-const char* sbindir = { SBINDIR };
 
 const char* pkgman_version = { PACKAGE_VERSION };
 
-const char* msysLib = { MSYSLIB };
+const char* msysLib = { MSYS_LIB };
 const char* msys_install_path = { MSYS_INSTALL_PATH };
 
 /**
@@ -1053,19 +1068,32 @@ const char* msys_install_path = { MSYS_INSTALL_PATH };
  * Tricky...
  */
 
+const char* path_seperator = { PATH_SEPERATOR };
+const char* string_seperator = { STRING_SEPERATOR };
+const char* homedrive = { HOMEDRIVE };
+const char* rootdir = { ROOTDIR };
+
 const char* prefix = { PREFIX };
-const char* conffile = { CONFFILE };
-const char* ldconfig = { LDCONFIG };
 const char* sysconfdir = { SYSCONFDIR };
 const char* localstatedir = { LOCALSTATEDIR };
+const char* datarootdir = { DATAROOTDIR };
 
+const char* sysroot = { SYSROOT };
+const char* bindir = { BINDIR };
+const char* sbindir = { SBINDIR };
+
+
+const char* syshookdir = { SYSHOOKDIR };
 const char* conffile = { CONFFILE };
+const char* database_dir = { DBPATH };
+const char* gpgdir = { GPGDIR };
+const char* cachedir = { CACHEDIR };
+
+const char* libalpm_version = { LIB_VERSION };
+
 const char* ldconfig = { LDCONFIG };
 const char* buildscript = { BUILDSCRIPT };
-
 const char* scriptlet_shell = { SCRIPTLET_SHELL };
-
-const char* database_dir = { DBPATH };
 
 const char* makepg_template_dir = { MAKEPKG_TEMPLATE_DIR };
 const char* pkg_ext = { PKGEXT };

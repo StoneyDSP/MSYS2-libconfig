@@ -49,6 +49,8 @@
 #  error "No crypto provider found!?"
 #endif
 
+#include <errno.h>
+
 #include "pkgman/pkgman_config.h"
 #ifndef PKGMAN_CONFIGURATION_H
 # error "No config header found?"
@@ -171,15 +173,17 @@ int main()
  * #endif
 */
 	int have_ucrtbase;
+	int have_msvcrt;
+	int have_lib_msys;
 	int have_libcrypto;
 	int have_libcurl;
 	int have_libgpgme;
 
 	have_ucrtbase = checkForLib(UCRTBASE_LIB_PATH, UCRTBASE_DYNAMIC_LIB);
 	printf("\n");
-	checkForLib(MSVCRT_LIB_PATH, MSVCRT_DYNAMIC_LIB);
+	have_msvcrt = checkForLib(MSVCRT_LIB_PATH, MSVCRT_DYNAMIC_LIB);
 	printf("\n");
-	checkForLib(MSYS_INSTALL_PATH, MSYSLIB);
+	have_lib_msys = checkForLib(MSYS_INSTALL_PATH, MSYS_LIB);
 	printf("\n");
 	have_libcrypto = checkForLib(CRYPTO_H_PATH, CRYPTO_LIB);
 	printf("\n");
@@ -199,8 +203,8 @@ int main()
   	printf("conf file           	: %s\n", 									conffile);
   	printf("localstatedir           : %s\n", 									localstatedir);
   	printf("database dir        	: %s\n", 									database_dir);
-  	printf("cache dir           	: %s/cache/pacman/pkg/\n", 					localstatedir);
-	printf("compiler 		: %s\n", 	pkgman_c_compiler);
+  	printf("cache dir           	: %s\n", 									cachedir);
+	printf("compiler 		: %s\n", 											pkgman_c_compiler);
 
 	printf("\n");
 
@@ -208,8 +212,8 @@ int main()
   	printf("Host Type               : @0@'.format(chost)\n");
   	printf("File inode command      : @0@'.format(inodecmd)\n");
   	printf("File seccomp command    : @0@'.format(filecmd)\n");
-  	printf("libalpm version         : @0@'.format(libalpm_version)\n");
-    printf("pacman version          : %s\n", pkgman_version );
+  	printf("libalpm version         : %s\n", libalpm_version);
+    printf("pacman version          : %s\n", pkgman_version);
 
 	printf("\n");
 

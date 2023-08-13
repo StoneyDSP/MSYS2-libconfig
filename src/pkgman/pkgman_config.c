@@ -191,12 +191,17 @@ int checkForLib(const char* libName)
 }
 
 #if (__CYGWIN__)
-int WinMain()
+int WinMain(int argc, char **argv)
 {
 #else
-int main()
+int main(int argc, char **argv)
 {
 #endif
+
+	int i = 0;
+
+	for (i = 0; i < argc; i++)
+  	  printf("%s\n", argv[i]);
 
 	printf("\n");
 	printf("pkgman_config");

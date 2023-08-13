@@ -96,16 +96,25 @@ int checkForFile(const char* filename)
 
 	return (fileCheckResult);
 }
+
+/**
+ * @name checkForDir
+ * @brief Uses 'opendir()' to check if a directory exists on disk and can be opened during runtime.
+ * Returns 0 if the dir is found and opened successfully, or the associated error value otherwise.
+ * @param pathToDir The fully-qualified path to the directory to be checked.
+ * @return int = { 0 || errno }
+ */
+int checkForDir(const char* pathToDir)
 {
-	/** Check for header path... this could be more thorough, of course... */
+	/** Check for dir path... this could be more thorough, of course... */
 	DIR *dip;
 	struct dirent *dit;
 	struct stat lsbuf;
 	char currentPath[FILENAME_MAX];
 
-	const char* header_path = pathToHeader;
+	const char* dir_path = pathToDir;
 
-	dip = opendir(header_path);
+	dip = opendir(dir_path);
 
 	if (dip == NULL)  {
 
@@ -132,14 +141,18 @@ int checkForFile(const char* filename)
 
 		if (S_ISDIR(lsbuf.st_mode))  {
 
-			printf("\"%s\" exists on this system.\n", header_path);
+			printf("\"%s\" exists on this system.\n", dir_path);
 
 		} else {
 
-			printf("\"%s\" does not exist on this system.\n", header_path);
+			printf("\"%s\" does not exist on this system.\n", dir_path);
+
+			return (-1);
 		}
 	}
 
+	return (0);
+}
 
 /**
  * @name checkForLib

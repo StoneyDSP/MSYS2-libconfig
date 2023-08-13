@@ -68,9 +68,34 @@
 #define UCRTBASE_DYNAMIC_LIB __PM_STRING(ucrtbase.dll)
 
 /**
- * Get the chosen lib
-*/
-int checkForLib(const char* pathToHeader, const char* libName)
+ * @name checkForFile
+ * @brief Uses 'stat()' to check if a file exists on disk and can be opened during runtime.
+ * Returns 0 if the file is found and opened successfully, or the associated error value otherwise.
+ * @param filename The fully-qualified file name to check for, including the path.
+ * @return int = { 0 || errno }
+ */
+int checkForFile(const char* filename)
+{
+	struct stat buffer;
+	int fileCheckResult;
+
+	fileCheckResult = stat(filename, &buffer);
+
+	if ((fileCheckResult) != 0)  {
+
+		/** printf("%s						: Failed [%d]\n", filename, fileCheckResult); */
+
+		printf("Fail    :: '%s' [%d]\n", filename, fileCheckResult);
+
+	} else {
+
+		/** printf("%s						: Success\n", filename); */
+
+		printf("Success :: '%s'\n", filename);
+	}
+
+	return (fileCheckResult);
+}
 {
 	/** Check for header path... this could be more thorough, of course... */
 	DIR *dip;
@@ -161,106 +186,79 @@ int main()
 		printf(" v%d.%d.%d", PKGMAN_VERSION_MAJOR, PKGMAN_VERSION_MINOR, PKGMAN_VERSION_PATCH);
 		printf("-%s", PKGMAN_VERSION_TWEAK);
 	#endif
+	printf("\n"); /** Needed for nice formatting! */
 
-	printf("\n");
-	printf("Checking for dependencies...\n");
-	printf("\n");
-
-/**
- * #if defined(__CYGWIN__) && CYGWIN_VERSION_API_MINOR < 262
- * void *libc = dlopen ("cygwin1.dll", 0);
- * struct mntent *(*getmntent_r) (FILE *, struct mntent *, char *, int) = dlsym (libc, "getmntent_r");
- * #endif
-*/
-	int have_ucrtbase;
-	int have_msvcrt;
-	int have_lib_msys;
-	int have_libcrypto;
-	int have_libcurl;
-	int have_libgpgme;
-
-	have_ucrtbase = checkForLib(UCRTBASE_LIB_PATH, UCRTBASE_DYNAMIC_LIB);
-	printf("\n");
-	have_msvcrt = checkForLib(MSVCRT_LIB_PATH, MSVCRT_DYNAMIC_LIB);
-	printf("\n");
-	have_lib_msys = checkForLib(MSYS_INSTALL_PATH, MSYS_LIB);
-	printf("\n");
-	have_libcrypto = checkForLib(CRYPTO_H_PATH, CRYPTO_LIB);
-	printf("\n");
-	have_libcurl = checkForLib(CURL_H_PATH, LIBCURL_LIB);
-	printf("\n");
-	have_libgpgme = checkForLib(GPGME_H_PATH, LIBGPGME_LIB);
+	printf("Checking for msys installation...\n");
 	printf("\n");
 
-	#define HAVE_LIBCURL have_libcurl
-	#define HAVE_LIBGPGME have_libcurl
+	char* msys_cmd = { "C:/msys64/msys2_shell.cmd" };
+	char* msys_autorebase = { "C:/msys64/autorebase.bat" };
+
+	int have_msys_cmd 			= checkForFile(msys_cmd);
+	int have_msys_autorebase 	= checkForFile(msys_autorebase);
 
 	printf("\n");
-	printf("Build information:\n\n");
-
-	printf("prefix                  : %s\n", 									prefix);
-  	printf("sysconfdir              : %s\n", 									sysconfdir);
-  	printf("conf file           	: %s\n", 									conffile);
-  	printf("localstatedir           : %s\n", 									localstatedir);
-  	printf("database dir        	: %s\n", 									database_dir);
-  	printf("cache dir           	: %s\n", 									cachedir);
-	printf("compiler 		: %s\n", 											pkgman_c_compiler);
-
+	printf("Checking for required system headers...\n");
 	printf("\n");
 
-	printf("Architecture            : @0@'.format(carch)\n");
-  	printf("Host Type               : @0@'.format(chost)\n");
-  	printf("File inode command      : @0@'.format(inodecmd)\n");
-  	printf("File seccomp command    : @0@'.format(filecmd)\n");
-  	printf("libalpm version         : %s\n", libalpm_version);
-    printf("pacman version          : %s\n", pkgman_version);
+	const char* header_found = { "Success" };
+	const char* header_missing = { "Fail" };
 
-	printf("\n");
-
-	printf("Directory and file information:\n\n");
-
-	printf("root working directory  : %s\n", 									rootdir);
-  	printf("package extension       : %s\n", 									pkg_ext);
-    printf("source pkg extension    : %s\n", 									src_ext);
-    printf("build script name       : %s\n", 									buildscript);
-    printf("template directory      : %s\n",	 								makepg_template_dir);
-
-	printf("\n");
-
-	printf("Compilation options:\n\n");
-
-	printf("i18n support            : @0@'.format(get_option('i18n'))\n");
-    printf("Build docs              : @0@'.format(build_doc)\n");
-
-#if (PKGMAN_DEBUG == 1)
-  	printf("debug build             : %s\n", "true");
+#if defined(HAVE_MNTENT_H)
+	printf("<mntent.h>			: %s\n", header_found);
 #else
-  	printf("debug build             : %s\n", "false");
+	printf("<mntent.h>			: %s\n", header_missing);
 #endif
 
-#if (have_libcurl != 0)
-  	printf("Use libcurl             : false\n");
+#if defined(HAVE_SYS_MNTTAB_H)
+    printf("<sys/mnttab.h>			: %s\n", header_found);
 #else
-  	printf("Use libcurl             : true\n");
+	printf("<sys/mnttab.h>			: %s\n", header_missing);
 #endif
 
-#if (have_libgpgme != 0)
-  	printf("Use GPGME               : false\n");
+#if defined(HAVE_SYS_MOUNT_H)
+    printf("<sys/mount.h>			: %s\n", header_found);
 #else
-  	printf("Use GPGME               : true\n");
+    printf("<sys/mount.h>			: %s\n", header_missing);
 #endif
 
-#if defined(HAVE_LIBSSL) && (HAVE_LIBSSL == 1)
-  	printf("Use OpenSSL             : true\n");
+#if defined(HAVE_SYS_PARAM_H)
+    printf("<sys/param.h>			: %s\n", header_found);
 #else
-  	printf("Use OpenSSL             : false\n");
+    printf("<sys/param.h>			: %s\n", header_missing);
 #endif
 
-#if defined(HAVE_LIBNETTLE) && (HAVE_LIBNETTLE == 1)
-  	printf("Use nettle              : true\n");
+#if defined(HAVE_SYS_STAT_H)
+    printf("<sys/stat.h>			: %s\n", header_found);
 #else
-  	printf("Use nettle              : false\n");
+    printf("<sys/stat.h>			: %s\n", header_missing);
 #endif
+
+#if defined(HAVE_SYS_STATVFS_H)
+    printf("<sys/statvfs.h>			: %s\n", header_found);
+#else
+    printf("<sys/statvfs.h>			: %s\n", header_missing);
+#endif
+
+#if defined(HAVE_SYS_TYPES_H)
+    printf("<sys/types.h>			: %s\n", header_found);
+#else
+    printf("<sys/types.h>			: %s\n", header_missing);
+#endif
+
+#if defined(HAVE_SYS_UCRED_H)
+    printf("<sys/ucred.h>			: %s\n", header_found);
+#else
+    printf("<sys/ucred.h>			: %s\n", header_missing);
+#endif
+
+#if defined(HAVE_TERMIOS_H)
+    printf("<termios.h>			: %s\n", header_found);
+#else
+	printf("<termios.h>			: %s\n", header_missing);
+#endif
+
+
 
 /**
  * printf("\n");

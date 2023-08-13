@@ -140,33 +140,39 @@ int checkForFile(const char* filename)
 		}
 	}
 
-	/** Get the chosen crypto lib */
+
+/**
+ * @name checkForLib
+ * @brief Uses 'dlopen()' to check if a dynamic library exists/can be opened during runtime.
+ * Returns 0 if the lib is found and opened successfully, or the associated error value otherwise.
+ * @param libName The fully-qualified lib name to check for.
+ * @return int = { 0 || errno }
+ */
+int checkForLib(const char* libName)
+{
 	void* handle;
 	char *error;
 
 	handle = dlopen(libName, RTLD_LAZY);
 
-	if (!handle)  {
-
-		printf("Loading '%s' attempt failed: %s\n", libName, dlerror());
-
-		return errno;
-	}
-
-	dlerror();    /* Clear any existing error */
+	dlerror(); /* Clear any existing error */
 
 	error = dlerror();
 
-	if (error != NULL)  {
+	if ((!handle) || (error != NULL))  {
 
-		printf("Loading '%s' attempt failed: %s\n", libName, error);
+		/** printf("%s						: Failed [%d]:%s\n", libName, errno, error); */
+
+		printf("Fail    :: '%s' [%d]: %s\n", libName, errno, error);
 
 		return errno;
 	}
 
-	printf("Loaded '%s' successfully.\n", libName);
-
 	dlclose(handle);
+
+	/**  printf("%s						: Success\n", libName); */
+
+	printf("Success :: '%s'\n", libName);
 
 	return (0);
 }
@@ -259,6 +265,26 @@ int main()
 #endif
 
 
+	printf("\n");
+	printf("Checking for required library dependencies...\n");
+	printf("\n");
+
+	int have_ucrtbase = checkForLib(UCRTBASE_DYNAMIC_LIB); /** UCRTBASE_LIB_PATH */
+	int have_msvcrt = checkForLib(MSVCRT_DYNAMIC_LIB); /** MSVCRT_LIB_PATH */
+	int have_lib_msys = checkForLib(MSYS_LIB); /** MSYS_INSTALL_PATH */
+	int have_libcrypto = checkForLib(CRYPTO_LIB); /** CRYPTO_H_PATH */
+	int have_libcurl = checkForLib(LIBCURL_LIB); /** CURL_H_PATH */
+	int have_libgpgme = checkForLib(LIBGPGME_LIB); /** GPGME_H_PATH */
+
+	#define HAVE_LIBCURL have_libcurl
+	#define HAVE_LIBGPGME have_libcurl
+
+/**
+ * #if defined(__CYGWIN__) && CYGWIN_VERSION_API_MINOR < 262
+ * void *libc = dlopen ("cygwin1.dll", 0);
+ * struct mntent *(*getmntent_r) (FILE *, struct mntent *, char *, int) = dlsym (libc, "getmntent_r");
+ * #endif
+*/
 
 /**
  * printf("\n");

@@ -1132,6 +1132,20 @@ const char* pkgman_c_compiler = { PKGMAN_C_COMPILER };
 */
 #endif /** !(PKGMAN_INTELLISENSE_GUARD) */
 
+int checkForFile(const char* filename);
+int checkForDir(const char* pathToDir);
+int checkForLib(const char* libName);
+
+/**
+ * It is a good idea to declare the function signatures above even though they
+ * can only be called in the source file which we don't plan to pass downstream.
+ * They will be encapsulated within the 'extern "C" {}' keyword if a C++
+ * compiler is invoked to build the source file.
+ *
+ * Don't forget that 'path' variables can be constructed using the platform-
+ * dependent macros defined above :)
+ */
+
 #ifdef PKGMAN_CPLUSPLUS
 }
 #endif

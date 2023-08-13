@@ -376,65 +376,72 @@ int main()
 */
 
 	printf("\n");
-	printf("Checking for required system headers...\n");
+	printf("Build information:\n\n");
+
+	printf("prefix                  : %s\n", 									prefix);
+  	printf("sysconfdir              : %s\n", 									sysconfdir);
+  	printf("conf file           	: %s\n", 									conffile);
+  	printf("localstatedir           : %s\n", 									localstatedir);
+  	printf("database dir        	: %s\n", 									database_dir);
+  	printf("cache dir           	: %s\n", 									cachedir);
+	printf("compiler 		: %s\n", 											pkgman_c_compiler);
+
 	printf("\n");
 
-	const char* header_found = { "Success" };
-	const char* header_missing = { "Fail" };
+	printf("Architecture            : @0@'.format(carch)\n");
+  	printf("Host Type               : @0@'.format(chost)\n");
+  	printf("File inode command      : @0@'.format(inodecmd)\n");
+  	printf("File seccomp command    : @0@'.format(filecmd)\n");
+  	printf("libalpm version         : %s\n", libalpm_version);
+    printf("pacman version          : %s\n", pkgman_version);
 
-#if defined(HAVE_MNTENT_H)
-	printf("<mntent.h>			: %s\n", header_found);
+	printf("\n");
+
+	printf("Directory and file information:\n\n");
+
+	printf("root working directory  : %s\n", 									rootdir);
+  	printf("package extension       : %s\n", 									pkg_ext);
+    printf("source pkg extension    : %s\n", 									src_ext);
+    printf("build script name       : %s\n", 									buildscript);
+    printf("template directory      : %s\n",	 								makepg_template_dir);
+
+	printf("\n");
+
+	printf("Compilation options:\n\n");
+
+	printf("i18n support            : @0@'.format(get_option('i18n'))\n");
+    printf("Build docs              : @0@'.format(build_doc)\n");
+
+#if (PKGMAN_DEBUG == 1)
+  	printf("debug build             : %s\n", "true");
 #else
-	printf("<mntent.h>			: %s\n", header_missing);
+  	printf("debug build             : %s\n", "false");
 #endif
 
-#if defined(HAVE_SYS_MNTTAB_H)
-    printf("<sys/mnttab.h>			: %s\n", header_found);
+#if (have_libcurl != 0)
+  	printf("Use libcurl             : false\n");
 #else
-	printf("<sys/mnttab.h>			: %s\n", header_missing);
+  	printf("Use libcurl             : true\n");
 #endif
 
-#if defined(HAVE_SYS_MOUNT_H)
-    printf("<sys/mount.h>			: %s\n", header_found);
+#if (have_libgpgme != 0)
+  	printf("Use GPGME               : false\n");
 #else
-    printf("<sys/mount.h>			: %s\n", header_missing);
+  	printf("Use GPGME               : true\n");
 #endif
 
-#if defined(HAVE_SYS_PARAM_H)
-    printf("<sys/param.h>			: %s\n", header_found);
+#if defined(HAVE_LIBSSL) && (HAVE_LIBSSL == 1)
+  	printf("Use OpenSSL             : true\n");
 #else
-    printf("<sys/param.h>			: %s\n", header_missing);
+  	printf("Use OpenSSL             : false\n");
 #endif
 
-#if defined(HAVE_SYS_STAT_H)
-    printf("<sys/stat.h>			: %s\n", header_found);
+#if defined(HAVE_LIBNETTLE) && (HAVE_LIBNETTLE == 1)
+  	printf("Use nettle              : true\n");
 #else
-    printf("<sys/stat.h>			: %s\n", header_missing);
+  	printf("Use nettle              : false\n");
 #endif
 
-#if defined(HAVE_SYS_STATVFS_H)
-    printf("<sys/statvfs.h>			: %s\n", header_found);
-#else
-    printf("<sys/statvfs.h>			: %s\n", header_missing);
-#endif
-
-#if defined(HAVE_SYS_TYPES_H)
-    printf("<sys/types.h>			: %s\n", header_found);
-#else
-    printf("<sys/types.h>			: %s\n", header_missing);
-#endif
-
-#if defined(HAVE_SYS_UCRED_H)
-    printf("<sys/ucred.h>			: %s\n", header_found);
-#else
-    printf("<sys/ucred.h>			: %s\n", header_missing);
-#endif
-
-#if defined(HAVE_TERMIOS_H)
-    printf("<termios.h>			: %s\n", header_found);
-#else
-	printf("<termios.h>			: %s\n", header_missing);
-#endif
 
 	printf("\n");
 

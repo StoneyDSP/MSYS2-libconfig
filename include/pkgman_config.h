@@ -1004,6 +1004,85 @@
 extern "C" {
 #endif
 
+#if defined(PKGMAN_WIN32_SHARED)
+#if defined(PKGMAN_WIN32_EXPORTS)
+#   define PKGMAN_EXPORT __declspec(dllexport)
+#else
+#   define PKGMAN_EXPORT __declspec(dllimport)
+#endif
+#else
+#   define PKGMAN_EXPORT
+#endif
+
+#if defined(_MODE_T_REQUIRED)
+#  define	_MODE_T_
+typedef	unsigned int mode_t; /* permissions */
+#  define _MODE_T_DECLARED
+#  define _MODE_T_DEFINED
+#  undef  _MODE_T_REQUIRED
+#endif
+
+#if defined(_UID_T_REQUIRED)
+#  define _UID_T_
+typedef	unsigned int uid_t; /* user id */
+#  define _UID_T_DECLARED
+#  define _UID_T_DEFINED
+#  undef  _UID_T_REQUIRED
+#endif
+
+#if defined(_OFF_T_REQUIRED)
+#  define _OFF_T_
+typedef	signed int off_t; /* file offset */
+#  define _OFF_T_DECLARED
+#  define _OFF_T_DEFINED
+#  undef  _OFF_T_REQUIRED
+#endif
+
+#if defined(_PID_T_REQUIRED)
+#  define _PID_T_
+typedef	signed int pid_t; /* process id */
+#  define PKGMAN_MODE_T mode_t
+#  define _PID_T_DECLARED
+#  define _PID_T_DEFINED
+#  undef  _PID_T_REQUIRED
+#endif
+
+#if defined(_SIZE_T_REQUIRED)
+#  define _SIZE_T_
+typedef unsigned int size_t; /** size_t type */
+#  define PKGMAN_SIZE_T size_t
+#  define _SIZE_T_DECLARED
+#  define _SIZE_T_DEFINED
+#  undef  _SIZE_T_REQUIRED
+#endif
+
+#if defined(_SSIZE_T_REQUIRED)
+#  define _SSIZE_T_
+typedef signed int ssize_t; /** Signed size_t type */
+#  define PKGMAN_SSIZE_T ssize_t
+#  define _SSIZE_T_DECLARED
+#  define _SSIZE_T_DEFINED
+#  undef  _SSIZE_T_REQUIRED
+#endif
+
+#if defined(_INT64_T_REQUIRED)
+#  define _INT64_T_
+typedef	signed long int int64_t;
+#  define PKGMAN_INT64_T int64_t
+#  define _INT64_T_DECLARED
+#  define _INT64_T_DEFINED
+#  define __int64
+#  undef  _INT64_T_REQUIRED
+#endif
+
+#define PKGMAN_MODE_T mode_t
+#define PKGMAN_UID_T uid_t
+#define PKGMAN_OFF_T off_t
+#define PKGMAN_PID_T pid_t
+#define PKGMAN_SIZE_T size_t
+#define PKGMAN_SSIZE_T ssize_t
+#define PKGMAN_INT64_T int64_t
+
 /**
  * @name dec
  * @brief Convert integer to decimal digit literals.

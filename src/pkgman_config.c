@@ -67,6 +67,10 @@
 #define UCRTBASE_LIB_PATH __PM_STRING(C:/Windows/System32)
 #define UCRTBASE_DYNAMIC_LIB __PM_STRING(ucrtbase.dll)
 
+#define __INCLUDE_STRING(HEADER)  __PM_STRING(HEADER)
+#define INCLUDE_FOUND(HEADER)   printf("Success :: '%s'\n", __INCLUDE_STRING(HEADER))
+#define INCLUDE_MISSING(HEADER) printf("Failed  :: '%s'\n", __INCLUDE_STRING(HEADER))
+
 /**
  * @name checkForFile
  * @brief Uses 'stat()' to check if a file exists on disk and can be opened during runtime.
@@ -181,18 +185,30 @@ int checkForLib(const char* libName)
 
 
 #if (__CYGWIN__)
-int WinMain(int argc, char **argv)
-{
+#  if defined(ID_VOID_MAIN)
+void WinMain() {}
+#  elif defined(__CLASSIC_C__)
+int WinMain(argc, argv) int argc; char** argv;
+#    else
+int WinMain(int argc, char** argv)
+#    endif
 #else
-int main(int argc, char **argv)
-{
+#  if defined(ID_VOID_MAIN)
+void main() {}
+#  elif defined(__CLASSIC_C__)
+int main(argc, argv) int argc; char** argv;
+#    else
+int main(int argc, char** argv)
+#    endif
 #endif
-
+{
 	/**
 	 * int i = 0;
 	 * for (i = 0; i < argc; i++) printf("%s\n", argv[i]);
 	 *
 	*/
+
+
 
 	printf("\n");
 	printf("pkgman_config");

@@ -73,6 +73,9 @@
 #  define __need_NULL 1
 #endif
 
+/**
+ * If the compiler does not have __has_*(), pretend the answer is always no.
+ */
 #ifndef	__has_attribute
 #define	__has_attribute(x)	0
 #endif
@@ -589,6 +592,7 @@
 #  endif
 #endif
 
+
 /***************************************************************************//**
  *
  *  ... Dependency check macros
@@ -660,6 +664,11 @@
  * strsep(),
  * swprintf(),
  * tcflush(),
+ *
+ * Naturally, we should not only rely on checking for builtin versions...
+ * But there dones't seem to be a widely-supported way to check the whole
+ * include path without a compile run.
+ * More work needed :)
  ******************************************************************************/
 
 #if PKGMAN_HAS_BUILTIN(__builtin_getmntent)
@@ -1488,6 +1497,10 @@ enum type_test_result
 	TYPE_FOUND
 };
 
+const char* pkgman_version = { PACKAGE_VERSION };
+const char* msysLib = { MSYS_LIB };
+const char* msys_install_path = { MSYS_INSTALL_PATH };
+
 const char* path_seperator = { PATH_SEPERATOR };
 const char* string_seperator = { STRING_SEPERATOR };
 const char* homedrive = { HOMEDRIVE };
@@ -1502,12 +1515,13 @@ const char* sysroot = { SYSROOT };
 const char* bindir = { BINDIR };
 const char* sbindir = { SBINDIR };
 
-
 const char* syshookdir = { SYSHOOKDIR };
 const char* conffile = { CONFFILE };
 const char* database_dir = { DBPATH };
 const char* gpgdir = { GPGDIR };
 const char* cachedir = { CACHEDIR };
+const char* logfile = { LOGFILE };
+const char* hookdir = { HOOKDIR };
 
 const char* libalpm_version = { LIB_VERSION };
 
@@ -1541,6 +1555,7 @@ const char* pkgman_c_compiler = { PKGMAN_C_COMPILER };
 */
 #endif /** !(PKGMAN_INTELLISENSE_GUARD) */
 
+
 int checkForFile(const char* filename);
 int checkForDir(const char* pathToDir);
 int checkForLib(const char* libName);
@@ -1553,6 +1568,37 @@ int checkForLib(const char* libName);
  * Don't forget that 'path' variables can be constructed using the platform-
  * dependent macros defined above :)
  */
+
+#if defined(__18CXX)
+#  define ID_VOID_MAIN
+#endif
+#if defined(__CLASSIC_C__)
+/* cv-qualifiers did not exist in K&R C */
+#  define const
+#  define volatile
+#endif
+
+#if (__CYGWIN__)
+#  if defined(ID_VOID_MAIN)
+void WinMain();
+#  else
+#    if defined(__CLASSIC_C__)
+int WinMain(argc, argv) int argc; char** argv;
+#    else
+int WinMain(int argc, char** argv);
+#    endif
+#  endif
+#else
+#  if defined(ID_VOID_MAIN)
+void main();
+#  else
+#    if defined(__CLASSIC_C__)
+int main(argc, argv) int argc; char** argv;
+#    else
+int main(int argc, char** argv);
+#    endif /** __CLASSIC_C__ */
+#  endif /** ID_VOID_MAIN */
+#endif
 
 #ifdef PKGMAN_CPLUSPLUS
 }

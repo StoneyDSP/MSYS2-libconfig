@@ -2,6 +2,125 @@
 
 ## latest...
 
+## 14.08.23
+
+Latest readout, here using the "MSYS2" subsystem toolchain. Some of these tests are wrapped in functions now and under further development in other repos elsewhere (I'll keep this project in sync with any changes):
+
+```
+$ ./out/usr/bin/pkgman_config.exe
+
+pkgman_config v6.0.2-81c0a15465cc6197b913e761833d2b486fc0c4fa
+
+Checking for msys installation...
+
+Success :: 'C:/msys64/msys2_shell.cmd'
+Success :: 'C:/msys64/autorebase.bat'
+
+Checking for required system headers...
+
+Success :: '<mntent.h>'
+Failed  :: '<sys/mnttab.h>'
+Success :: '<sys/mount.h>'
+Success :: '<sys/param.h>'
+Success :: '<sys/stat.h>'
+Success :: '<sys/statvfs.h>'
+Success :: '<sys/types.h>'
+Failed  :: '<sys/ucred.h>'
+Success :: '<termios.h>'
+
+Checking for required library dependencies...
+
+Success :: 'ucrtbase.dll'
+Success :: 'msvcrt.dll'
+Success :: 'msys-2.0.dll'
+Success :: 'msys-crypto-3.dll'
+Success :: 'msys-curl-4.dll'
+Success :: 'msys-gpgme-11.dll'
+
+Checking for required functions...
+
+Success :: 'char *strsep(char **stringp, const char *delim)'
+Success :: 'char *strndup(const char *s, size_t n)'
+
+Build information:
+
+prefix                  : /usr
+sysconfdir              : /etc
+conf file               : /etc/pkgman.conf
+localstatedir           : /var
+database dir            : /var/lib/pacman/
+cache dir               : /var/cache/pacman/pkg/
+compiler                : GNU 11.3.0
+
+Architecture            : @0@'.format(carch)
+Host Type               : @0@'.format(chost)
+File inode command      : @0@'.format(inodecmd)
+File seccomp command    : @0@'.format(filecmd)
+libalpm version         : 13.0.2
+pacman version          : 6.0.2
+
+Directory and file information:
+
+root working directory  : /
+package extension       : .pkg.tar.gz
+source pkg extension    : .src.tar.gz
+build script name       : PKGBUILD
+template directory      : /usr/share/makepkg-template
+
+Compilation options:
+
+i18n support            : @0@'.format(get_option('i18n'))
+Build docs              : @0@'.format(build_doc)
+debug build             : false
+Use libcurl             : true
+Use GPGME               : true
+Use OpenSSL             : true
+Use nettle              : false
+
+pkgman_config v6.0.2-81c0a15465cc6197b913e761833d2b486fc0c4fa
+Copyright (C) 2023 Nathan J. Hood (StoneyDSP) <nathanjhood@googlemail.com>
+
+License GPLv2: <https://gnu.org/licenses/gpl.htm>
+This software comes with ABSOLUTELY NO WARRANTY; This is free software, and you are free to change and redistribute it.
+
+Home page URL: https://github.com/StoneyDSP/msys2-libconfig.git
+Bug reports: https://github.com/StoneyDSP/msys2-libconfig/issues
+
+```
+
+Here is the build task that generated the above:
+
+```
+C:/msys64/usr/bin/x86_64-pc-msys-gcc.exe \
+-D_FILE_OFFSET_BITS=64 \
+-D_GNU_SOURCE=1 \
+-D_DEFAULT_SOURCE=1 \
+-D_XOPEN_SOURCE=500 \
+-D_XOPEN_SOURCE_EXTENDED \
+-I${workspaceFolder}/include \
+-IC:/msys64/usr/include \
+-IC:/msys64/usr/include/curl \
+-IC:/msys64/usr/include/w32api \
+-IC:/msys64/usr/lib/gcc/x86_64-pc-msys/11.3.0/include \
+-IC:/msys64/usr/lib/gcc/x86_64-pc-msys/11.3.0/include-fixed \
+-LC:/msys64/usr/lib/gcc/x86_64-pc-msys/11.3.0 \
+-LC:/msys64/usr/lib/w32api \
+-LC:/msys64/usr/lib \
+-lgcc_s \
+-lgcc \
+-lmsys-2.0 \
+-lkernel32 \
+-ladvapi32 \
+-lshell32 \
+-luser32 \
+-lcurl \
+-m64 \
+-pipe \
+-ggdb \
+${workspaceFolder}/src/pkgman_config.c \
+-o ${workspaceFolder}/out/usr/bin/pkgman_config.exe
+```
+
 ## 11.08.23
 
 Now building our package manager configurator successfully for *all* Msys64 susbsystems! :D There are some quirks from one to the other that I hope I can address further within the code... some differences in system header availability, for example.

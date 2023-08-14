@@ -830,11 +830,7 @@
 #  endif
 #endif
 
-/**
-#define JOIN_VARS(A, B) A STRING_SEPERATOR B
-#define JOIN_PATHS(PRE, POST) PRE POST
-*/
-
+/** Not quite there yet... */
 #define ___JOIN_PATHS(A, SEP, B) A ##SEP ##B
 #define __JOIN_PATHS(A, SEP, B) ___JOIN_PATHS(A, SEP, B)
 #define JOIN_PATHS(A, B) __JOIN_PATHS(A, PATH_SEPERATOR, B)
@@ -901,17 +897,52 @@
 #  define PACKAGE_VERSION __PM_STRING(PKGMAN_VERSION_MAJOR) __PM_STRING(.) __PM_STRING(PKGMAN_VERSION_MINOR) __PM_STRING(.) __PM_STRING(PKGMAN_VERSION_PATCH)
 #endif
 
+#if !defined(EXEC_PREFIX)
+#  define EXEC_PREFIX PREFIX
+#endif
+
 #if !defined(BINDIR)
-/** #  define BINDIR PREFIX PATH_SEPERATOR __PM_STRING(bin) */
-#  define BINDIR PREFIX PATH_SEPERATOR __PM_STRING(bin)
+#  define BINDIR EXEC_PREFIX PATH_SEPERATOR __PM_STRING(bin)
 #endif
 
 #if !defined(SBINDIR)
-#  define SBINDIR PREFIX PATH_SEPERATOR __PM_STRING(sbin)
+#  define SBINDIR EXEC_PREFIX PATH_SEPERATOR __PM_STRING(sbin)
+#endif
+
+#if !defined(LIBDIR)
+#  define LIBDIR EXEC_PREFIX PATH_SEPERATOR __PM_STRING(lib)
+#endif
+
+#if !defined(LIBEXECDIR)
+#  define LIBEXECDIR EXEC_PREFIX PATH_SEPERATOR __PM_STRING(libexec)
 #endif
 
 #if !defined(DATAROOTDIR)
 #  define DATAROOTDIR PREFIX PATH_SEPERATOR __PM_STRING(share)
+#endif
+
+#if !defined(DATADIR)
+#  define DATADIR DATAROOTDIR
+#endif
+
+#if !defined(DOCDIR)
+#  define DOCDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(info)
+#endif
+
+#if !defined(INFODIR)
+#  define INFODIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(info)
+#endif
+
+#if !defined(LOCALEDIR)
+#  define LOCALEDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(locale)
+#endif
+
+#if !defined(MANDIR)
+#  define MANDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(doc) PATH_SEPERATOR __PM_STRING(pkgman)
+#endif
+
+#if !defined(RUNSTATEDIR)
+#  define RUNSTATEDIR LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(run)
 #endif
 
 #if !defined(LDCONFIG)
@@ -926,6 +957,10 @@
 #  define BUILDSCRIPT __PM_STRING(PKGBUILD)
 #endif
 
+#if !defined(LIBMAKEPKGDIR)
+#  define LIBMAKEPKGDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(makepkg)
+#endif
+
 #if !defined(SYSHOOKDIR)
 #  define SYSHOOKDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(libalpm) PATH_SEPERATOR __PM_STRING(hooks) PATH_SEPERATOR
 #endif
@@ -935,7 +970,7 @@
 #endif
 
 #if !defined(DBPATH)
-#  define DBPATH LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(lib) PATH_SEPERATOR __PM_STRING(pacman) PATH_SEPERATOR
+#  define DBPATH LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(lib) PATH_SEPERATOR __PM_STRING(pkgman) PATH_SEPERATOR
 #endif
 
 #if !defined(GPGDIR)
@@ -946,16 +981,28 @@
 #  define CACHEDIR LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(cache) PATH_SEPERATOR __PM_STRING(pacman) PATH_SEPERATOR __PM_STRING(pkg) PATH_SEPERATOR
 #endif
 
+#if !defined(LOGFILE)
+#  define LOGFILE LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(log) PATH_SEPERATOR __PM_STRING(pkgman.log)
+#endif
+
+#if !defined(HOOKDIR)
+#  define HOOKDIR SYSCONFDIR PATH_SEPERATOR __PM_STRING(pacman.d) PATH_SEPERATOR __PM_STRING(hooks) PATH_SEPERATOR
+#endif
+
 #if !defined(MAKEPKG_TEMPLATE_DIR)
 #  define MAKEPKG_TEMPLATE_DIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(makepkg-template)
 #endif
 
+#if !defined(PKGDATADIR)
+#  define PKGDATADIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(pkgman)
+#endif
+
 #if !defined(PKGEXT)
-#  define PKGEXT __PM_STRING(.pkg.tar.gz)
+#  define PKGEXT __PM_STRING(.) __PM_STRING(pkg) __PM_STRING(.) __PM_STRING(tar) __PM_STRING(.) __PM_STRING(gz)
 #endif
 
 #if !defined(SRCEXT)
-#  define SRCEXT __PM_STRING(.src.tar.gz)
+#  define SRCEXT __PM_STRING(.) __PM_STRING(src) __PM_STRING(.) __PM_STRING(tar) __PM_STRING(.) __PM_STRING(gz)
 #endif
 
 /***************************************************************************//**

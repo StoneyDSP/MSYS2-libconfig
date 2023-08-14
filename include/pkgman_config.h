@@ -707,105 +707,64 @@
 #if (PKGMAN_PLATFORM_IS_MSYS)
 
   #if !defined(_MODE_T_DECLARED)
-  #  define	_MODE_T_
-  typedef	unsigned int mode_t; /* permissions */
-  #  define _MODE_T_DECLARED
+  #  define	_MODE_T_REQUIRED
   #endif
 
   #if !defined(_UID_T_DECLARED)
-  #  define _UID_T_
-  typedef	unsigned int uid_t; /* user id */
-  #  define _UID_T_DECLARED
+  #  define _UID_T_REQUIRED
   #endif
 
   #if !defined(_OFF_T_DECLARED)
-  #  define _OFF_T_
-  typedef	signed int off_t; /* file offset */
-  #  define _OFF_T_DECLARED
+  #  define _OFF_T_REQUIRED
   #endif
 
   #if !defined(_PID_T_DECLARED)
-  #  define _PID_T_
-  typedef	signed int pid_t; /* process id */
-  #  define _PID_T_DECLARED
+  #  define _PID_T_REQUIRED
+  #endif
+
+  #if !defined(_SIZE_T_DECLARED)
+  #  define _SIZE_T_REQUIRED
   #endif
 
   #if !defined(_SSIZE_T_DECLARED)
-  #  define _SSIZE_T_
-  typedef signed int ssize_t; /** Signed size_t type */
-  #  define _SSIZE_T_DECLARED
+  #  define _SSIZE_T_REQUIRED
   #endif
 
   #if !defined(_INT64_T_DECLARED)
-  #  define _INT64_T_
-  typedef	signed long int int64_t;
-  #  define _INT64_T_DECLARED
+  #  define _INT64_T_REQUIRED
   #endif
 
 #else /** !(PKGMAN_PLATFORM_IS_MSYS) */
 
   #if !defined(_MODE_T_)
-  #  define	_MODE_T_
-  typedef	unsigned int mode_t; /* permissions */
-  #  define _MODE_T_
+  #  define	_MODE_T_REQUIRED
   #endif
 
   #if !defined(_UID_T_)
-  #  define _UID_T_
-  typedef	unsigned int uid_t; /* user id */
-  #  define _UID_T_DEFINED
+  #  define _UID_T_REQUIRED
   #endif
 
   #if !defined(_OFF_T_)
-  #  define _OFF_T_
-  typedef	signed int off_t; /* file offset */
-  #  define _OFF_T_DEFINED
+  #  define _OFF_T_REQUIRED
   #endif
 
   #if !defined(_PID_T_)
-  #  define _PID_T_
-  typedef	signed int pid_t; /* process id */
-  #  define _PID_T_DEFINED
+  #  define _PID_T_REQUIRED
   #endif
 
   #if !defined(_SIZE_T_DEFINED)
-  #  define _SIZE_T_
-  typedef	unsigned int size_t;
-  #  define _SIZE_T_DEFINED
+  #  define _SIZE_T_REQUIRED
   #endif
 
   #if !defined(_SSIZE_T_DEFINED)
-  #  define _SSIZE_T_
-  typedef signed int ssize_t; /** Signed size_t type */
-  #  define _SSIZE_T_DEFINED
+  #  define _SSIZE_T_REQUIRED
   #endif
 
   #if !defined(__int64)
-  #  define _INT64_T_
-  typedef	signed long int int64_t;
-  #  define _INT64_T_DEFINED
+  #  define _INT64_T_REQUIRED
   #endif
 
 #endif
-
-#define PKGMAN_MODE_T mode_t
-#define PKGMAN_UID_T uid_t
-#define PKGMAN_OFF_T off_t
-#define PKGMAN_PID_T pid_t
-#define PKGMAN_SIZE_T size_t
-#define PKGMAN_SSIZE_T ssize_t
-#define PKGMAN_INT64_T int64_t
-
-#define PKGMAN_INT(ID, VAL) int ID = VAL;
-
-/**
- * @name PKGMAN_INT_PTR
- * @brief Creates pointers to integer values using the pre-processor. PKGMAN_INT_PTR(one, 1)
- * @param ID Accepts a name for your integer.
- * @param VAL accepts a value for your integer.
- *
- */
-#define PKGMAN_INT_PTR(ID, VAL) int* ID = VAL;
 
 
 /***************************************************************************//**

@@ -830,8 +830,14 @@
 #  endif
 #endif
 
+/**
 #define JOIN_VARS(A, B) A STRING_SEPERATOR B
 #define JOIN_PATHS(PRE, POST) PRE POST
+*/
+
+#define ___JOIN_PATHS(A, SEP, B) A ##SEP ##B
+#define __JOIN_PATHS(A, SEP, B) ___JOIN_PATHS(A, SEP, B)
+#define JOIN_PATHS(A, B) __JOIN_PATHS(A, PATH_SEPERATOR, B)
 
 #if !defined(HOMEDRIVE)
 #  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
@@ -849,19 +855,19 @@
 #  endif
 #endif
 
-#if !defined(PREFIX)
-#  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
-#    define PREFIX HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR __PM_STRING(usr) /** (default value for Win32/MinGW). */
-#  else
-#    define PREFIX HOMEDRIVE __PM_STRING(usr) /**  */
-#  endif
-#endif
-
 #if !defined(SYSROOT)
 #  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
 #    define SYSROOT HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR __PM_STRING(etc)
 #  else
 #    define SYSROOT HOMEDRIVE
+#  endif
+#endif
+
+#if !defined(PREFIX)
+#  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
+#    define PREFIX HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR __PM_STRING(usr) /** (default value for Win32/MinGW). */
+#  else
+#    define PREFIX SYSROOT __PM_STRING(usr) /**  */
 #  endif
 #endif
 
@@ -896,6 +902,7 @@
 #endif
 
 #if !defined(BINDIR)
+/** #  define BINDIR PREFIX PATH_SEPERATOR __PM_STRING(bin) */
 #  define BINDIR PREFIX PATH_SEPERATOR __PM_STRING(bin)
 #endif
 
@@ -1014,14 +1021,17 @@ extern "C" {
 	 * @param delim
 	 * @return char*
 	 */
-	char *strsep(char **stringp, const char *delim) {
+	char *strsep(char **stringp, const char *delim)
+	{
 		char *rv = *stringp;
-		if (rv) {
+		if (rv)
+		{
 			*stringp += strcspn(*stringp, delim);
 			if (**stringp)
 				*(*stringp)++ = '\0';
 			else
-				*stringp = 0; }
+				*stringp = 0;
+		}
 		return rv;
 	}
 #  define HAVE_STRSEP 1
@@ -1039,7 +1049,8 @@ extern "C" {
 		size_t len = strnlen(s, n);
 		char *new = (char *) malloc(len + 1);
 
-		if(new == NULL) {
+		if(new == NULL)
+		{
 			return NULL;
 		}
 
@@ -1105,7 +1116,6 @@ const char* pkgman_c_compiler = { PKGMAN_C_COMPILER };
 
 /**
  *
- * const char* bindir = BINDIR;
  * const char* datadir = DATADIR;
  * const char* includedir = INCLUDEDIR;
  * const char* infodir = INFODIR;
@@ -1114,20 +1124,10 @@ const char* pkgman_c_compiler = { PKGMAN_C_COMPILER };
  * const char* libexecdir = LIBEXECDIR;
  * const char* localedir = LOCALEDIR;
  * const char* mandir = MANDIR;
- * const char* sbindir = SBINDIR;
  * const char* sharedstatedir = SHAREDSTATEDIR;
  *
- *
- * const char* scriptletshell = SCRIPTLET_SHELL;
- * const char* ldconfig = LDCONFIG;
- * const char* libalpm_version = LIB_VERSION;
- *
  * const char* syshookdir = SYSHOOKDIR;
- * const char* conffile = CONFFILE;
- * const char* dbpath = DBPATH;
- * const char* gpgdir = GPGDIR;
  * const char* logfile = LOGFILE;
- * const char* cachedir = CACHEDIR;
  * const char* hookdir = HOOKDIR;
 */
 #endif /** !(PKGMAN_INTELLISENSE_GUARD) */
@@ -1135,7 +1135,6 @@ const char* pkgman_c_compiler = { PKGMAN_C_COMPILER };
 int checkForFile(const char* filename);
 int checkForDir(const char* pathToDir);
 int checkForLib(const char* libName);
-
 /**
  * It is a good idea to declare the function signatures above even though they
  * can only be called in the source file which we don't plan to pass downstream.

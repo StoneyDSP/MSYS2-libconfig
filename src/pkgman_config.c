@@ -51,7 +51,7 @@
 
 #include <errno.h>
 
-#include "pkgman/pkgman_config.h"
+#include "pkgman_config.h"
 #ifndef PKGMAN_CONFIGURATION_H
 # error "No config header found?"
 #endif
@@ -83,13 +83,9 @@ int checkForFile(const char* filename)
 
 	if ((fileCheckResult) != 0)  {
 
-		/** printf("%s						: Failed [%d]\n", filename, fileCheckResult); */
-
 		printf("Fail    :: '%s' [%d]\n", filename, fileCheckResult);
 
 	} else {
-
-		/** printf("%s						: Success\n", filename); */
 
 		printf("Success :: '%s'\n", filename);
 	}
@@ -136,23 +132,20 @@ int checkForDir(const char* pathToDir)
 		perror("stat()");
 
 		return errno;
-
-	} else {
-
-		if (S_ISDIR(lsbuf.st_mode))  {
-
-			printf("\"%s\" exists on this system.\n", dir_path);
-
-		} else {
-
-			printf("\"%s\" does not exist on this system.\n", dir_path);
-
-			return (-1);
-		}
 	}
+
+	if (!(S_ISDIR(lsbuf.st_mode)))  {
+
+		printf("\"%s\" does not exist on this system.\n", dir_path);
+
+		return (-1);
+	}
+
+	printf("\"%s\" exists on this system.\n", dir_path);
 
 	return (0);
 }
+
 
 /**
  * @name checkForLib
@@ -174,8 +167,6 @@ int checkForLib(const char* libName)
 
 	if ((!handle) || (error != NULL))  {
 
-		/** printf("%s						: Failed [%d]:%s\n", libName, errno, error); */
-
 		printf("Fail    :: '%s' [%d]: %s\n", libName, errno, error);
 
 		return errno;
@@ -183,12 +174,11 @@ int checkForLib(const char* libName)
 
 	dlclose(handle);
 
-	/**  printf("%s						: Success\n", libName); */
-
 	printf("Success :: '%s'\n", libName);
 
 	return (0);
 }
+
 
 #if (__CYGWIN__)
 int WinMain(int argc, char **argv)
@@ -198,10 +188,11 @@ int main(int argc, char **argv)
 {
 #endif
 
-	int i = 0;
-
-	for (i = 0; i < argc; i++)
-  	  printf("%s\n", argv[i]);
+	/**
+	 * int i = 0;
+	 * for (i = 0; i < argc; i++) printf("%s\n", argv[i]);
+	 *
+	*/
 
 	printf("\n");
 	printf("pkgman_config");
@@ -212,6 +203,7 @@ int main(int argc, char **argv)
 	#endif
 	printf("\n"); /** Needed for nice formatting! */
 
+	printf("\n");
 	printf("Checking for msys installation...\n");
 	printf("\n");
 
@@ -225,61 +217,59 @@ int main(int argc, char **argv)
 	printf("Checking for required system headers...\n");
 	printf("\n");
 
-	const char* header_found = { "Success" };
-	const char* header_missing = { "Fail" };
 
 #if defined(HAVE_MNTENT_H)
-	printf("<mntent.h>			: %s\n", header_found);
+	printf("Success :: '%s'\n", "<mntent.h>");
 #else
-	printf("<mntent.h>			: %s\n", header_missing);
+	printf("Failed  :: '%s'\n", "<mntent.h>");
 #endif
 
 #if defined(HAVE_SYS_MNTTAB_H)
-    printf("<sys/mnttab.h>			: %s\n", header_found);
+	printf("Success :: '%s'\n", "<sys/mnttab.h>");
 #else
-	printf("<sys/mnttab.h>			: %s\n", header_missing);
+	printf("Failed  :: '%s'\n", "<sys/mnttab.h>");
 #endif
 
 #if defined(HAVE_SYS_MOUNT_H)
-    printf("<sys/mount.h>			: %s\n", header_found);
+	printf("Success :: '%s'\n", "<sys/mount.h>");
 #else
-    printf("<sys/mount.h>			: %s\n", header_missing);
+    printf("Failed  :: '%s'\n", "<sys/mount.h>");
 #endif
 
 #if defined(HAVE_SYS_PARAM_H)
-    printf("<sys/param.h>			: %s\n", header_found);
+	printf("Success :: '%s'\n", "<sys/param.h>");
 #else
-    printf("<sys/param.h>			: %s\n", header_missing);
+    printf("Failed  :: '%s'\n", "<sys/param.h>");
 #endif
 
 #if defined(HAVE_SYS_STAT_H)
-    printf("<sys/stat.h>			: %s\n", header_found);
+	printf("Success :: '%s'\n", "<sys/stat.h>");
 #else
-    printf("<sys/stat.h>			: %s\n", header_missing);
+    printf("Failed  :: '%s'\n", "<sys/stat.h>");
 #endif
 
 #if defined(HAVE_SYS_STATVFS_H)
-    printf("<sys/statvfs.h>			: %s\n", header_found);
+	printf("Success :: '%s'\n", "<sys/statvfs.h>");
 #else
-    printf("<sys/statvfs.h>			: %s\n", header_missing);
+    printf("Failed  :: '%s'\n", "<sys/statvfs.h>");
 #endif
 
 #if defined(HAVE_SYS_TYPES_H)
-    printf("<sys/types.h>			: %s\n", header_found);
+    printf("Success :: '%s'\n", "<sys/types.h>");
 #else
-    printf("<sys/types.h>			: %s\n", header_missing);
+    printf("Failed  :: '%s'\n", "<sys/types.h>");
 #endif
 
 #if defined(HAVE_SYS_UCRED_H)
-    printf("<sys/ucred.h>			: %s\n", header_found);
+	printf("Success :: '%s'\n", "<sys/ucred.h>");
 #else
-    printf("<sys/ucred.h>			: %s\n", header_missing);
+    printf("Failed  :: '%s'\n", "<sys/ucred.h>");
 #endif
 
 #if defined(HAVE_TERMIOS_H)
-    printf("<termios.h>			: %s\n", header_found);
+    printf("Success :: '%s'\n", "<termios.h>");
 #else
-	printf("<termios.h>			: %s\n", header_missing);
+	printf("Failed  :: '%s'\n", "<termios.h>");
 #endif
 
 
@@ -296,6 +286,22 @@ int main(int argc, char **argv)
 
 	#define HAVE_LIBCURL have_libcurl
 	#define HAVE_LIBGPGME have_libcurl
+
+	printf("\n");
+	printf("Checking for required functions...\n");
+	printf("\n");
+
+#if (HAVE_STRSEP)
+	printf("Success :: '%s'\n", "char *strsep(char **stringp, const char *delim)");
+#else
+	printf("Failed  :: '%s'\n", "char *strsep(char **stringp, const char *delim)");
+#endif
+
+#if (HAVE_STRNDUP)
+	printf("Success :: '%s'\n", "char *strndup(const char *s, size_t n)");
+#else
+	printf("Failed  :: '%s'\n", "char *strndup(const char *s, size_t n)");
+#endif
 
 /**
  * #if defined(__CYGWIN__) && CYGWIN_VERSION_API_MINOR < 262
@@ -486,10 +492,23 @@ int main(int argc, char **argv)
   	printf("Use nettle              : false\n");
 #endif
 
-
 	printf("\n");
 
-	printf("...pkgman_config > Exiting successfully.\n");
+	printf("pkgman_config");
+
+	#ifdef PKGMAN_VERSION
+		printf(" v%d.%d.%d", PKGMAN_VERSION_MAJOR, PKGMAN_VERSION_MINOR, PKGMAN_VERSION_PATCH);
+		printf("-%s", PKGMAN_VERSION_TWEAK);
+	#endif
+	printf("\n"); /** Needed for nice formatting! */
+
+	printf("Copyright (C) 2023 Nathan J. Hood (StoneyDSP) <nathanjhood@googlemail.com>\n");
+	printf("\n");
+	printf("License GPLv2: <https://gnu.org/licenses/gpl.htm>\n");
+	printf("This software comes with ABSOLUTELY NO WARRANTY; This is free software, and you are free to change and redistribute it.\n");
+	printf("\n");
+	printf("Home page URL: https://github.com/StoneyDSP/msys2-libconfig.git\n");
+	printf("Bug reports: https://github.com/StoneyDSP/msys2-libconfig/issues\n");
 
 	return(EXIT_SUCCESS);
 }

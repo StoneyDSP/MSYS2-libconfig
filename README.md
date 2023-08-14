@@ -1,5 +1,7 @@
 # MSYS2-libconfig
 
+A configuration header/library/executable to make it easier to build arch-linux 'pacman'-derived projects, thanks to modern C.
+
 ## latest...
 
 ## 14.08.23

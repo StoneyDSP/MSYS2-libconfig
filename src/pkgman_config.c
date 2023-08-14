@@ -217,61 +217,102 @@ int main(int argc, char **argv)
 	printf("Checking for required system headers...\n");
 	printf("\n");
 
+	struct pkgman_required_headers* PkgmanGetHeaders = &PkgmanHeaders;
 
-#if defined(HAVE_MNTENT_H)
-	printf("Success :: '%s'\n", "<mntent.h>");
-#else
-	printf("Failed  :: '%s'\n", "<mntent.h>");
-#endif
+	if (PKGMAN_HAS_MNTENT_H)
+		PkgmanHeaders.have_mntent_h = HEADER_FOUND;
 
-#if defined(HAVE_SYS_MNTTAB_H)
-	printf("Success :: '%s'\n", "<sys/mnttab.h>");
-#else
-	printf("Failed  :: '%s'\n", "<sys/mnttab.h>");
-#endif
+	if (PKGMAN_HAS_SYS_MNTTAB_H)
+		PkgmanHeaders.have_sys_mnt_tab_h = HEADER_FOUND;
 
-#if defined(HAVE_SYS_MOUNT_H)
-	printf("Success :: '%s'\n", "<sys/mount.h>");
-#else
-    printf("Failed  :: '%s'\n", "<sys/mount.h>");
-#endif
+	if (PKGMAN_HAS_SYS_PARAM_H)
+		PkgmanHeaders.have_sys_param_h = HEADER_FOUND;
 
-#if defined(HAVE_SYS_PARAM_H)
-	printf("Success :: '%s'\n", "<sys/param.h>");
-#else
-    printf("Failed  :: '%s'\n", "<sys/param.h>");
-#endif
+	if (PKGMAN_HAS_SYS_RESOURCE_H)
+		PkgmanHeaders.have_sys_resource_h = HEADER_FOUND;
 
-#if defined(HAVE_SYS_STAT_H)
-	printf("Success :: '%s'\n", "<sys/stat.h>");
-#else
-    printf("Failed  :: '%s'\n", "<sys/stat.h>");
-#endif
+	if (PKGMAN_HAS_SYS_STAT_H)
+		PkgmanHeaders.have_sys_stat_h = HEADER_FOUND;
 
-#if defined(HAVE_SYS_STATVFS_H)
-	printf("Success :: '%s'\n", "<sys/statvfs.h>");
-#else
-    printf("Failed  :: '%s'\n", "<sys/statvfs.h>");
-#endif
+	if (PKGMAN_HAS_SYS_STATFS_H)
+		PkgmanHeaders.have_sys_statfs_h = HEADER_FOUND;
 
-#if defined(HAVE_SYS_TYPES_H)
-    printf("Success :: '%s'\n", "<sys/types.h>");
-#else
-    printf("Failed  :: '%s'\n", "<sys/types.h>");
-#endif
+	if (PKGMAN_HAS_SYS_STATVFS_H)
+		PkgmanHeaders.have_sys_statvfs_h = HEADER_FOUND;
 
-#if defined(HAVE_SYS_UCRED_H)
-	printf("Success :: '%s'\n", "<sys/ucred.h>");
-#else
-    printf("Failed  :: '%s'\n", "<sys/ucred.h>");
-#endif
+	if (PKGMAN_HAS_SYS_TIME_H)
+		PkgmanHeaders.have_sys_time_h = HEADER_FOUND;
 
-#if defined(HAVE_TERMIOS_H)
-    printf("Success :: '%s'\n", "<termios.h>");
-#else
-	printf("Failed  :: '%s'\n", "<termios.h>");
-#endif
+	if (PKGMAN_HAS_SYS_TYPES_H)
+		PkgmanHeaders.have_sys_types_h = HEADER_FOUND;
 
+	if (PKGMAN_HAS_SYS_UCRED_H)
+		PkgmanHeaders.have_sys_ucred_h = HEADER_FOUND;
+
+	if (PkgmanGetHeaders->have_mntent_h == HEADER_FOUND)
+	{
+		printf("Success :: '%s'\n", "<mntent.h>");
+	} else {
+		printf("Failed  :: '%s'\n", "<mntent.h>");
+	}
+
+	if(PkgmanGetHeaders->have_sys_mnt_tab_h == HEADER_FOUND)
+	{
+		printf("Success :: '%s'\n", "<sys/mnttab.h>");
+	} else {
+		printf("Failed  :: '%s'\n", "<sys/mnttab.h>");
+	}
+
+	if (PkgmanGetHeaders->have_sys_mount_h == HEADER_FOUND)
+	{
+		printf("Success :: '%s'\n", "<sys/mount.h>");
+	} else {
+    	printf("Failed  :: '%s'\n", "<sys/mount.h>");
+	}
+
+
+	if (PkgmanGetHeaders->have_sys_param_h == HEADER_FOUND)
+	{
+		printf("Success :: '%s'\n", "<sys/param.h>");
+	} else {
+		printf("Failed  :: '%s'\n", "<sys/param.h>");
+	}
+
+	if (PkgmanGetHeaders->have_sys_stat_h == HEADER_FOUND)
+	{
+		printf("Success :: '%s'\n", "<sys/stat.h>");
+	} else {
+		printf("Failed  :: '%s'\n", "<sys/stat.h>");
+	}
+
+
+	if (PkgmanGetHeaders->have_sys_statvfs_h == HEADER_FOUND)
+	{
+		printf("Success :: '%s'\n", "<sys/statvfs.h>");
+	} else {
+		printf("Failed  :: '%s'\n", "<sys/statvfs.h>");
+	}
+
+	if (PkgmanGetHeaders->have_sys_types_h == HEADER_FOUND)
+	{
+		printf("Success :: '%s'\n", "<sys/types.h>");
+	} else {
+		printf("Failed  :: '%s'\n", "<sys/types.h>");
+	}
+
+	if (PkgmanGetHeaders->have_sys_ucred_h == HEADER_FOUND)
+	{
+		printf("Success :: '%s'\n", "<sys/ucred.h>");
+	} else {
+		printf("Failed  :: '%s'\n", "<sys/ucred.h>");
+	}
+
+	if (PkgmanGetHeaders->have_termios_h == HEADER_FOUND)
+	{
+		printf("Success :: '%s'\n", "<termios.h>");
+	} else {
+		printf("Failed  :: '%s'\n", "<termios.h>");
+	}
 
 	printf("\n");
 	printf("Checking for required library dependencies...\n");
@@ -291,17 +332,77 @@ int main(int argc, char **argv)
 	printf("Checking for required functions...\n");
 	printf("\n");
 
-#if (HAVE_STRSEP)
-	printf("Success :: '%s'\n", "char *strsep(char **stringp, const char *delim)");
-#else
-	printf("Failed  :: '%s'\n", "char *strsep(char **stringp, const char *delim)");
-#endif
+	struct pkgman_required_symbols* PkgmanGetSymbols = &PkgmanSymbols;
 
-#if (HAVE_STRNDUP)
-	printf("Success :: '%s'\n", "char *strndup(const char *s, size_t n)");
-#else
-	printf("Failed  :: '%s'\n", "char *strndup(const char *s, size_t n)");
-#endif
+	if (PKGMAN_HAS_GETMNTENT)
+		PkgmanSymbols.have_getmntent = SYMBOL_FOUND;
+
+	if (PKGMAN_HAS_GETMNTINFO)
+		PkgmanSymbols.have_getmntinfo = SYMBOL_FOUND;
+
+	if (PKGMAN_HAS_STRNDUP)
+		PkgmanSymbols.have_strndup = SYMBOL_FOUND;
+
+	if (PKGMAN_HAS_STRNLEN)
+		PkgmanSymbols.have_strnlen = SYMBOL_FOUND;
+
+	if (PKGMAN_HAS_STRSEP)
+		PkgmanSymbols.have_strsep = SYMBOL_FOUND;
+
+	if (PKGMAN_HAS_SWPRINTF)
+		PkgmanSymbols.have_swprintf = SYMBOL_FOUND;
+
+	if (PKGMAN_HAS_TCFLUSH)
+		PkgmanSymbols.have_tcflush = SYMBOL_FOUND;
+
+	if (PkgmanGetSymbols->have_getmntent == SYMBOL_FOUND)
+	{
+		printf("Success :: '%s'\n", "getmntent()");
+	} else {
+		printf("Failed  :: '%s'\n", "getmntent()");
+	}
+
+	if (PkgmanGetSymbols->have_getmntinfo == SYMBOL_FOUND)
+	{
+		printf("Success :: '%s'\n", "getmntinfo()");
+	} else {
+		printf("Failed  :: '%s'\n", "getmntinfo()");
+	}
+
+	if (PkgmanGetSymbols->have_strndup == SYMBOL_FOUND)
+	{
+		printf("Success :: '%s'\n", "strndup()");
+	} else {
+		printf("Failed  :: '%s'\n", "strndup()");
+	}
+
+	if (PkgmanGetSymbols->have_strnlen == SYMBOL_FOUND)
+	{
+		printf("Success :: '%s'\n", "strnlen()");
+	} else {
+		printf("Failed  :: '%s'\n", "strnlen()");
+	}
+
+	if (PkgmanGetSymbols->have_strsep == SYMBOL_FOUND)
+	{
+		printf("Success :: '%s'\n", "strsep()");
+	} else {
+		printf("Failed  :: '%s'\n", "strsep()");
+	}
+
+	if (PkgmanGetSymbols->have_swprintf == SYMBOL_FOUND)
+	{
+		printf("Success :: '%s'\n", "swprintf()");
+	} else {
+		printf("Failed  :: '%s'\n", "swprintf()");
+	}
+
+	if (PkgmanGetSymbols->have_tcflush == SYMBOL_FOUND)
+	{
+		printf("Success :: '%s'\n", "tcflush()");
+	} else {
+		printf("Failed  :: '%s'\n", "tcflush()");
+	}
 
 /**
  * #if defined(__CYGWIN__) && CYGWIN_VERSION_API_MINOR < 262
@@ -428,13 +529,13 @@ int main(int argc, char **argv)
 	printf("\n");
 	printf("Build information:\n\n");
 
-	printf("prefix                  : %s\n", 									prefix);
-  	printf("sysconfdir              : %s\n", 									sysconfdir);
-  	printf("conf file           	: %s\n", 									conffile);
-  	printf("localstatedir           : %s\n", 									localstatedir);
-  	printf("database dir        	: %s\n", 									database_dir);
-  	printf("cache dir           	: %s\n", 									cachedir);
-	printf("compiler 		: %s\n", 											pkgman_c_compiler);
+	printf("prefix                  : %s\n", 									PkgmanGetCommandLine->prefix);
+  	printf("sysconfdir              : %s\n", 									PkgmanGetCommandLine->sysconfdir);
+  	printf("conf file           	: %s\n", 									PkgmanGetConf->conffile);
+  	printf("localstatedir           : %s\n", 									PkgmanGetCommandLine->localstatedir);
+  	printf("database dir        	: %s\n", 									PkgmanGetConf->dbpath);
+  	printf("cache dir           	: %s\n", 									PkgmanGetConf->cachedir);
+	printf("compiler 		: %s\n", 											PkgmanGetSettings->pkgman_c_compiler);
 
 	printf("\n");
 
@@ -442,18 +543,18 @@ int main(int argc, char **argv)
   	printf("Host Type               : @0@'.format(chost)\n");
   	printf("File inode command      : @0@'.format(inodecmd)\n");
   	printf("File seccomp command    : @0@'.format(filecmd)\n");
-  	printf("libalpm version         : %s\n", libalpm_version);
-    printf("pacman version          : %s\n", pkgman_version);
+  	printf("libalpm version         : %s\n", 									PkgmanGetConf->libalpm_version);
+    printf("pacman version          : %s\n", 									PkgmanGetSettings->pkgman_version);
 
 	printf("\n");
 
 	printf("Directory and file information:\n\n");
 
-	printf("root working directory  : %s\n", 									rootdir);
-  	printf("package extension       : %s\n", 									pkg_ext);
-    printf("source pkg extension    : %s\n", 									src_ext);
-    printf("build script name       : %s\n", 									buildscript);
-    printf("template directory      : %s\n",	 								makepg_template_dir);
+	printf("root working directory  : %s\n", 									PkgmanGetCommandLine->rootdir);
+  	printf("package extension       : %s\n", 									PkgmanGetSettings->pkg_ext);
+    printf("source pkg extension    : %s\n", 									PkgmanGetSettings->src_ext);
+    printf("build script name       : %s\n", 									PkgmanGetCommandLine->buildscript);
+    printf("template directory      : %s\n",	 								PkgmanGetSettings->makepkg_template_dir);
 
 	printf("\n");
 

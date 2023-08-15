@@ -25,9 +25,9 @@
 #ifndef PKGMAN_CONFIGURATION_H
 #define PKGMAN_CONFIGURATION_H
 
-#define PKGMAN_VERSION_MAJOR 6
-#define PKGMAN_VERSION_MINOR 0
-#define PKGMAN_VERSION_PATCH 2
+#define PKGMAN_VERSION_MAJOR '6'
+#define PKGMAN_VERSION_MINOR '0'
+#define PKGMAN_VERSION_PATCH '2'
 #define PKGMAN_VERSION_TWEAK __PM_STRING(81c0a15465cc6197b913e761833d2b486fc0c4fa)
 #define PKGMAN_VERSION (PKGMAN_VERSION_MAJOR * 10000 + PKGMAN_VERSION_MINOR * 100 + PKGMAN_VERSION_PATCH)
 
@@ -784,17 +784,21 @@
 
 #if !defined(PATH_SEPERATOR)
 #  if defined(PKGMAN_PLATFORM_IS_WINDOWS)
-#    define PATH_SEPERATOR __PM_STRING(\\) /** @name PATH_SEPERATOR @details This quote keeps the code intact :) */
+#    define PATH_SEPERATOR '\\' /** @name PATH_SEPERATOR @details This quote keeps the code intact :) */
+/** #    define PATH_SEPERATOR __PM_STRING(\\) */ /** @name PATH_SEPERATOR @details This quote keeps the code intact :) */
 #  elif defined(PKGMAN_PLATFORM_IS_UNIX)
-#    define PATH_SEPERATOR __PM_STRING(/) /** @name PATH_SEPERATOR @details This quote keeps the code intact :) */
+#    define PATH_SEPERATOR '/' /** @name PATH_SEPERATOR @details This quote keeps the code intact :) */
+/** #    define PATH_SEPERATOR __PM_STRING(/) */ /** @name PATH_SEPERATOR @details This quote keeps the code intact :) */
 #  endif
 #endif
 
 #if !defined(STRING_SEPERATOR)
 #  if defined(PKGMAN_PLATFORM_IS_WINDOWS)
-#    define STRING_SEPERATOR __PM_STRING(;) /** @name STRING_SEPERATOR @details This quote keeps the code intact :) */
+#    define STRING_SEPERATOR ';' /** @name STRING_SEPERATOR @details This quote keeps the code intact :) */
+/** #    define STRING_SEPERATOR __PM_STRING(;) */ /** @name STRING_SEPERATOR @details This quote keeps the code intact :) */
 #  elif defined(PKGMAN_PLATFORM_IS_UNIX)
-#    define STRING_SEPERATOR __PM_STRING(:) /** @name STRING_SEPERATOR @details This quote keeps the code intact :) */
+#    define STRING_SEPERATOR ':' /** @name STRING_SEPERATOR @details This quote keeps the code intact :) */
+/** #    define STRING_SEPERATOR __PM_STRING(:) */ /** @name STRING_SEPERATOR @details This quote keeps the code intact :) */
 #  endif
 #endif
 
@@ -805,7 +809,8 @@
 
 #if !defined(HOMEDRIVE)
 #  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
-#    define HOMEDRIVE __PM_STRING(C:) /** @name HOMEDRIVE @details This quote keeps the code intact :) */
+#    define HOMEDRIVE 'C', ':' /** @name HOMEDRIVE @details This quote keeps the code intact :) */
+/** #    define HOMEDRIVE __PM_STRING(C:) */ /** @name HOMEDRIVE @details This quote keeps the code intact :) */
 #  else
 #    define HOMEDRIVE PATH_SEPERATOR /** @name HOMEDRIVE @details This quote keeps the code intact :) */
 #  endif
@@ -813,7 +818,7 @@
 
 #if !defined(ROOTDIR)
 #  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
-#    define ROOTDIR HOMEDRIVE PATH_SEPERATOR /** @name ROOTDIR @brief The location of the root operating directory (default value for Win32/MinGW). */
+#    define ROOTDIR HOMEDRIVE, PATH_SEPERATOR /** @name ROOTDIR @brief The location of the root operating directory (default value for Win32/MinGW). */
 #  else
 #    define ROOTDIR HOMEDRIVE /** < @name ROOTDIR @brief The location of the root operating directory (default value for *nix). */
 #  endif
@@ -821,7 +826,8 @@
 
 #if !defined(SYSROOT)
 #  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
-#    define SYSROOT HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR __PM_STRING(etc)
+#    define SYSROOT HOMEDRIVE, PATH_SEPERATOR, 'm', 's', 'y', 's', '6', '4', PATH_SEPERATOR, 'e', 't', 'c'
+/** #    define SYSROOT HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR __PM_STRING(etc) */
 #  else
 #    define SYSROOT HOMEDRIVE
 #  endif
@@ -829,25 +835,31 @@
 
 #if !defined(PREFIX)
 #  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
-#    define PREFIX HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR __PM_STRING(usr) /** (default value for Win32/MinGW). */
+#    define PREFIX HOMEDRIVE, PATH_SEPERATOR, 'm', 's', 'y', 's', '6', '4', PATH_SEPERATOR, 'u', 's', 'r' /** (default value for Win32/MinGW). */
+/** #    define PREFIX HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR __PM_STRING(usr) */ /** (default value for Win32/MinGW). */
 #  else
-#    define PREFIX SYSROOT __PM_STRING(usr) /**  */
+#    define PREFIX SYSROOT, 'u', 's', 'r'
+/** #    define PREFIX SYSROOT __PM_STRING(usr)   */
 #  endif
 #endif
 
 #if !defined(SYSCONFDIR)
 #  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
-#    define SYSCONFDIR HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR __PM_STRING(etc)
+#    define SYSCONFDIR HOMEDRIVE, PATH_SEPERATOR, 'm', 's', 'y', 's', '6', '4', PATH_SEPERATOR, 'e', 't', 'c'
+/** #    define SYSCONFDIR HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR __PM_STRING(etc) */
 #  else
-#    define SYSCONFDIR HOMEDRIVE __PM_STRING(etc)
+#    define SYSCONFDIR HOMEDRIVE, 'e', 't', 'c'
+/** #    define SYSCONFDIR HOMEDRIVE __PM_STRING(etc) */
 #  endif
 #endif
 
 #if !defined(LOCALSTATEDIR)
 #  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
-#    define LOCALSTATEDIR HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR __PM_STRING(var) /** (default value for Win32/MinGW). */
+#    define LOCALSTATEDIR HOMEDRIVE, PATH_SEPERATOR, 'm', 's', 'y', 's', '6', '4', PATH_SEPERATOR, 'v', 'a', 'r' /** (default value for Win32/MinGW). */
+/** #    define LOCALSTATEDIR HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR __PM_STRING(var) */ /** (default value for Win32/MinGW). */
 #  else
-#    define LOCALSTATEDIR HOMEDRIVE __PM_STRING(var) /** < */
+#    define LOCALSTATEDIR HOMEDRIVE, 'v', 'a', 'r'
+/** #    define LOCALSTATEDIR HOMEDRIVE __PM_STRING(var)   */
 #  endif
 #endif
 
@@ -855,14 +867,24 @@
  *
  *  ... Other optional macros
  *
+ * TODO: @StoneyDSP With all this char array macro-string business, everything
+ * is fine when relying on these internal definitions. However, if we open the
+ * macro definitions to the possibility of command-line instruction, which
+ * would be very ideal, then the definitions recieved from the command line
+ * ALSO need to be parsed into some 'stringified' format, UNLESS we save
+ * the 'stringification' until the assignment to char array. But in this
+ * approach, we end up stringifying the macro itself, instead of it's contents!
+ *
+ * Tricky...
  ******************************************************************************/
 
-#define LIB_VERSION __PM_STRING(13.0.2)
+#define LIB_VERSION '1', '3', '.', '0', '.', '2'
 
-#define PACKAGE _PM_STRING(pkgman)
+#define PACKAGE 'p', 'k', 'g', 'm', 'a', 'n'
 
 #if !defined(PACKAGE_VERSION)
-#  define PACKAGE_VERSION __PM_STRING(PKGMAN_VERSION_MAJOR) __PM_STRING(.) __PM_STRING(PKGMAN_VERSION_MINOR) __PM_STRING(.) __PM_STRING(PKGMAN_VERSION_PATCH)
+#  define PACKAGE_VERSION PKGMAN_VERSION_MAJOR, '.', PKGMAN_VERSION_MINOR, '.', PKGMAN_VERSION_PATCH
+/** #  define PACKAGE_VERSION __PM_STRING(PKGMAN_VERSION_MAJOR) __PM_STRING(.) __PM_STRING(PKGMAN_VERSION_MINOR) __PM_STRING(.) __PM_STRING(PKGMAN_VERSION_PATCH) */
 #endif
 
 #if !defined(EXEC_PREFIX)
@@ -870,23 +892,28 @@
 #endif
 
 #if !defined(BINDIR)
-#  define BINDIR EXEC_PREFIX PATH_SEPERATOR __PM_STRING(bin)
+#  define BINDIR EXEC_PREFIX, PATH_SEPERATOR, 'b', 'i', 'n'
+/** #  define BINDIR EXEC_PREFIX PATH_SEPERATOR __PM_STRING(bin) */
 #endif
 
 #if !defined(SBINDIR)
-#  define SBINDIR EXEC_PREFIX PATH_SEPERATOR __PM_STRING(sbin)
+#  define SBINDIR EXEC_PREFIX, PATH_SEPERATOR, 's', 'b', 'i', 'n'
+/** #  define SBINDIR EXEC_PREFIX PATH_SEPERATOR __PM_STRING(sbin) */
 #endif
 
 #if !defined(LIBDIR)
-#  define LIBDIR EXEC_PREFIX PATH_SEPERATOR __PM_STRING(lib)
+#  define LIBDIR EXEC_PREFIX, PATH_SEPERATOR, 'l', 'i', 'b'
+/** #  define LIBDIR EXEC_PREFIX PATH_SEPERATOR __PM_STRING(lib) */
 #endif
 
 #if !defined(LIBEXECDIR)
-#  define LIBEXECDIR EXEC_PREFIX PATH_SEPERATOR __PM_STRING(libexec)
+#  define LIBEXECDIR EXEC_PREFIX, PATH_SEPERATOR, 'l', 'i', 'b', 'e', 'x', 'e', 'c'
+/** #  define LIBEXECDIR EXEC_PREFIX PATH_SEPERATOR __PM_STRING(libexec) */
 #endif
 
 #if !defined(DATAROOTDIR)
-#  define DATAROOTDIR PREFIX PATH_SEPERATOR __PM_STRING(share)
+#  define DATAROOTDIR PREFIX, PATH_SEPERATOR, 's', 'h', 'a', 'r', 'e'
+/** #  define DATAROOTDIR PREFIX PATH_SEPERATOR __PM_STRING(share) */
 #endif
 
 #if !defined(DATADIR)
@@ -894,83 +921,110 @@
 #endif
 
 #if !defined(DOCDIR)
-#  define DOCDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(info)
+#  define DOCDIR DATAROOTDIR, PATH_SEPERATOR, 'i', 'n', 'f', 'o'
+/** #  define DOCDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(info) */
 #endif
 
 #if !defined(INFODIR)
-#  define INFODIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(info)
+#  define INFODIR DATAROOTDIR, PATH_SEPERATOR, 'i', 'n', 'f', 'o'
+/** #  define INFODIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(info) */
 #endif
 
 #if !defined(LOCALEDIR)
-#  define LOCALEDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(locale)
+#  define LOCALEDIR DATAROOTDIR, PATH_SEPERATOR, 'l', 'o', 'c', 'a', 'l', 'e'
+/** #  define LOCALEDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(locale) */
 #endif
 
 #if !defined(MANDIR)
-#  define MANDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(doc) PATH_SEPERATOR __PM_STRING(pkgman)
+#  define MANDIR DATAROOTDIR, PATH_SEPERATOR, 'd', 'o', 'c', PATH_SEPERATOR, 'p', 'k', 'g', 'm', 'a', 'n'
+/** #  define MANDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(doc) PATH_SEPERATOR __PM_STRING(pkgman) */
 #endif
 
 #if !defined(RUNSTATEDIR)
-#  define RUNSTATEDIR LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(run)
+#  define RUNSTATEDIR LOCALSTATEDIR, PATH_SEPERATOR, 'r', 'u', 'n'
+/** #  define RUNSTATEDIR LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(run) */
 #endif
 
+
+/***************************************************************************//**
+ *
+ *  ... Pacman Tools
+ *
+ ******************************************************************************/
+
 #if !defined(LDCONFIG)
-#  define LDCONFIG SBINDIR PATH_SEPERATOR __PM_STRING(ldconfig)
+#  define LDCONFIG SBINDIR, PATH_SEPERATOR, 'l', 'd', 'c', 'o', 'n', 'f', 'i', 'g'
+/** #  define LDCONFIG SBINDIR PATH_SEPERATOR __PM_STRING(ldconfig) */
 #endif
 
 #if !defined(SCRIPTLET_SHELL)
-#  define SCRIPTLET_SHELL BINDIR PATH_SEPERATOR __PM_STRING(sh)
+#  define SCRIPTLET_SHELL BINDIR, PATH_SEPERATOR, 's', 'h'
+/** #  define SCRIPTLET_SHELL BINDIR PATH_SEPERATOR __PM_STRING(sh) */
 #endif
 
 #if !defined(BUILDSCRIPT)
-#  define BUILDSCRIPT __PM_STRING(PKGBUILD)
+#  define BUILDSCRIPT 'P', 'K', 'G', 'B', 'U', 'I', 'L', 'D'
+/** #  define BUILDSCRIPT __PM_STRING(PKGBUILD) */
 #endif
 
 #if !defined(LIBMAKEPKGDIR)
-#  define LIBMAKEPKGDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(makepkg)
+#  define LIBMAKEPKGDIR DATAROOTDIR, PATH_SEPERATOR, 'm', 'a', 'k', 'e', 'p', 'k', 'g'
+/** #  define LIBMAKEPKGDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(makepkg) */
 #endif
 
 #if !defined(SYSHOOKDIR)
-#  define SYSHOOKDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(libalpm) PATH_SEPERATOR __PM_STRING(hooks) PATH_SEPERATOR
+#  define SYSHOOKDIR DATAROOTDIR, PATH_SEPERATOR, 'l', 'i', 'b', 'a', 'l', 'p', 'm', PATH_SEPERATOR, 'h', 'o', 'o', 'k', 's', PATH_SEPERATOR
+/** #  define SYSHOOKDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(libalpm) PATH_SEPERATOR __PM_STRING(hooks) PATH_SEPERATOR */
 #endif
 
 #if !defined(CONFFILE)
-#  define CONFFILE SYSCONFDIR PATH_SEPERATOR __PM_STRING(pkgman.conf)
+#  define CONFFILE SYSCONFDIR, PATH_SEPERATOR, 'p', 'k', 'g', 'm', 'a', 'n', '.', 'c', 'o', 'n', 'f'
+/** #  define CONFFILE SYSCONFDIR PATH_SEPERATOR __PM_STRING(pkgman.conf) */
 #endif
 
 #if !defined(DBPATH)
-#  define DBPATH LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(lib) PATH_SEPERATOR __PM_STRING(pkgman) PATH_SEPERATOR
+#  define DBPATH LOCALSTATEDIR, PATH_SEPERATOR, 'l', 'i', 'b', PATH_SEPERATOR, 'p', 'k', 'g', 'm', 'a', 'n', PATH_SEPERATOR
+/** #  define DBPATH LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(lib) PATH_SEPERATOR __PM_STRING(pkgman) PATH_SEPERATOR */
 #endif
 
 #if !defined(GPGDIR)
-#  define GPGDIR SYSCONFDIR PATH_SEPERATOR __PM_STRING(pacman.d) PATH_SEPERATOR __PM_STRING(gnupg) PATH_SEPERATOR
+#  define GPGDIR SYSCONFDIR, PATH_SEPERATOR, 'p', 'a', 'c', 'm', 'a', 'n', '.', 'd', PATH_SEPERATOR, 'g', 'n', 'u', 'p', 'g', PATH_SEPERATOR
+/** #  define GPGDIR SYSCONFDIR PATH_SEPERATOR __PM_STRING(pacman.d) PATH_SEPERATOR __PM_STRING(gnupg) PATH_SEPERATOR */
 #endif
 
 #if !defined(CACHEDIR)
-#  define CACHEDIR LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(cache) PATH_SEPERATOR __PM_STRING(pacman) PATH_SEPERATOR __PM_STRING(pkg) PATH_SEPERATOR
+#  define CACHEDIR LOCALSTATEDIR, PATH_SEPERATOR, 'c', 'a', 'c', 'h', 'e', PATH_SEPERATOR, 'p', 'a', 'c', 'm', 'a', 'n', PATH_SEPERATOR, 'p', 'k', 'g', PATH_SEPERATOR
+/** #  define CACHEDIR LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(cache) PATH_SEPERATOR __PM_STRING(pacman) PATH_SEPERATOR __PM_STRING(pkg) PATH_SEPERATOR */
 #endif
 
 #if !defined(LOGFILE)
-#  define LOGFILE LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(log) PATH_SEPERATOR __PM_STRING(pkgman.log)
+#  define LOGFILE LOCALSTATEDIR, PATH_SEPERATOR, 'l', 'o', 'g', PATH_SEPERATOR, 'p', 'k', 'g', 'm', 'a', 'n', '.', 'l', 'o', 'g'
+/** #  define LOGFILE LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(log) PATH_SEPERATOR __PM_STRING(pkgman.log) */
 #endif
 
 #if !defined(HOOKDIR)
-#  define HOOKDIR SYSCONFDIR PATH_SEPERATOR __PM_STRING(pacman.d) PATH_SEPERATOR __PM_STRING(hooks) PATH_SEPERATOR
+#  define HOOKDIR SYSCONFDIR, PATH_SEPERATOR, 'p', 'a', 'c', 'm', 'a', 'n', '.', 'd', PATH_SEPERATOR, 'h', 'o', 'o', 'k', 's', PATH_SEPERATOR
+/** #  define HOOKDIR SYSCONFDIR PATH_SEPERATOR __PM_STRING(pacman.d) PATH_SEPERATOR __PM_STRING(hooks) PATH_SEPERATOR */
 #endif
 
 #if !defined(MAKEPKG_TEMPLATE_DIR)
-#  define MAKEPKG_TEMPLATE_DIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(makepkg-template)
+#  define MAKEPKG_TEMPLATE_DIR DATAROOTDIR, PATH_SEPERATOR, 'm', 'a', 'k', 'e', 'p', 'k', 'g', '-', 't', 'e', 'm', 'p', 'l', 'a', 't', 'e'
+/** #  define MAKEPKG_TEMPLATE_DIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(makepkg-template) */
 #endif
 
 #if !defined(PKGDATADIR)
-#  define PKGDATADIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(pkgman)
+#  define PKGDATADIR DATAROOTDIR, PATH_SEPERATOR, 'p', 'k', 'g', 'm', 'a', 'n'
+/** #  define PKGDATADIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(pkgman) */
 #endif
 
 #if !defined(PKGEXT)
-#  define PKGEXT __PM_STRING(.) __PM_STRING(pkg) __PM_STRING(.) __PM_STRING(tar) __PM_STRING(.) __PM_STRING(gz)
+#  define PKGEXT '.', 'p', 'k', 'g', '.', 't', 'a', 'r', '.', 'g', 'z'
+/** #  define PKGEXT __PM_STRING(.) __PM_STRING(pkg) __PM_STRING(.) __PM_STRING(tar) __PM_STRING(.) __PM_STRING(gz) */
 #endif
 
 #if !defined(SRCEXT)
-#  define SRCEXT __PM_STRING(.) __PM_STRING(src) __PM_STRING(.) __PM_STRING(tar) __PM_STRING(.) __PM_STRING(gz)
+#  define SRCEXT '.', 's', 'r', 'c', '.', 't', 'a', 'r', '.', 'g', 'z'
+/** #  define SRCEXT __PM_STRING(.) __PM_STRING(src) __PM_STRING(.) __PM_STRING(tar) __PM_STRING(.) __PM_STRING(gz) */
 #endif
 
 /***************************************************************************//**
@@ -983,12 +1037,14 @@
 #  if (PKGMAN_PLATFORM_IS_CYGWIN)
 #    define MSYS_INSTALL_PATH SYSROOT
 #  else /** !(PKGMAN_PLATFORM_IS_CYGWIN) */
-#    define MSYS_INSTALL_PATH HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64)
+#    define MSYS_INSTALL_PATH HOMEDRIVE, PATH_SEPERATOR, 'm', 's', 'y', 's', '6', '4'
+/** #    define MSYS_INSTALL_PATH HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) */
 #  endif
 #endif
 
 #ifndef MSYS_LIB
-#  define MSYS_LIB __PM_STRING(msys-2.0.dll)
+#  define MSYS_LIB 'm', 's', 'y', 's', '-', '2', '.', '0', '.', 'd', 'l', 'l'
+/** #  define MSYS_LIB __PM_STRING(msys-2.0.dll) */
 #endif
 
 /***************************************************************************//**
@@ -1154,147 +1210,7 @@ typedef	signed long int int64_t;
 #  define HAVE_STRNDUP 1
 #endif
 
-/**
- * TODO: @StoneyDSP With all this char array macro-string business, everything
- * is fine when relying on these internal definitions. However, if we open the
- * macro definitions to the possibility of command-line instruction, which
- * would be very ideal, then the definitions recieved from the command line
- * ALSO need to be parsed into some 'stringified' format, UNLESS we save
- * the 'stringification' until the assignment to char array. But in this
- * approach, we end up stringifying the macro itself, instead of it's contents!
- *
- * Tricky...
- */
-
-/**
- * command-line options
- * PREFIX = get_option('prefix')
- * DATAROOTDIR = join_paths(PREFIX, get_option('datarootdir'))
- * SYSCONFDIR = join_paths(PREFIX, get_option('sysconfdir'))
- * LOCALSTATEDIR = join_paths(PREFIX, get_option('localstatedir'))
- * LOCALEDIR = join_paths(PREFIX, get_option('localedir'))
- * ROOTDIR = get_option('root-dir')
- * BINDIR = join_paths(PREFIX, get_option('bindir'))
- * MANDIR = join_paths(PREFIX, get_option('mandir'))
- * BUILDSCRIPT = get_option('buildscript')
- * LIBMAKEPKGDIR = join_paths(PREFIX, DATAROOTDIR, 'makepkg')
- * PKGDATADIR = join_paths(PREFIX, DATAROOTDIR, meson.project_name())
- */
-struct pkgman_command_line
-{
-	const char* prefix; 														/** PREFIX = get_option('prefix') */
-	const char* datarootdir; 													/** DATAROOTDIR = join_paths(PREFIX, get_option('datarootdir')) */
-	const char* sysconfdir; 													/** SYSCONFDIR = join_paths(PREFIX, get_option('sysconfdir')) */
-	const char* localstatedir; 													/** LOCALSTATEDIR = join_paths(PREFIX, get_option('localstatedir')) */
-	const char* localedir; 														/** LOCALEDIR = join_paths(PREFIX, get_option('localedir')) */
-	const char* rootdir; 														/** ROOTDIR = get_option('root-dir') */
-	const char* bindir; 														/** BINDIR = join_paths(PREFIX, get_option('bindir')) */
-	const char* mandir; 														/** MANDIR = join_paths(PREFIX, get_option('mandir')) */
-	const char* buildscript; 													/** BUILDSCRIPT = get_option('buildscript') */
-	const char* libmakepkgdir; 													/** LIBMAKEPKGDIR = join_paths(PREFIX, DATAROOTDIR, 'makepkg') */
-	const char* pkgdatadir; 													/** PKGDATADIR = join_paths(PREFIX, DATAROOTDIR, meson.project_name()) */
-
-} PkgmanCommandLine = {
-		.bindir = BINDIR,
-		.buildscript = BUILDSCRIPT,
-		.datarootdir = DATAROOTDIR,
-		.libmakepkgdir = LIBMAKEPKGDIR,
-		.localedir = LOCALEDIR,
-		.localstatedir = LOCALSTATEDIR,
-		.mandir = MANDIR,
-		.pkgdatadir = PKGDATADIR,
-		.prefix = PREFIX,
-		.rootdir = ROOTDIR,
-		.sysconfdir = SYSCONFDIR
-
-	}, *PkgmanGetCommandLine = &PkgmanCommandLine;
-
-struct pkgman_settings
-{
-	const char* pkgman_version;
-	const char* pkgman_c_compiler;
-
-	const char* msysLib;
-	const char* msys_install_path;
-
-	const char* path_seperator;
-	const char* string_seperator;
-	const char* homedrive;
-
-	const char* sysroot;
-	const char* sbindir;
-	const char* makepkg_template_dir;
-
-	const char* pkg_ext;
-	const char* src_ext;
-} PkgmanSettings = {
-	.homedrive = HOMEDRIVE,
-	.makepkg_template_dir = MAKEPKG_TEMPLATE_DIR,
-	.msys_install_path = MSYS_INSTALL_PATH,
-	.msysLib = MSYS_LIB,
-	.path_seperator = PATH_SEPERATOR,
-	.pkg_ext = PKGEXT,
-	.src_ext = SRCEXT,
-	.pkgman_c_compiler = PKGMAN_C_COMPILER,
-	.pkgman_version = PACKAGE_VERSION,
-	.sbindir = SBINDIR,
-	.string_seperator = STRING_SEPERATOR,
-	.sysroot = SYSROOT
-
-}, *PkgmanGetSettings = &PkgmanSettings;
-
-/**
- * conf = configuration_data()
- * conf.set_quoted('LOCALEDIR', LOCALEDIR)
- * conf.set_quoted('SCRIPTLET_SHELL', get_option('scriptlet-shell'))
- * conf.set_quoted('LDCONFIG', LDCONFIG)
- * conf.set_quoted('SYSHOOKDIR', join_paths(DATAROOTDIR, 'libalpm/hooks/'))
- * conf.set_quoted('CONFFILE', join_paths(SYSCONFDIR, 'pacman.conf'))
- * conf.set_quoted('DBPATH', join_paths(LOCALSTATEDIR, 'lib/pacman/'))
- * conf.set_quoted('GPGDIR', join_paths(SYSCONFDIR, 'pacman.d/gnupg/'))
- * conf.set_quoted('LOGFILE', join_paths(LOCALSTATEDIR, 'log/pacman.log'))
- * conf.set_quoted('CACHEDIR', join_paths(LOCALSTATEDIR, 'cache/pacman/pkg/'))
- * conf.set_quoted('HOOKDIR', join_paths(SYSCONFDIR, 'pacman.d/hooks/'))
- * conf.set_quoted('ROOTDIR', ROOTDIR)
- */
-struct pkgman_conf
-{
-	int gnu_source; 															/** conf.set('_GNU_SOURCE', true) */
-	char package [FILENAME_MAX]; 														/** conf.set_quoted('PACKAGE',  meson.project_name()) */
-	char package_version [FILENAME_MAX];												/** conf.set_quoted('PACKAGE_VERSION', PACKAGE_VERSION) */
-	char libalpm_version [FILENAME_MAX];												/** conf.set_quoted('LIB_VERSION', libalpm_version) */
-
-	char scriptlet_shell				[PATH_MAX];
-	char ldconfig						[PATH_MAX];
-
-	char localedir						[PATH_MAX];
-	char syshookdir						[PATH_MAX];
-	char conffile						[PATH_MAX];
-	char dbpath							[PATH_MAX];
-	char gpgdir							[PATH_MAX];
-	char logfile						[PATH_MAX];
-	char cachedir						[PATH_MAX];
-	char hookdir						[PATH_MAX];
-	char rootdir						[PATH_MAX];
-
-} PkgmanConf = {
-	.cachedir = { CACHEDIR },
-	.conffile = { CONFFILE },
-	.dbpath = { DBPATH },
-	.gnu_source = _GNU_SOURCE,
-	.gpgdir = { GPGDIR },
-	.hookdir = { HOOKDIR },
-	.ldconfig = { LDCONFIG },
-	.libalpm_version = { LIB_VERSION },
-	.localedir = { LOCALEDIR },
-	.logfile = { LOGFILE },
-	.package = { __PM_STRING(pkgman) },
-	.package_version = { PACKAGE_VERSION },
-	.rootdir = { ROOTDIR },
-	.scriptlet_shell = { SCRIPTLET_SHELL },
-	.syshookdir = { SYSHOOKDIR }
-
-}, *PkgmanGetConf = &PkgmanConf;
+#endif
 
 enum header_test_result
 {
@@ -1381,7 +1297,7 @@ struct pkgman_required_headers
 {
 	enum header_test_result have_sys_mnt_tab_h; 								/** @returns int have_sys_mnttab_h = 	{ PKGMAN_HAS_SYS_MNTTAB_H }; */
 	enum header_test_result have_sys_mount_h; 									/** int have_sys_mount_h; */
-	enum header_test_result have_sys_param_h;
+	enum header_test_result have_sys_param_h; 				/** @name have_sys_param_h @returns enum header_test_result = { PKGMAN_HAS_SYS_PARAM_H }; */
 	enum header_test_result have_sys_resource_h;
 	enum header_test_result have_sys_stat_h;
 	enum header_test_result have_sys_statfs_h;

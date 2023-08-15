@@ -67,9 +67,171 @@
 #define UCRTBASE_LIB_PATH __PM_STRING(C:/Windows/System32)
 #define UCRTBASE_DYNAMIC_LIB __PM_STRING(ucrtbase.dll)
 
-#define __INCLUDE_STRING(HEADER)  __PM_STRING(HEADER)
-#define INCLUDE_FOUND(HEADER)   printf("Success :: '%s'\n", __INCLUDE_STRING(HEADER))
-#define INCLUDE_MISSING(HEADER) printf("Failed  :: '%s'\n", __INCLUDE_STRING(HEADER))
+/***************************************************************************//**
+ *
+ *   ... System Header flags
+ *
+ ******************************************************************************/
+
+/** Set flags for portability */
+#if defined(HAVE_SYS_MNTTAB_H)
+#  define _PKGMAN_HAS_SYS_MNTTAB_H (enum pkgman_test_result)TEST_PASS
+#else
+#  define _PKGMAN_HAS_SYS_MNTTAB_H (enum pkgman_test_result)TEST_FAIL
+#endif
+#if defined(HAVE_SYS_MOUNT_H)
+#  define _PKGMAN_HAS_SYS_MOUNT_H (enum pkgman_test_result)TEST_PASS
+#else
+#  define _PKGMAN_HAS_SYS_MOUNT_H (enum pkgman_test_result)TEST_FAIL
+#endif
+#if defined(HAVE_SYS_PARAM_H)
+#  define _PKGMAN_HAS_SYS_PARAM_H (enum pkgman_test_result)TEST_PASS
+#else
+#  define _PKGMAN_HAS_SYS_PARAM_H (enum pkgman_test_result)TEST_FAIL
+#endif
+#if defined(HAVE_SYS_RESOURCE_H)
+#  define _PKGMAN_HAS_SYS_RESOURCE_H (enum pkgman_test_result)TEST_PASS
+#else
+#  define _PKGMAN_HAS_SYS_RESOURCE_H (enum pkgman_test_result)TEST_FAIL
+#endif
+#if defined(HAVE_SYS_STAT_H)
+#  define _PKGMAN_HAS_SYS_STAT_H (enum pkgman_test_result)TEST_PASS
+#else
+#  define _PKGMAN_HAS_SYS_STAT_H (enum pkgman_test_result)TEST_FAIL
+#endif
+#if defined(HAVE_SYS_STATFS_H)
+#  define _PKGMAN_HAS_SYS_STATFS_H (enum pkgman_test_result)TEST_PASS
+#else
+#  define _PKGMAN_HAS_SYS_STATFS_H (enum pkgman_test_result)TEST_FAIL
+#endif
+#if defined(HAVE_SYS_STATVFS_H)
+#  define _PKGMAN_HAS_SYS_STATVFS_H (enum pkgman_test_result)TEST_PASS
+#else
+#  define _PKGMAN_HAS_SYS_STATVFS_H (enum pkgman_test_result)TEST_FAIL
+#endif
+#if defined(HAVE_SYS_TYPES_H)
+#  define _PKGMAN_HAS_SYS_TYPES_H (enum pkgman_test_result)TEST_PASS
+#else
+#  define _PKGMAN_HAS_SYS_TYPES_H (enum pkgman_test_result)TEST_FAIL
+#endif
+#if defined(HAVE_SYS_TIME_H)
+#  define _PKGMAN_HAS_SYS_TIME_H (enum pkgman_test_result)TEST_PASS
+#else
+#  define _PKGMAN_HAS_SYS_TIME_H (enum pkgman_test_result)TEST_FAIL
+#endif
+#if defined(HAVE_SYS_UCRED_H)
+#  define _PKGMAN_HAS_SYS_UCRED_H (enum pkgman_test_result)TEST_PASS
+#else
+#  define _PKGMAN_HAS_SYS_UCRED_H (enum pkgman_test_result)TEST_FAIL
+#endif
+#if defined(HAVE_TERMIOS_H)
+#  define _PKGMAN_HAS_TERMIOS_H (enum pkgman_test_result)TEST_PASS
+#else
+#  define _PKGMAN_HAS_TERMIOS_H (enum pkgman_test_result)TEST_FAIL
+#endif
+#if defined(HAVE_MNTENT_H)
+#  define _PKGMAN_HAS_MNTENT_H (enum pkgman_test_result)TEST_PASS
+#else
+#  define _PKGMAN_HAS_MNTENT_H (enum pkgman_test_result)TEST_FAIL
+#endif
+
+/***************************************************************************//**
+ *
+ *   ... Dependency Header flags
+ *
+ ******************************************************************************/
+
+#if defined(HAVE_ARCHIVE_H)
+#  define PKGMAN_HAS_LIBARCHIVE_LIB (enum pkgman_test_result)TEST_PASS
+#else
+#  define PKGMAN_HAS_LIBARCHIVE_LIB (enum pkgman_test_result)TEST_FAIL
+#endif
+
+#if defined(HAVE_CURL_CURL_H)
+#  define PKGMAN_HAS_LIBCURL_LIB (enum pkgman_test_result)TEST_PASS
+#else
+#  define PKGMAN_HAS_LIBCURL_LIB (enum pkgman_test_result)TEST_FAIL
+#endif
+
+#if defined(HAVE_GPGME_H)
+#  define PKGMAN_HAS_LIBGPGME_LIB (enum pkgman_test_result)TEST_PASS
+#else
+#  define PKGMAN_HAS_LIBGPGME_LIB (enum pkgman_test_result)TEST_FAIL
+#endif
+
+#if defined(HAVE_LIBINTL_H)
+#  define PKGMAN_HAS_LIBINTL_LIB (enum pkgman_test_result)TEST_PASS
+#else
+#  define PKGMAN_HAS_LIBINTL_LIB (enum pkgman_test_result)TEST_FAIL
+#endif
+
+/***************************************************************************//**
+ *
+ *   ... Function Symbol flags
+ *
+ ******************************************************************************/
+
+#if defined(HAVE_GETMNTENT)
+#  define _PKGMAN_HAS_GETMNTENT (enum pkgman_test_result)TEST_PASS
+#else
+#  define _PKGMAN_HAS_GETMNTENT (enum pkgman_test_result)TEST_FAIL
+#endif
+
+#if defined(HAVE_GETMNTINFO)
+#  define _PKGMAN_HAS_GETMNTINFO (enum pkgman_test_result)TEST_PASS
+#else
+#  define _PKGMAN_HAS_GETMNTINFO (enum pkgman_test_result)TEST_FAIL
+#endif
+
+#if defined(HAVE_STRNDUP)
+#  define _PKGMAN_HAS_STRNDUP (enum pkgman_test_result)TEST_PASS
+#else
+#  define _PKGMAN_HAS_STRNDUP (enum pkgman_test_result)TEST_FAIL
+#endif
+
+#if defined(HAVE_STRNLEN)
+#  define _PKGMAN_HAS_STRNLEN (enum pkgman_test_result)TEST_PASS
+#else
+#  define _PKGMAN_HAS_STRNLEN (enum pkgman_test_result)TEST_FAIL
+#endif
+
+#if defined(HAVE_STRSEP)
+#  define _PKGMAN_HAS_STRSEP (enum pkgman_test_result)TEST_PASS
+#else
+#  define _PKGMAN_HAS_STRSEP (enum pkgman_test_result)TEST_FAIL
+#endif
+
+#if defined(HAVE_SWPRINTF)
+#  define _PKGMAN_HAS_SWPRINTF (enum pkgman_test_result)TEST_PASS
+#else
+#  define _PKGMAN_HAS_SWPRINTF (enum pkgman_test_result)TEST_FAIL
+#endif
+
+#if defined(HAVE_TCFLUSH)
+#  define _PKGMAN_HAS_TCFLUSH (enum pkgman_test_result)TEST_PASS
+#else
+#  define _PKGMAN_HAS_TCFLUSH (enum pkgman_test_result)TEST_FAIL
+#endif
+
+
+#if !defined(HAVE_STRUCT_STATVFS_F_FLAG)
+#  define _PKGMAN_HAS_STRUCT_STATVFS_F_FLAG (enum pkgman_test_result)TEST_FAIL
+#else
+#  define _PKGMAN_HAS_STRUCT_STATVFS_F_FLAG (enum pkgman_test_result)TEST_PASS
+#endif
+
+#if !defined(HAVE_STRUCT_STATFS_F_FLAGS)
+#  define _PKGMAN_HAS_STRUCT_STATFS_F_FLAGS (enum pkgman_test_result)TEST_FAIL
+#else
+#  define _PKGMAN_HAS_STRUCT_STATFS_F_FLAGS (enum pkgman_test_result)TEST_PASS
+#endif
+
+#if !defined(HAVE_STRUCT_STAT_ST_BLKSIZE)
+#  define _PKGMAN_HAS_STRUCT_STAT_ST_BLKSIZE (enum pkgman_test_result)TEST_FAIL
+#else
+#  define _PKGMAN_HAS_STRUCT_STAT_ST_BLKSIZE (enum pkgman_test_result)TEST_PASS
+#endif
+
 
 /**
  * @name checkForFile

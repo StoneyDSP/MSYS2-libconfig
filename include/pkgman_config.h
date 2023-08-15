@@ -1001,9 +1001,8 @@
 #ifndef MSYS_INSTALL_PATH
 #  if (PKGMAN_PLATFORM_IS_CYGWIN)
 #    define MSYS_INSTALL_PATH SYSROOT
-#  else /** !(PKGMAN_PLATFORM_IS_CYGWIN) */
+#  else
 #    define MSYS_INSTALL_PATH HOMEDRIVE, PATH_SEPERATOR, 'm', 's', 'y', 's', '6', '4'
-/** #    define MSYS_INSTALL_PATH HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) */
 #  endif
 #endif
 
@@ -1012,16 +1011,65 @@
 /** #  define MSYS_LIB __PM_STRING(msys-2.0.dll) */
 #endif
 
+
+#if defined(PKGMAN_PLATFORM_IS_MSYS)
+#  define PKGMAN_LIBC_LIB 'm', 's', 'y', 's', '-', '2', '.', '0','.', 'd', 'l', 'l'
+#elif defined(PKGMAN_PLATFORM_IS_CYGWIN)
+#  define PKGMAN_LIBC_LIB 'c', 'y', 'g', 'w', 'i', 'n', '1', '.', 'd', 'l', 'l'
+#else
+#  define PKGMAN_LIBC_LIB 'm', 's', 'v', 'c', 'r', 't', '.', 'd', 'l', 'l' /** 'msvcrt.dll' or 'ucrtbase.dll'... */
+#endif
+
 /***************************************************************************//**
  *
- *  ... Downstream required macros
+ *  ... Dependency check macros
+ *
+ ******************************************************************************/
+
+#if (HAVE_ARCHIVE_H)
+#  define ARCHIVE_H_PATH INCLUDEDIR
+#  define LIBARCHIVE_LIB SHARED_LIBRARY_PREFIX, 'a', 'r', 'c', 'h', 'i', 'v', 'e', '-', '1', '3', SHARED_LIBRARY_SUFFIX
+#endif
+
+#if (HAVE_CURL_CURL_H)
+#  define CURL_H_PATH INCLUDEDIR, PATH_SEPERATOR, 'c', 'u', 'r', 'l'
+#  define LIBCURL_LIB SHARED_LIBRARY_PREFIX, 'c', 'u', 'r', 'l', '-', '4', SHARED_LIBRARY_SUFFIX
+#endif
+
+#if   (HAVE_GPGME_H)
+#  define GPGME_H_PATH INCLUDEDIR, PATH_SEPERATOR, 'g', 'p', 'g', 'm', 'e', '+', '+'
+#  define LIBGPGME_LIB SHARED_LIBRARY_PREFIX, 'g', 'p', 'g', 'm', 'e', '-', '1', '1', SHARED_LIBRARY_SUFFIX
+#endif
+
+#if   (HAVE_LIBINTL_H)
+#  define LIBINTL_H_PATH INCLUDEDIR
+#  define LIBINTL_LIB SHARED_LIBRARY_PREFIX, 'i', 'n', 't', 'l', '-', '8', SHARED_LIBRARY_SUFFIX
+#endif
+
+#if   (HAVE_LIBNETTLE)
+#  define CRYPTO_INCLUDE_SYMBOL __PM_STRING(<nettle/crypto.h>)
+#elif (HAVE_LIBSSL)
+#  define CRYPTO_INCLUDE_SYMBOL __PM_STRING(<openssl/crypto.h>)
+#endif
+
+#if   (HAVE_LIBSSL)
+#  define CRYPTO_H_PATH INCLUDEDIR, PATH_SEPERATOR, 'o', 'p', 'e', 'n', 's', 's', 'l'
+#elif (HAVE_LIBNETTLE)
+#  define CRYPTO_H_PATH INCLUDEDIR, PATH_SEPERATOR, 'n', 'e', 't', 't', 'l', 'e'
+#endif
+
+#define LIBCRYPTO_LIB SHARED_LIBRARY_PREFIX, 'c', 'r', 'y', 'p', 't', 'o', '-', '3', '-', 'x', '6', '4', SHARED_LIBRARY_SUFFIX
+
+/***************************************************************************//**
+ *
+ *  ... Downstream required struct members
  *
  ******************************************************************************/
 
 #if defined(HAVE_STRUCT_STATVFS_F_FLAG)
-#	define FSSTATSTYPE struct statvfs
+#  define FSSTATSTYPE struct statvfs
 #elif defined(HAVE_STRUCT_STATFS_F_FLAGS)
-#	define FSSTATSTYPE struct statfs
+#  define FSSTATSTYPE struct statfs
 #endif
 
 /***************************************************************************//**
@@ -1043,75 +1091,6 @@ extern "C" {
 #else
 #   define PKGMAN_EXPORT
 #endif
-
-#if defined(_MODE_T_REQUIRED)
-#  define	_MODE_T_
-typedef	unsigned int mode_t; /* permissions */
-#  define _MODE_T_DECLARED
-#  define _MODE_T_DEFINED
-#  undef  _MODE_T_REQUIRED
-#endif
-
-#if defined(_UID_T_REQUIRED)
-#  define _UID_T_
-typedef	unsigned int uid_t; /* user id */
-#  define _UID_T_DECLARED
-#  define _UID_T_DEFINED
-#  undef  _UID_T_REQUIRED
-#endif
-
-#if defined(_OFF_T_REQUIRED)
-#  define _OFF_T_
-typedef	signed int off_t; /* file offset */
-#  define _OFF_T_DECLARED
-#  define _OFF_T_DEFINED
-#  undef  _OFF_T_REQUIRED
-#endif
-
-#if defined(_PID_T_REQUIRED)
-#  define _PID_T_
-typedef	signed int pid_t; /* process id */
-#  define PKGMAN_MODE_T mode_t
-#  define _PID_T_DECLARED
-#  define _PID_T_DEFINED
-#  undef  _PID_T_REQUIRED
-#endif
-
-#if defined(_SIZE_T_REQUIRED)
-#  define _SIZE_T_
-typedef unsigned int size_t; /** size_t type */
-#  define PKGMAN_SIZE_T size_t
-#  define _SIZE_T_DECLARED
-#  define _SIZE_T_DEFINED
-#  undef  _SIZE_T_REQUIRED
-#endif
-
-#if defined(_SSIZE_T_REQUIRED)
-#  define _SSIZE_T_
-typedef signed int ssize_t; /** Signed size_t type */
-#  define PKGMAN_SSIZE_T ssize_t
-#  define _SSIZE_T_DECLARED
-#  define _SSIZE_T_DEFINED
-#  undef  _SSIZE_T_REQUIRED
-#endif
-
-#if defined(_INT64_T_REQUIRED)
-#  define _INT64_T_
-typedef	signed long int int64_t;
-#  define PKGMAN_INT64_T int64_t
-#  define _INT64_T_DECLARED
-#  define _INT64_T_DEFINED
-#  define __int64
-#  undef  _INT64_T_REQUIRED
-#endif
-
-#define PKGMAN_MODE_T mode_t
-#define PKGMAN_UID_T uid_t
-#define PKGMAN_OFF_T off_t
-#define PKGMAN_PID_T pid_t
-#define PKGMAN_SIZE_T size_t
-#define PKGMAN_SSIZE_T ssize_t
-#define PKGMAN_INT64_T int64_t
 
 /**
  * @name dec
@@ -1458,23 +1437,12 @@ struct pkgman_conf
 };
 
 /**
- *
- * const char* datadir = DATADIR;
  * const char* includedir = INCLUDEDIR;
  * const char* infodir = INFODIR;
- * const char* libdir = LIBDIR;
  * const char* licensedir = LICENSEDIR;
- * const char* libexecdir = LIBEXECDIR;
- * const char* localedir = LOCALEDIR;
- * const char* mandir = MANDIR;
  * const char* sharedstatedir = SHAREDSTATEDIR;
  *
- * const char* syshookdir = SYSHOOKDIR;
- * const char* logfile = LOGFILE;
- * const char* hookdir = HOOKDIR;
 */
-#endif /** !(PKGMAN_INTELLISENSE_GUARD) */
-
 
 int checkForFile(const char* filename);
 int checkForDir(const char* pathToDir);

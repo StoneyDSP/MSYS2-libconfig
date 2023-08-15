@@ -1,5 +1,5 @@
 /***************************************************************************//**
- * @file config.h
+ * @file pkgman_config.h
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief Modern C configuration header for pacman/pkgman
  * @version 0.1
@@ -28,7 +28,7 @@
 #define PKGMAN_VERSION_MAJOR 6
 #define PKGMAN_VERSION_MINOR 0
 #define PKGMAN_VERSION_PATCH 2
-#define PKGMAN_VERSION_TWEAK __PM_STRING(81c0a15465cc6197b913e761833d2b486fc0c4fa)
+#define PKGMAN_VERSION_TWEAK __PM_STRING(6eca3e5d40d128e0fc4231d2c7bef45f6b2c8262)
 #define PKGMAN_VERSION (PKGMAN_VERSION_MAJOR * 10000 + PKGMAN_VERSION_MINOR * 100 + PKGMAN_VERSION_PATCH)
 
 /***************************************************************************//**
@@ -377,6 +377,7 @@
 #else
 #  define PKGMAN_DEBUG 0
 #endif
+
 
 /**
  * @name PKGMAN_INTELLISENSE_GUARD
@@ -925,7 +926,7 @@
 #endif
 
 #if !defined(MANDIR)
-#  define MANDIR DATAROOTDIR, PATH_SEPERATOR, 'd', 'o', 'c', PATH_SEPERATOR, 'p', 'k', 'g', 'm', 'a', 'n'
+#  define MANDIR DATAROOTDIR, PATH_SEPERATOR, 'd', 'o', 'c', PATH_SEPERATOR, PACKAGE
 /** #  define MANDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(doc) PATH_SEPERATOR __PM_STRING(pkgman) */
 #endif
 
@@ -934,6 +935,77 @@
 /** #  define RUNSTATEDIR LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(run) */
 #endif
 
+/***************************************************************************//**
+ *
+ *  ... Helper variables for libraries
+ *
+ ******************************************************************************/
+
+#if defined(PKGMAN_PLATFORM_IS_MSYS)
+
+  #define STATIC_LIBRARY_SUFFIX '.', 'l', 'i', 'b'
+  #define IMPORT_LIBRARY_SUFFIX '.', 'd', 'l', 'l', '.', 'a'
+  #define SHARED_LIBRARY_SUFFIX '.', 'd', 'l', 'l'
+  #define STATIC_LIBRARY_PREFIX ""
+  #define SHARED_LIBRARY_PREFIX 'm', 's', 'y', 's', '-'
+  #define SHARED_IMPORT_PREFIX 'l', 'i', 'b'
+  #define PKGMAN_FIND_LIBRARY_SUFFIXES '.', 'd', 'l', 'l', '.', 'a', STRING_SEPERATOR, '.', 'a'
+  #define PKGMAN_FIND_LIBRARY_PREFIXES 'l', 'i', 'b'
+
+#elif defined(PKGMAN_PLATFORM_IS_CYGWIN)
+
+  #define STATIC_LIBRARY_SUFFIX '.', 'l', 'i', 'b'
+  #define IMPORT_LIBRARY_SUFFIX '.', 'd', 'l', 'l', '.', 'a'
+  #define SHARED_LIBRARY_SUFFIX '.', 'd', 'l', 'l'
+  #define STATIC_LIBRARY_PREFIX ""
+  #define SHARED_LIBRARY_PREFIX 'c', 'y', 'g'
+  #define SHARED_IMPORT_PREFIX 'l', 'i', 'b'
+  #define PKGMAN_FIND_LIBRARY_SUFFIXES '.', 'd', 'l', 'l', '.', 'a', STRING_SEPERATOR, '.', 'a'
+  #define PKGMAN_FIND_LIBRARY_PREFIXES 'l', 'i', 'b'
+
+#elif defined(PKGMAN_PLATFORM_IS_MINGW)
+
+  #define STATIC_LIBRARY_SUFFIX '.', 'a'
+  #define IMPORT_LIBRARY_SUFFIX '.', 'd', 'l', 'l', '.', 'a'
+  #define SHARED_LIBRARY_SUFFIX '.', 'd', 'l', 'l'
+  #define STATIC_LIBRARY_PREFIX 'l', 'i', 'b'
+  #define SHARED_LIBRARY_PREFIX 'l', 'i', 'b'
+  #define SHARED_IMPORT_PREFIX 'l', 'i', 'b'
+  #define PKGMAN_FIND_LIBRARY_SUFFIXES '.', 'd', 'l', 'l', STRING_SEPERATOR, '.', 'd', 'l', 'l', '.', 'a', STRING_SEPERATOR, '.', 'a', STRING_SEPERATOR, '.', 'l', 'i', 'b'
+  #define PKGMAN_FIND_LIBRARY_PREFIXES 'l', 'i', 'b', STRING_SEPERATOR, ""
+
+#elif defined(PKGMAN_PLATFORM_IS_WINDOWS)
+
+  #define STATIC_LIBRARY_SUFFIX ".lib"
+  #define IMPORT_LIBRARY_SUFFIX ".lib"
+  #define SHARED_LIBRARY_SUFFIX ".dll"
+  #define STATIC_LIBRARY_PREFIX ""
+  #define SHARED_LIBRARY_PREFIX ""
+  #define SHARED_IMPORT_PREFIX ""
+  #define PKGMAN_FIND_LIBRARY_SUFFIXES ".lib" STRING_SEPERATOR ".dll")
+  #define PKGMAN_FIND_LIBRARY_PREFIXES "" STRING_SEPERATOR "lib")
+
+#elif defined(PKGMAN_PLATFORM_IS_OSX)
+
+  #define STATIC_LIBRARY_SUFFIX ".a"
+  #define IMPORT_LIBRARY_SUFFIX ""
+  #define SHARED_LIBRARY_SUFFIX ".dylib")
+  #define STATIC_LIBRARY_PREFIX "lib"
+  #define SHARED_LIBRARY_PREFIX "lib"
+  #define PKGMAN_FIND_LIBRARY_SUFFIXES ".tbd" STRING_SEPERATOR ".dylib" STRING_SEPERATOR ".so" STRING_SEPERATOR ".a")
+  #define PKGMAN_FIND_LIBRARY_PREFIXES "lib" STRING_SEPERATOR ""
+
+#else
+
+  #define STATIC_LIBRARY_SUFFIX ".a"
+  #define IMPORT_LIBRARY_SUFFIX ""
+  #define SHARED_LIBRARY_SUFFIX ".so"
+  #define STATIC_LIBRARY_PREFIX "lib"
+  #define SHARED_LIBRARY_PREFIX "lib"
+  #define PKGMAN_FIND_LIBRARY_SUFFIXES ".so" STRING_SEPERATOR ".a"
+  #define PKGMAN_FIND_LIBRARY_PREFIXES "lib" STRING_SEPERATOR ""
+
+#endif
 
 /***************************************************************************//**
  *

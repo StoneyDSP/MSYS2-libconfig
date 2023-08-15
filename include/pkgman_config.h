@@ -1177,69 +1177,121 @@ typedef	signed long int int64_t;
 
 #endif
 
-enum header_test_result
+enum pkgman_test_result
 {
-	HEADER_MISSING,
-	HEADER_FOUND
+	TEST_INIT = -1,
+	TEST_PASS = 0,
+	TEST_FAIL = 1
 };
+
+struct pkgman_required_libs {
+
+	char libarchive 					[FILENAME_MAX];
+	char libcrypto 						[FILENAME_MAX];
+	char libcurl 						[FILENAME_MAX];
+	char libc 							[FILENAME_MAX];
+	char libgpgme 						[FILENAME_MAX];
+	char libintl 						[FILENAME_MAX];
+
+	enum pkgman_test_result has_libarchive_lib;
+	enum pkgman_test_result has_libcrypto_lib;
+	enum pkgman_test_result has_libcurl_lib;
+	enum pkgman_test_result has_libc_lib;
+	enum pkgman_test_result has_libgpgme_lib;
+	enum pkgman_test_result has_libintl_lib;
+
+} PkgmanLibs = {
+
+	.libc 								= { PKGMAN_LIBC_LIB, '\0' },
+
+	.libarchive 						= { LIBARCHIVE_LIB, '\0' },
+	.libcrypto 							= { LIBCRYPTO_LIB, '\0' },
+	.libcurl							= { LIBCURL_LIB, '\0' },
+	.libgpgme 							= { LIBGPGME_LIB, '\0' },
+	.libintl 							= { LIBINTL_LIB, '\0' },
+
+	.has_libarchive_lib 				= TEST_INIT,
+	.has_libcrypto_lib 					= TEST_INIT,
+	.has_libcurl_lib 					= TEST_INIT,
+	.has_libc_lib 						= TEST_INIT,
+	.has_libgpgme_lib 					= TEST_INIT,
+	.has_libintl_lib 					= TEST_INIT
+
 };
 
 /**
- * int have_mntent_h = 					{ PKGMAN_HAS_MNTENT_H };
- * int have_sys_mnttab_h = 				{ PKGMAN_HAS_SYS_MNTTAB_H };
- * int have_sys_mount_h = 				{ PKGMAN_HAS_SYS_MOUNT_H };
- * int have_sys_param_h = 				{ PKGMAN_HAS_SYS_PARAM_H };
- * int have_sys_resource_h = 			{ PKGMAN_HAS_SYS_RESOURCE_H };
- * int have_sys_stat_h = 				{ PKGMAN_HAS_SYS_STAT_H };
- * int have_sys_statfs_h = 				{ PKGMAN_HAS_SYS_STATFS_H };
- * int have_sys_statvfs_h = 			{ PKGMAN_HAS_SYS_STATVFS_H };
- * int have_sys_types_h = 				{ PKGMAN_HAS_SYS_TYPES_H };
- * int have_sys_time_h = 				{ PKGMAN_HAS_SYS_TIME_H };
- * int have_sys_ucred_h = 				{ PKGMAN_HAS_SYS_UCRED_H };
- * int have_termios_h = 				{ PKGMAN_HAS_TERMIOS_H };
+ * @name pkgman_required_headers
+ * @brief Roughly equivalent to the 'compiler.has_header' checks in the original
+ * pacman 'meson.build' file.
  */
 struct pkgman_required_headers
 {
-	enum header_test_result have_sys_mnt_tab_h; 								/** @returns int have_sys_mnttab_h = 	{ PKGMAN_HAS_SYS_MNTTAB_H }; */
-	enum header_test_result have_sys_mount_h; 									/** int have_sys_mount_h; */
-	enum header_test_result have_sys_param_h; 				/** @name have_sys_param_h @returns enum header_test_result = { PKGMAN_HAS_SYS_PARAM_H }; */
-	enum header_test_result have_sys_resource_h;
-	enum header_test_result have_sys_stat_h;
-	enum header_test_result have_sys_statfs_h;
-	enum header_test_result have_sys_statvfs_h;
-	enum header_test_result have_sys_types_h;
-	enum header_test_result have_sys_time_h;
-	enum header_test_result have_sys_ucred_h;
-	enum header_test_result have_termios_h; 									/** @returns int have_termios_h = 		{ PKGMAN_HAS_TERMIOS_H }; */
-	enum header_test_result have_mntent_h; 									/** @returns int have_mntent_h = 		{ PKGMAN_HAS_MNTENT_H }; */
+	enum pkgman_test_result has_mntent_h; 					/** @name have_mntent_h @returns enum header_test_result = { PKGMAN_HAS_MNTENT_H }; */
+	enum pkgman_test_result has_sys_mnt_tab_h; 				/** @name have_sys_mnttab_h @returns enum header_test_result = { PKGMAN_HAS_SYS_MNTTAB_H }; */
+	enum pkgman_test_result has_sys_mount_h; 				/** @name have_sys_mount_h @returns enum header_test_result = { PKGMAN_HAS_SYS_MOUNT_H }; */
+	enum pkgman_test_result has_sys_param_h; 				/** @name have_sys_param_h @returns enum header_test_result = { PKGMAN_HAS_SYS_PARAM_H }; */
+	enum pkgman_test_result has_sys_resource_h; 			/** @name have_sys_resource_h @returns enum header_test_result = { PKGMAN_HAS_SYS_RESOURCE_H }; */
+	enum pkgman_test_result has_sys_stat_h; 				/** @name have_sys_stat_h @returns enum header_test_result = { PKGMAN_HAS_SYS_STAT_H }; */
+	enum pkgman_test_result has_sys_statfs_h; 				/** @name have_sys_statfs_h @returns enum header_test_result = { PKGMAN_HAS_SYS_STATFS_H }; */
+	enum pkgman_test_result has_sys_statvfs_h; 				/** @name have_sys_statvfs_h @returns enum header_test_result = { PKGMAN_HAS_SYS_STATVFS_H }; */
+	enum pkgman_test_result has_sys_types_h; 				/** @name have_sys_types_h @returns enum header_test_result = { PKGMAN_HAS_SYS_TYPES_H }; */
+	enum pkgman_test_result has_sys_time_h; 				/** @name have_sys_time_h @returns enum header_test_result = { PKGMAN_HAS_SYS_TIME_H }; */
+	enum pkgman_test_result has_sys_ucred_h; 				/** @name have_sys_ucred_h @returns enum header_test_result = { PKGMAN_HAS_SYS_UCRED_H }; */
+	enum pkgman_test_result has_termios_h; 					/** @name have_termios_h @returns enum header_test_result = { PKGMAN_HAS_TERMIOS_H }; */
 
 } PkgmanHeaders = {
-	.have_mntent_h = PKGMAN_HAS_MNTENT_H,
-	.have_sys_mnt_tab_h = PKGMAN_HAS_SYS_MNTTAB_H,
-	.have_sys_mount_h = PKGMAN_HAS_SYS_MOUNT_H,
-	.have_sys_param_h = PKGMAN_HAS_SYS_PARAM_H,
-	.have_sys_resource_h = PKGMAN_HAS_SYS_RESOURCE_H,
-	.have_sys_stat_h = PKGMAN_HAS_SYS_STAT_H,
-	.have_sys_statfs_h = PKGMAN_HAS_SYS_STATFS_H,
-	.have_sys_statvfs_h = PKGMAN_HAS_SYS_STATVFS_H,
-	.have_sys_time_h = PKGMAN_HAS_SYS_TIME_H,
-	.have_sys_types_h = PKGMAN_HAS_SYS_TYPES_H,
-	.have_sys_ucred_h = PKGMAN_HAS_SYS_UCRED_H,
-	.have_termios_h = PKGMAN_HAS_TERMIOS_H
+
+	.has_mntent_h 						= TEST_INIT,
+	.has_sys_mnt_tab_h 					= TEST_INIT,
+	.has_sys_mount_h 					= TEST_INIT,
+	.has_sys_param_h 					= TEST_INIT,
+	.has_sys_resource_h 				= TEST_INIT,
+	.has_sys_stat_h 					= TEST_INIT,
+	.has_sys_statfs_h 					= TEST_INIT,
+	.has_sys_statvfs_h 					= TEST_INIT,
+	.has_sys_time_h 					= TEST_INIT,
+	.has_sys_types_h 					= TEST_INIT,
+	.has_sys_ucred_h 					= TEST_INIT,
+	.has_termios_h 						= TEST_INIT
 };
 
-enum symbol_test_result
+// enum symbol_test_result
+// {
+// 	SYMBOL_MISSING,
+// 	SYMBOL_FOUND
+// };
+
+struct pkgman_required_symbols
 {
-	SYMBOL_MISSING,
-	SYMBOL_FOUND
+	enum pkgman_test_result has_getmntent;
+	enum pkgman_test_result has_getmntinfo;
+	enum pkgman_test_result has_strndup;
+	enum pkgman_test_result has_strnlen;
+	enum pkgman_test_result has_strsep;
+	enum pkgman_test_result has_swprintf;
+	enum pkgman_test_result has_tcflush;
+
+} PkgmanSymbols = {
+ 	.has_getmntent 					= TEST_INIT,
+	.has_getmntinfo 					= TEST_INIT,
+	.has_strndup 						= TEST_INIT,
+	.has_strnlen 						= TEST_INIT,
+	.has_strsep 						= TEST_INIT,
+	.has_swprintf 						= TEST_INIT,
+	.has_tcflush 						= TEST_INIT
 };
 
-/** Symbols */
 
-#if defined(HAVE_GETMNTENT)
-#  define PKGMAN_HAS_GETMNTENT (enum symbol_test_result)SYMBOL_FOUND
-#else
-#  define PKGMAN_HAS_GETMNTENT (enum symbol_test_result)SYMBOL_MISSING
+
+
+struct pkgman_required_members
+{
+	enum pkgman_test_result has_struct_stat_st_blksize;
+	enum pkgman_test_result has_struct_statvfs_f_flag;
+	enum pkgman_test_result has_struct_statfs_f_flags;
+
+} PkgmanMemberChecks;
+
 #endif
 
 #if defined(HAVE_GETMNTINFO)
@@ -1278,85 +1330,132 @@ enum symbol_test_result
 #  define PKGMAN_HAS_TCFLUSH (enum symbol_test_result)SYMBOL_MISSING
 #endif
 
-struct pkgman_required_symbols
-{
-	enum symbol_test_result have_getmntent;
-	enum symbol_test_result have_getmntinfo;
-	enum symbol_test_result have_strndup;
-	enum symbol_test_result have_strnlen;
-	enum symbol_test_result have_strsep;
-	enum symbol_test_result have_swprintf;
-	enum symbol_test_result have_tcflush;
 
-} PkgmanSymbols = {
-	.have_getmntent = PKGMAN_HAS_GETMNTENT,
-	.have_getmntinfo = PKGMAN_HAS_GETMNTINFO,
-	.have_strndup = PKGMAN_HAS_STRNDUP,
-	.have_strnlen = PKGMAN_HAS_STRNLEN,
-	.have_strsep = PKGMAN_HAS_STRSEP,
-	.have_swprintf = PKGMAN_HAS_SWPRINTF,
-	.have_tcflush = PKGMAN_HAS_TCFLUSH
+struct pkgman_required_types
+{
+	enum type_test_result have_mode_t;
+	enum type_test_result have_uid_t;
+
+} PkgmanTypeChecks;
+
+/**
+ * @name pkgman_command_line
+ * @brief Roughly equivalent to user-specified command-line options in the
+ * original pacman 'meson.build' file.
+ */
+struct pkgman_command_line
+{
+	char prefix							[PATH_MAX]; 		/** PREFIX = get_option('prefix') */
+	char datarootdir 					[PATH_MAX]; 		/** DATAROOTDIR = join_paths(PREFIX, get_option('datarootdir')) */
+	char sysconfdir 					[PATH_MAX]; 		/** SYSCONFDIR = join_paths(PREFIX, get_option('sysconfdir')) */
+	char localstatedir 					[PATH_MAX]; 		/** LOCALSTATEDIR = join_paths(PREFIX, get_option('localstatedir')) */
+	char localedir 						[PATH_MAX]; 		/** LOCALEDIR = join_paths(PREFIX, get_option('localedir')) */
+	char rootdir 						[PATH_MAX]; 		/** ROOTDIR = get_option('root-dir') */
+	char bindir 						[PATH_MAX]; 		/** BINDIR = join_paths(PREFIX, get_option('bindir')) */
+	char mandir 						[PATH_MAX]; 		/** MANDIR = join_paths(PREFIX, get_option('mandir')) */
+	char buildscript 					[PATH_MAX]; 		/** BUILDSCRIPT = get_option('buildscript') */
+	char libmakepkgdir 					[PATH_MAX]; 		/** LIBMAKEPKGDIR = join_paths(PREFIX, DATAROOTDIR, 'makepkg') */
+	char pkgdatadir 					[PATH_MAX]; 		/** PKGDATADIR = join_paths(PREFIX, DATAROOTDIR, meson.project_name()) */
+
+} PkgmanCommandLine = {
+
+	.bindir 							= { BINDIR, '\0' },
+	.buildscript 						= { BUILDSCRIPT, '\0' },
+	.datarootdir						= { DATAROOTDIR, '\0' },
+	.libmakepkgdir 						= { LIBMAKEPKGDIR, '\0' },
+	.localedir 							= { LOCALEDIR, '\0' },
+	.localstatedir 						= { LOCALSTATEDIR, '\0' },
+	.mandir 							= { MANDIR, '\0' },
+	.pkgdatadir 						= { PKGDATADIR, '\0' },
+	.prefix								= { PREFIX, '\0' },
+	.rootdir 							= { ROOTDIR, '\0' },
+	.sysconfdir 						= { SYSCONFDIR, '\0' }
+
 };
 
-enum member_test_result
+/**
+ * @name pkgman_settings
+ * @brief Roughly equivalent to the project-wide settings in the original
+ * pacman 'meson.build' file.
+ */
+struct pkgman_settings
 {
-	MEMBER_MISSING,
-	MEMBER_FOUND
+	char pkgman_version 				[FILENAME_MAX];
+	const char* pkgman_c_compiler;
+
+	char msysLib 						[FILENAME_MAX];
+	char msys_install_path 				[PATH_MAX];
+
+	char path_seperator 				[PATH_MAX];
+	char string_seperator 				[PATH_MAX];
+	char homedrive 						[PATH_MAX];
+
+	char sysroot 						[PATH_MAX];
+	char sbindir 						[PATH_MAX];
+	char makepkg_template_dir			[PATH_MAX];
+
+	char pkg_ext 						[PATH_MAX];
+	char src_ext 						[PATH_MAX];
+
+} PkgmanSettings = {
+
+	.homedrive 							= { HOMEDRIVE, '\0' },
+	.makepkg_template_dir 				= { MAKEPKG_TEMPLATE_DIR, '\0' },
+	.msys_install_path 					= { MSYS_INSTALL_PATH, '\0' },
+	.msysLib 							= { MSYS_LIB, '\0' },
+	.path_seperator 					= { PATH_SEPERATOR, '\0' },
+	.pkg_ext 							= { PKGEXT, '\0' },
+	.src_ext 							= { SRCEXT, '\0' },
+	.pkgman_c_compiler 					= PKGMAN_C_COMPILER,
+	.pkgman_version 					= { PACKAGE_VERSION, '\0' },
+	.sbindir 							= { SBINDIR, '\0' },
+	.string_seperator 					= { STRING_SEPERATOR, '\0' },
+	.sysroot 							= { SYSROOT, '\0' }
+
 };
 
-struct pkgman_required_members
+/**
+ * Roughly equivalent to 'conf = configuration_data()' in the original pacman meson.build file.
+ */
+struct pkgman_conf
 {
-	enum member_test_result have_struct_stat_st_blksize;
-	enum member_test_result have_struct_statvfs_f_flag;
-	enum member_test_result have_struct_statfs_f_flags;
+	int gnu_source; 										/** conf.set('_GNU_SOURCE', true) */
+	char package 						[FILENAME_MAX]; 	/** conf.set_quoted('PACKAGE',  meson.project_name()) */
+	char package_version 				[FILENAME_MAX];		/** conf.set_quoted('PACKAGE_VERSION', PACKAGE_VERSION) */
+	char libalpm_version 				[FILENAME_MAX];		/** conf.set_quoted('LIB_VERSION', libalpm_version) */
 
-} PkgmanRequiredMembers;
+	char scriptlet_shell				[PATH_MAX]; 		/** conf.set_quoted('SCRIPTLET_SHELL', get_option('scriptlet-shell')) */
+	char ldconfig						[PATH_MAX]; 		/** conf.set_quoted('LDCONFIG', LDCONFIG) */
 
-enum type_test_result
-{
-	TYPE_MISSING,
-	TYPE_FOUND
+	char localedir						[PATH_MAX]; 		/** conf.set_quoted('LOCALEDIR', LOCALEDIR) */
+	char syshookdir						[PATH_MAX]; 		/** conf.set_quoted('SYSHOOKDIR', join_paths(DATAROOTDIR, 'libalpm/hooks/')) */
+	char conffile						[PATH_MAX]; 		/** conf.set_quoted('CONFFILE', join_paths(SYSCONFDIR, 'pacman.conf')) */
+	char dbpath							[PATH_MAX]; 		/** conf.set_quoted('DBPATH', join_paths(LOCALSTATEDIR, 'lib/pacman/')) */
+	char gpgdir							[PATH_MAX]; 		/** conf.set_quoted('GPGDIR', join_paths(SYSCONFDIR, 'pacman.d/gnupg/')) */
+	char logfile						[PATH_MAX];			/** conf.set_quoted('LOGFILE', join_paths(LOCALSTATEDIR, 'log/pacman.log')) */
+	char cachedir						[PATH_MAX]; 		/** conf.set_quoted('CACHEDIR', join_paths(LOCALSTATEDIR, 'cache/pacman/pkg/')) */
+	char hookdir						[PATH_MAX]; 		/** conf.set_quoted('HOOKDIR', join_paths(SYSCONFDIR, 'pacman.d/hooks/')) */
+	char rootdir						[PATH_MAX]; 		/** conf.set_quoted('ROOTDIR', ROOTDIR) */
+
+} PkgmanConf = {
+
+	.cachedir 							= { CACHEDIR, '\0' },
+	.conffile 							= { CONFFILE, '\0' },
+	.dbpath 							= { DBPATH, '\0' },
+	.gnu_source 						= _GNU_SOURCE,
+	.gpgdir 							= { GPGDIR, '\0' },
+	.hookdir 							= { HOOKDIR, '\0' },
+	.ldconfig 							= { LDCONFIG, '\0' },
+	.libalpm_version 					= { LIB_VERSION, '\0' },
+	.localedir 							= { LOCALEDIR, '\0' },
+	.logfile 							= { LOGFILE, '\0' },
+	.package 							= { PACKAGE, '\0' },
+	.package_version 					= { PACKAGE_VERSION, '\0' },
+	.rootdir 							= { ROOTDIR, '\0' },
+	.scriptlet_shell 					= { SCRIPTLET_SHELL, '\0' },
+	.syshookdir 						= { SYSHOOKDIR, '\0' }
+
 };
-
-const char* pkgman_version = { PACKAGE_VERSION };
-const char* msysLib = { MSYS_LIB };
-const char* msys_install_path = { MSYS_INSTALL_PATH };
-
-const char* path_seperator = { PATH_SEPERATOR };
-const char* string_seperator = { STRING_SEPERATOR };
-const char* homedrive = { HOMEDRIVE };
-const char* rootdir = { ROOTDIR };
-
-const char* prefix = { PREFIX };
-const char* sysconfdir = { SYSCONFDIR };
-const char* localstatedir = { LOCALSTATEDIR };
-const char* datarootdir = { DATAROOTDIR };
-
-const char* sysroot = { SYSROOT };
-const char* bindir = { BINDIR };
-const char* sbindir = { SBINDIR };
-
-const char* syshookdir = { SYSHOOKDIR };
-const char* conffile = { CONFFILE };
-const char* database_dir = { DBPATH };
-const char* gpgdir = { GPGDIR };
-const char* cachedir = { CACHEDIR };
-const char* logfile = { LOGFILE };
-const char* hookdir = { HOOKDIR };
-
-const char* libalpm_version = { LIB_VERSION };
-
-const char* ldconfig = { LDCONFIG };
-const char* buildscript = { BUILDSCRIPT };
-const char* scriptlet_shell = { SCRIPTLET_SHELL };
-
-const char* makepg_template_dir = { MAKEPKG_TEMPLATE_DIR };
-const char* pkg_ext = { PKGEXT };
-const char* src_ext = { SRCEXT };
-
-const char* pkgman_c_compiler = { PKGMAN_C_COMPILER };
-
-#if !(PKGMAN_INTELLISENSE_GUARD)
 
 /**
  *

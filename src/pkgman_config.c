@@ -393,8 +393,18 @@ int main(int argc, char** argv)
 
 	struct pkgman_required_headers* PkgmanGetHeaders = &PkgmanHeaders;
 
-	if (PKGMAN_HAS_MNTENT_H)
-		PkgmanHeaders.have_mntent_h = HEADER_FOUND;
+	enum pkgman_test_result have_mntent_h = PkgmanGetHeaders->has_mntent_h;
+	enum pkgman_test_result have_sys_mnt_tab_h = PkgmanGetHeaders->has_sys_mnt_tab_h;
+	enum pkgman_test_result have_sys_mount_h = PkgmanGetHeaders->has_sys_mount_h;
+	enum pkgman_test_result have_sys_param_h = PkgmanGetHeaders->has_sys_param_h;
+	enum pkgman_test_result have_sys_resource_h = PkgmanGetHeaders->has_sys_resource_h;
+	enum pkgman_test_result have_sys_stat_h = PkgmanGetHeaders->has_sys_stat_h;
+	enum pkgman_test_result have_sys_statfs_h = PkgmanGetHeaders->has_sys_statfs_h;
+	enum pkgman_test_result have_sys_statvfs_h = PkgmanGetHeaders->has_sys_statvfs_h;
+	enum pkgman_test_result have_sys_types_h = PkgmanGetHeaders->has_sys_types_h;
+	enum pkgman_test_result have_sys_time_h = PkgmanGetHeaders->has_sys_time_h;
+	enum pkgman_test_result have_sys_ucred_h = PkgmanGetHeaders->has_sys_ucred_h;
+	enum pkgman_test_result have_termios_h = PkgmanGetHeaders->has_termios_h;
 
 	if (PKGMAN_HAS_SYS_MNTTAB_H)
 		PkgmanHeaders.have_sys_mnt_tab_h = HEADER_FOUND;
@@ -492,15 +502,16 @@ int main(int argc, char** argv)
 	printf("Checking for required library dependencies...\n");
 	printf("\n");
 
-	int have_ucrtbase = checkForLib(UCRTBASE_DYNAMIC_LIB); /** UCRTBASE_LIB_PATH */
-	int have_msvcrt = checkForLib(MSVCRT_DYNAMIC_LIB); /** MSVCRT_LIB_PATH */
-	int have_lib_msys = checkForLib(MSYS_LIB); /** MSYS_INSTALL_PATH */
-	int have_libcrypto = checkForLib(CRYPTO_LIB); /** CRYPTO_H_PATH */
-	int have_libcurl = checkForLib(LIBCURL_LIB); /** CURL_H_PATH */
-	int have_libgpgme = checkForLib(LIBGPGME_LIB); /** GPGME_H_PATH */
+	struct pkgman_required_libs* PkgmanGetLibs = &PkgmanLibs;
 
-	#define HAVE_LIBCURL have_libcurl
-	#define HAVE_LIBGPGME have_libcurl
+	enum pkgman_test_result have_libc_lib 						= PkgmanGetLibs->has_libc_lib;
+
+	enum pkgman_test_result have_libarchive_lib 				= PkgmanGetLibs->has_libarchive_lib;
+	enum pkgman_test_result have_libcrypto_lib 					= PkgmanGetLibs->has_libcrypto_lib;
+	enum pkgman_test_result have_libcurl_lib 					= PkgmanGetLibs->has_libcurl_lib;
+	enum pkgman_test_result have_libgpgme_lib 					= PkgmanGetLibs->has_libgpgme_lib;
+	enum pkgman_test_result have_libintl_lib 					= PkgmanGetLibs->has_libintl_lib;
+
 
 	printf("\n");
 	printf("Checking for required functions...\n");
@@ -526,10 +537,16 @@ int main(int argc, char** argv)
 	if (PKGMAN_HAS_SWPRINTF)
 		PkgmanSymbols.have_swprintf = SYMBOL_FOUND;
 
-	if (PKGMAN_HAS_TCFLUSH)
-		PkgmanSymbols.have_tcflush = SYMBOL_FOUND;
+	struct pkgman_required_symbols* PkgmanGetSymbols = &PkgmanSymbols;
 
-	if (PkgmanGetSymbols->have_getmntent == SYMBOL_FOUND)
+	enum pkgman_test_result have_getmntent = PkgmanGetSymbols->has_getmntent;
+	enum pkgman_test_result have_getmntinfo = PkgmanGetSymbols->has_getmntinfo;
+	enum pkgman_test_result have_strndup = PkgmanGetSymbols->has_strndup;
+	enum pkgman_test_result have_strnlen = PkgmanGetSymbols->has_strnlen;
+	enum pkgman_test_result have_strsep = PkgmanGetSymbols->has_strsep;
+	enum pkgman_test_result have_swprintf = PkgmanGetSymbols->has_swprintf;
+	enum pkgman_test_result have_tcflush = PkgmanGetSymbols->has_tcflush;
+
 	{
 		printf("Success :: '%s'\n", "getmntent()");
 	} else {
@@ -574,16 +591,23 @@ int main(int argc, char** argv)
 	if (PkgmanGetSymbols->have_tcflush == SYMBOL_FOUND)
 	{
 		printf("Success :: '%s'\n", "tcflush()");
+
+	struct pkgman_required_members* PkgmanGetMemberChecks = &PkgmanMemberChecks;
+
+	enum pkgman_test_result have_struct_stat_st_blksize = PkgmanGetMemberChecks->has_struct_stat_st_blksize;
+	enum pkgman_test_result have_struct_statfs_f_flags = PkgmanGetMemberChecks->has_struct_statfs_f_flags;
+	enum pkgman_test_result have_struct_statvfs_f_flag = PkgmanGetMemberChecks->has_struct_statvfs_f_flag;
+
 	} else {
 		printf("Failed  :: '%s'\n", "tcflush()");
 	}
 
-/**
- * #if defined(__CYGWIN__) && CYGWIN_VERSION_API_MINOR < 262
- * void *libc = dlopen ("cygwin1.dll", 0);
- * struct mntent *(*getmntent_r) (FILE *, struct mntent *, char *, int) = dlsym (libc, "getmntent_r");
- * #endif
-*/
+
+	struct pkgman_required_types* PkgmanGetTypeChecks = &PkgmanTypeChecks;
+
+	struct pkgman_command_line* PkgmanGetCommandLine = &PkgmanCommandLine;
+	struct pkgman_settings* PkgmanGetSettings = &PkgmanSettings;
+	struct pkgman_conf* PkgmanGetConf = &PkgmanConf;
 
 /**
  * printf("\n");

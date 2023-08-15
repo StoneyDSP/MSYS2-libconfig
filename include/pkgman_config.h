@@ -25,9 +25,9 @@
 #ifndef PKGMAN_CONFIGURATION_H
 #define PKGMAN_CONFIGURATION_H
 
-#define PKGMAN_VERSION_MAJOR '6'
-#define PKGMAN_VERSION_MINOR '0'
-#define PKGMAN_VERSION_PATCH '2'
+#define PKGMAN_VERSION_MAJOR 6
+#define PKGMAN_VERSION_MINOR 0
+#define PKGMAN_VERSION_PATCH 2
 #define PKGMAN_VERSION_TWEAK __PM_STRING(81c0a15465cc6197b913e761833d2b486fc0c4fa)
 #define PKGMAN_VERSION (PKGMAN_VERSION_MAJOR * 10000 + PKGMAN_VERSION_MINOR * 100 + PKGMAN_VERSION_PATCH)
 
@@ -321,6 +321,15 @@
 #	undef  PKGMAN_CPLUSPLUS
 #endif
 
+/* Guard C code in headers, while including them from C++ */
+#ifdef  PKGMAN_CPLUSPLUS
+#  define PKGMAN_BEGIN_DECLS  extern "C" {
+#  define PKGMAN_END_DECLS    }
+#else
+#  define PKGMAN_BEGIN_DECLS
+#  define PKGMAN_END_DECLS
+#endif
+
 #ifdef __has_feature
 #	define PKGMAN_HAS_FEATURE(x) __has_feature(x)
 #else
@@ -590,6 +599,13 @@
 #  else
 #    error "Error! Unix platform in use, but cannot locate standard Unix header <unistd.h>?"
 #  endif
+#elif (PKGMAN_PLATFORM_IS_WINDOWS)
+#  if PKGMAN_HAS_INCLUDE(<windows.h>)
+/* #    include <windows.h> */
+#    define HAVE_WINDOWS_H 1
+#  else
+#    error "Error! Windows platform in use, but cannot locate standard Windows header <windows.h>?"
+#  endif
 #endif
 
 #if PKGMAN_HAS_INCLUDE(<archive.h>)
@@ -678,7 +694,7 @@
  * ['int64_t',  '''#include <stdint.h>''',    'signed long int'],
  *
  ******************************************************************************/
-#if (PKGMAN_PLATFORM_IS_MSYS)
+#if (PKGMAN_PLATFORM_IS_CYGWIN)
 
   #if !defined(_MODE_T_DECLARED)
   #  define	_MODE_T_REQUIRED
@@ -791,8 +807,8 @@
 
 #if !defined(SYSROOT)
 #  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
-#    define SYSROOT HOMEDRIVE, PATH_SEPERATOR, 'm', 's', 'y', 's', '6', '4', PATH_SEPERATOR, 'e', 't', 'c'
-/** #    define SYSROOT HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR __PM_STRING(etc) */
+#    define SYSROOT HOMEDRIVE, PATH_SEPERATOR, 'm', 's', 'y', 's', '6', '4', PATH_SEPERATOR
+/** #    define SYSROOT HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR */
 #  else
 #    define SYSROOT HOMEDRIVE
 #  endif
@@ -850,6 +866,14 @@
 #if !defined(PACKAGE_VERSION)
 #  define PACKAGE_VERSION PKGMAN_VERSION_MAJOR, '.', PKGMAN_VERSION_MINOR, '.', PKGMAN_VERSION_PATCH
 /** #  define PACKAGE_VERSION __PM_STRING(PKGMAN_VERSION_MAJOR) __PM_STRING(.) __PM_STRING(PKGMAN_VERSION_MINOR) __PM_STRING(.) __PM_STRING(PKGMAN_VERSION_PATCH) */
+#endif
+
+#if !defined(INCLUDEDIR)
+#  define INCLUDEDIR PREFIX, PATH_SEPERATOR, 'i', 'n', 'c', 'l', 'u', 'd', 'e'
+#endif
+
+#if !defined(OLDINCLUDEDIR)
+#  define OLDINCLUDEDIR SYSROOT, PATH_SEPERATOR, 'i', 'n', 'c', 'l', 'u', 'd', 'e'
 #endif
 
 #if !defined(EXEC_PREFIX)
@@ -943,12 +967,12 @@
 #endif
 
 #if !defined(CONFFILE)
-#  define CONFFILE SYSCONFDIR, PATH_SEPERATOR, 'p', 'k', 'g', 'm', 'a', 'n', '.', 'c', 'o', 'n', 'f'
+#  define CONFFILE SYSCONFDIR, PATH_SEPERATOR, PACKAGE, '.', 'c', 'o', 'n', 'f'
 /** #  define CONFFILE SYSCONFDIR PATH_SEPERATOR __PM_STRING(pkgman.conf) */
 #endif
 
 #if !defined(DBPATH)
-#  define DBPATH LOCALSTATEDIR, PATH_SEPERATOR, 'l', 'i', 'b', PATH_SEPERATOR, 'p', 'k', 'g', 'm', 'a', 'n', PATH_SEPERATOR
+#  define DBPATH LOCALSTATEDIR, PATH_SEPERATOR, 'l', 'i', 'b', PATH_SEPERATOR, PACKAGE, PATH_SEPERATOR
 /** #  define DBPATH LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(lib) PATH_SEPERATOR __PM_STRING(pkgman) PATH_SEPERATOR */
 #endif
 
@@ -958,17 +982,17 @@
 #endif
 
 #if !defined(CACHEDIR)
-#  define CACHEDIR LOCALSTATEDIR, PATH_SEPERATOR, 'c', 'a', 'c', 'h', 'e', PATH_SEPERATOR, 'p', 'a', 'c', 'm', 'a', 'n', PATH_SEPERATOR, 'p', 'k', 'g', PATH_SEPERATOR
+#  define CACHEDIR LOCALSTATEDIR, PATH_SEPERATOR, 'c', 'a', 'c', 'h', 'e', PATH_SEPERATOR, PACKAGE, PATH_SEPERATOR, 'p', 'k', 'g', PATH_SEPERATOR
 /** #  define CACHEDIR LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(cache) PATH_SEPERATOR __PM_STRING(pacman) PATH_SEPERATOR __PM_STRING(pkg) PATH_SEPERATOR */
 #endif
 
 #if !defined(LOGFILE)
-#  define LOGFILE LOCALSTATEDIR, PATH_SEPERATOR, 'l', 'o', 'g', PATH_SEPERATOR, 'p', 'k', 'g', 'm', 'a', 'n', '.', 'l', 'o', 'g'
+#  define LOGFILE LOCALSTATEDIR, PATH_SEPERATOR, 'l', 'o', 'g', PATH_SEPERATOR, PACKAGE, '.', 'l', 'o', 'g'
 /** #  define LOGFILE LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(log) PATH_SEPERATOR __PM_STRING(pkgman.log) */
 #endif
 
 #if !defined(HOOKDIR)
-#  define HOOKDIR SYSCONFDIR, PATH_SEPERATOR, 'p', 'a', 'c', 'm', 'a', 'n', '.', 'd', PATH_SEPERATOR, 'h', 'o', 'o', 'k', 's', PATH_SEPERATOR
+#  define HOOKDIR SYSCONFDIR, PATH_SEPERATOR, PACKAGE, '.', 'd', PATH_SEPERATOR, 'h', 'o', 'o', 'k', 's', PATH_SEPERATOR
 /** #  define HOOKDIR SYSCONFDIR PATH_SEPERATOR __PM_STRING(pacman.d) PATH_SEPERATOR __PM_STRING(hooks) PATH_SEPERATOR */
 #endif
 
@@ -978,7 +1002,7 @@
 #endif
 
 #if !defined(PKGDATADIR)
-#  define PKGDATADIR DATAROOTDIR, PATH_SEPERATOR, 'p', 'k', 'g', 'm', 'a', 'n'
+#  define PKGDATADIR DATAROOTDIR, PATH_SEPERATOR, PACKAGE
 /** #  define PKGDATADIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(pkgman) */
 #endif
 
@@ -1154,6 +1178,24 @@ extern "C" {
 #  define HAVE_STRNDUP 1
 #endif
 
+#ifndef HAVE_STRNLEN
+	/**
+	 * @brief Returns the length of the string or 'max_count' - whichever is
+	 * smallest.
+	 * @param string The string whose size is to be determined
+	 * @param max_count Length of the string or 'max_count'
+	 */
+	size_t strnlen(const char* string, size_t max_count)
+	{
+		size_t count;
+		for(count = 0; count < max_count; count++) {
+			if(string[count] == '\0') {
+				break;
+			}
+		}
+		return count;
+	}
+#  define HAVE_STRNLEN 1
 #endif
 
 enum pkgman_test_result
@@ -1271,44 +1313,81 @@ struct pkgman_required_members
 
 } PkgmanMemberChecks;
 
+enum type_test_result
+{
+	TYPE_MISSING,
+	TYPE_FOUND
+};
+
+
+#if defined(_MODE_T_REQUIRED)
+#  define	_MODE_T_
+typedef	unsigned int mode_t; /* permissions */
+#  define _MODE_T_DECLARED
+#  define _MODE_T_DEFINED
+#  undef  _MODE_T_REQUIRED
 #endif
 
-#if defined(HAVE_GETMNTINFO)
-#  define PKGMAN_HAS_GETMNTINFO (enum symbol_test_result)SYMBOL_FOUND
-#else
-#  define PKGMAN_HAS_GETMNTINFO (enum symbol_test_result)SYMBOL_MISSING
+#if defined(_UID_T_REQUIRED)
+#  define _UID_T_
+typedef	unsigned int uid_t; /* user id */
+#  define _UID_T_DECLARED
+#  define _UID_T_DEFINED
+#  undef  _UID_T_REQUIRED
 #endif
 
-#if defined(HAVE_STRNDUP)
-#  define PKGMAN_HAS_STRNDUP (enum symbol_test_result)SYMBOL_FOUND
-#else
-#  define PKGMAN_HAS_STRNDUP (enum symbol_test_result)SYMBOL_MISSING
+#if defined(_OFF_T_REQUIRED)
+#  define _OFF_T_
+typedef	signed int off_t; /* file offset */
+#  define _OFF_T_DECLARED
+#  define _OFF_T_DEFINED
+#  undef  _OFF_T_REQUIRED
 #endif
 
-#if defined(HAVE_STRNLEN)
-#  define PKGMAN_HAS_STRNLEN (enum symbol_test_result)SYMBOL_FOUND
-#else
-#  define PKGMAN_HAS_STRNLEN (enum symbol_test_result)SYMBOL_MISSING
+#if defined(_PID_T_REQUIRED)
+#  define _PID_T_
+typedef	signed int pid_t; /* process id */
+#  define PKGMAN_MODE_T mode_t
+#  define _PID_T_DECLARED
+#  define _PID_T_DEFINED
+#  undef  _PID_T_REQUIRED
 #endif
 
-#if defined(HAVE_STRSEP)
-#  define PKGMAN_HAS_STRSEP (enum symbol_test_result)SYMBOL_FOUND
-#else
-#  define PKGMAN_HAS_STRSEP (enum symbol_test_result)SYMBOL_MISSING
+#if defined(_SIZE_T_REQUIRED)
+#  define _SIZE_T_
+typedef unsigned int size_t; /** size_t type */
+#  define PKGMAN_SIZE_T size_t
+#  define _SIZE_T_DECLARED
+#  define _SIZE_T_DEFINED
+#  undef  _SIZE_T_REQUIRED
 #endif
 
-#if defined(HAVE_SWPRINTF)
-#  define PKGMAN_HAS_SWPRINTF (enum symbol_test_result)SYMBOL_FOUND
-#else
-#  define PKGMAN_HAS_SWPRINTF (enum symbol_test_result)SYMBOL_MISSING
+#if defined(_SSIZE_T_REQUIRED)
+#  define _SSIZE_T_
+typedef signed int ssize_t; /** Signed size_t type */
+#  define PKGMAN_SSIZE_T ssize_t
+#  define _SSIZE_T_DECLARED
+#  define _SSIZE_T_DEFINED
+#  undef  _SSIZE_T_REQUIRED
 #endif
 
-#if defined(HAVE_TCFLUSH)
-#  define PKGMAN_HAS_TCFLUSH (enum symbol_test_result)SYMBOL_FOUND
-#else
-#  define PKGMAN_HAS_TCFLUSH (enum symbol_test_result)SYMBOL_MISSING
+#if defined(_INT64_T_REQUIRED)
+#  define _INT64_T_
+typedef	signed long int int64_t;
+#  define PKGMAN_INT64_T int64_t
+#  define _INT64_T_DECLARED
+#  define _INT64_T_DEFINED
+#  define __int64
+#  undef  _INT64_T_REQUIRED
 #endif
 
+#define PKGMAN_MODE_T mode_t
+#define PKGMAN_UID_T uid_t
+#define PKGMAN_OFF_T off_t
+#define PKGMAN_PID_T pid_t
+#define PKGMAN_SIZE_T size_t
+#define PKGMAN_SSIZE_T ssize_t
+#define PKGMAN_INT64_T int64_t
 
 struct pkgman_required_types
 {
@@ -1457,9 +1536,6 @@ int checkForLib(const char* libName);
  * dependent macros defined above :)
  */
 
-#if defined(__18CXX)
-#  define ID_VOID_MAIN
-#endif
 #if defined(__CLASSIC_C__)
 /* cv-qualifiers did not exist in K&R C */
 #  define const
@@ -1467,25 +1543,17 @@ int checkForLib(const char* libName);
 #endif
 
 #if (__CYGWIN__)
-#  if defined(ID_VOID_MAIN)
-void WinMain();
-#  else
-#    if defined(__CLASSIC_C__)
+#  if defined(__CLASSIC_C__)
 int WinMain(argc, argv) int argc; char** argv;
-#    else
+#  else
 int WinMain(int argc, char** argv);
-#    endif
 #  endif
 #else
-#  if defined(ID_VOID_MAIN)
-void main();
-#  else
-#    if defined(__CLASSIC_C__)
+#  if defined(__CLASSIC_C__)
 int main(argc, argv) int argc; char** argv;
-#    else
+#  else
 int main(int argc, char** argv);
-#    endif /** __CLASSIC_C__ */
-#  endif /** ID_VOID_MAIN */
+#  endif
 #endif
 
 #ifdef PKGMAN_CPLUSPLUS

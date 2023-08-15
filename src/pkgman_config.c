@@ -343,21 +343,17 @@ int checkForLib(const char* libName)
 
 
 #if (__CYGWIN__)
-#  if defined(ID_VOID_MAIN)
-void WinMain() {}
-#  elif defined(__CLASSIC_C__)
+#  if defined(__CLASSIC_C__)
 int WinMain(argc, argv) int argc; char** argv;
-#    else
+#  else
 int WinMain(int argc, char** argv)
-#    endif
+#  endif
 #else
-#  if defined(ID_VOID_MAIN)
-void main() {}
-#  elif defined(__CLASSIC_C__)
+#  if defined(__CLASSIC_C__)
 int main(argc, argv) int argc; char** argv;
-#    else
+#  else
 int main(int argc, char** argv)
-#    endif
+#  endif
 #endif
 {
 	/**
@@ -365,8 +361,6 @@ int main(int argc, char** argv)
 	 * for (i = 0; i < argc; i++) printf("%s\n", argv[i]);
 	 *
 	*/
-
-
 
 	printf("\n");
 	printf("pkgman_config");

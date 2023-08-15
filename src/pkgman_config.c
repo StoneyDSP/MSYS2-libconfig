@@ -9,17 +9,6 @@
  *
  */
 
-#if (__CYGWIN__)
-#  if __has_include(<cygwin/version.h>)
-#    include <cygwin/version.h>
-#  endif
-#endif
-
-/**
- * #if __has_include(<corecrt.h>)
- * #  include <corecrt.h>
- * #endif
-*/
 
 #if   (__has_include(<dlfcn.h>))
 #  include <dlfcn.h>

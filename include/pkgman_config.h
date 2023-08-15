@@ -592,25 +592,14 @@
 #  endif
 #endif
 
-
-/***************************************************************************//**
- *
- *  ... Dependency check macros
- *
- ******************************************************************************/
+#if PKGMAN_HAS_INCLUDE(<archive.h>)
+#  include <archive.h>
+#  define HAVE_ARCHIVE_H 1
+#endif
 
 #if PKGMAN_HAS_INCLUDE(<curl/curl.h>)
 #  include <curl/curl.h>
 #  define HAVE_CURL_CURL_H 1
-#endif
-
-#if   (HAVE_CURL_CURL_H)
-#  define CURL_H_PATH __PM_STRING(C:/msys64/usr/include/curl)
-#  if (PKGMAN_PLATFORM_IS_MSYS)
-#    define LIBCURL_LIB __PM_STRING(msys-curl-4.dll)
-#  else
-#    define LIBCURL_LIB __PM_STRING(libcurl-4.dll)
-#  endif
 #endif
 
 #if PKGMAN_HAS_INCLUDE(<gpgme.h>)
@@ -618,40 +607,16 @@
 #  define HAVE_GPGME_H 1
 #endif
 
-#if   (HAVE_GPGME_H)
-#  define GPGME_H_PATH __PM_STRING(C:/msys64/usr/include/gpgme++)
-#  if (PKGMAN_PLATFORM_IS_MSYS)
-#    define LIBGPGME_LIB __PM_STRING(msys-gpgme-11.dll)
-#  else
-#    define LIBGPGME_LIB __PM_STRING(libgpgme-11.dll)
-#  endif
+#if PKGMAN_HAS_INCLUDE(<libintl.h>)
+#  include <libintl.h>
+#  define HAVE_LIBINTL_H 1
 #endif
 
-/**
- * #if PKGMAN_HAS_INCLUDE(<openssl/crypto.h>)
- * #  include <openssl/crypto.h>
- * #  define OPENSSL_FOUND 1
- * #  define PKGMAN_CRYPTO_LIB __PM_STRING(libcrypto.dll)
- * #endif
-*/
-
-#if   (HAVE_LIBNETTLE)
-#  define CRYPTO_INCLUDE_SYMBOL __PM_STRING(<nettle/crypto.h>)
-#elif (HAVE_LIBSSL)
-#  define CRYPTO_INCLUDE_SYMBOL __PM_STRING(<openssl/crypto.h>)
+#if PKGMAN_HAS_INCLUDE(<openssl/crypto.h>)
+/* #  include <openssl/crypto.h> */
+#  define HAVE_OPENSSL_CRYPTO_H 1
 #endif
 
-#if   (HAVE_LIBSSL)
-#  define CRYPTO_H_PATH __PM_STRING(C:/msys64/usr/include/openssl)
-#elif (HAVE_LIBNETTLE)
-#  define CRYPTO_H_PATH __PM_STRING(C:/msys64/usr/include/nettle)
-#endif
-
-#if (PKGMAN_PLATFORM_IS_MSYS)
-#  define CRYPTO_LIB __PM_STRING(msys-crypto-3.dll)
-#else
-#  define CRYPTO_LIB __PM_STRING(libcrypto.dll)
-#endif
 
 /***************************************************************************//**
  *
@@ -1217,67 +1182,7 @@ enum header_test_result
 	HEADER_MISSING,
 	HEADER_FOUND
 };
-/** Set flags for portability */
-#if defined(HAVE_SYS_MNTTAB_H)
-#  define PKGMAN_HAS_SYS_MNTTAB_H (enum header_test_result)HEADER_FOUND
-#else
-#  define PKGMAN_HAS_SYS_MNTTAB_H (enum header_test_result)HEADER_MISSING
-#endif
-#if defined(HAVE_SYS_MOUNT_H)
-#  define PKGMAN_HAS_SYS_MOUNT_H (enum header_test_result)HEADER_FOUND
-#else
-#  define PKGMAN_HAS_SYS_MOUNT_H (enum header_test_result)HEADER_MISSING
-#endif
-#if defined(HAVE_SYS_PARAM_H)
-#  define PKGMAN_HAS_SYS_PARAM_H (enum header_test_result)HEADER_FOUND
-#else
-#  define PKGMAN_HAS_SYS_PARAM_H (enum header_test_result)HEADER_MISSING
-#endif
-#if defined(HAVE_SYS_RESOURCE_H)
-#  define PKGMAN_HAS_SYS_RESOURCE_H (enum header_test_result)HEADER_FOUND
-#else
-#  define PKGMAN_HAS_SYS_RESOURCE_H (enum header_test_result)HEADER_MISSING
-#endif
-#if defined(HAVE_SYS_STAT_H)
-#  define PKGMAN_HAS_SYS_STAT_H (enum header_test_result)HEADER_FOUND
-#else
-#  define PKGMAN_HAS_SYS_STAT_H (enum header_test_result)HEADER_MISSING
-#endif
-#if defined(HAVE_SYS_STATFS_H)
-#  define PKGMAN_HAS_SYS_STATFS_H (enum header_test_result)HEADER_FOUND
-#else
-#  define PKGMAN_HAS_SYS_STATFS_H (enum header_test_result)HEADER_MISSING
-#endif
-#if defined(HAVE_SYS_STATVFS_H)
-#  define PKGMAN_HAS_SYS_STATVFS_H (enum header_test_result)HEADER_FOUND
-#else
-#  define PKGMAN_HAS_SYS_STATVFS_H (enum header_test_result)HEADER_MISSING
-#endif
-#if defined(HAVE_SYS_TYPES_H)
-#  define PKGMAN_HAS_SYS_TYPES_H (enum header_test_result)HEADER_FOUND
-#else
-#  define PKGMAN_HAS_SYS_TYPES_H (enum header_test_result)HEADER_MISSING
-#endif
-#if defined(HAVE_SYS_TIME_H)
-#  define PKGMAN_HAS_SYS_TIME_H (enum header_test_result)HEADER_FOUND
-#else
-#  define PKGMAN_HAS_SYS_TIME_H (enum header_test_result)HEADER_MISSING
-#endif
-#if defined(HAVE_SYS_UCRED_H)
-#  define PKGMAN_HAS_SYS_UCRED_H (enum header_test_result)HEADER_FOUND
-#else
-#  define PKGMAN_HAS_SYS_UCRED_H (enum header_test_result)HEADER_MISSING
-#endif
-#if defined(HAVE_TERMIOS_H)
-#  define PKGMAN_HAS_TERMIOS_H (enum header_test_result)HEADER_FOUND
-#else
-#  define PKGMAN_HAS_TERMIOS_H (enum header_test_result)HEADER_MISSING
-#endif
-#if defined(HAVE_MNTENT_H)
-#  define PKGMAN_HAS_MNTENT_H (enum header_test_result)HEADER_FOUND
-#else
-#  define PKGMAN_HAS_MNTENT_H (enum header_test_result)HEADER_MISSING
-#endif
+};
 
 /**
  * int have_mntent_h = 					{ PKGMAN_HAS_MNTENT_H };

@@ -312,7 +312,14 @@ int checkForDir(const char* pathToDir)
 int checkForLib(const char* libName)
 {
 	void* handle;
-	char *error;
+	char* error;
+
+	if (*libName == '\0')  {
+
+		printf("Fail    :: '%s' [%d]: %s\n", libName, -1, "No lib name given?");
+
+		return (-1);
+	}
 
 	handle = dlopen(libName, RTLD_LAZY);
 

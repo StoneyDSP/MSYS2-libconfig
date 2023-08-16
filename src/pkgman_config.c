@@ -1,14 +1,11 @@
-/**
- * @file pkgman_config.cs
- * @author your name (you@domain.com)
- * @brief
+/***************************************************************************//**
+ * @file pkgman_config.c
+ * @author Nathan J. Hood <nathanjhood@googlemail.com>
+ * @brief Modern C configuration header for pacman/pkgman
  * @version 0.1
- * @date 2023-08-09
- *
- * @copyright Copyright (c) 2023
- *
- */
-
+ * @date 2023-08-07
+ * @copyright Copyright (c) 2023 GNU GPL2.0 - Nathan J. Hood <nathanjhood@googlemail.com>
+ ******************************************************************************/
 
 #if   (__has_include(<dlfcn.h>))
 #  include <dlfcn.h>
@@ -403,13 +400,9 @@ int main(int argc, char** argv)
 	if (_PKGMAN_HAS_MNTENT_H == TEST_PASS)
 	{
 		have_mntent_h = TEST_PASS;
-
 		printf("Success :: '%s'\n", "<mntent.h>");
-
 	}  else  {
-
 		have_mntent_h = TEST_FAIL;
-
 		printf("Failed  :: '%s'\n", "<mntent.h>");
 	}
 
@@ -417,13 +410,9 @@ int main(int argc, char** argv)
 	if (_PKGMAN_HAS_SYS_MNTTAB_H == TEST_PASS)
 	{
 		have_sys_mnt_tab_h = TEST_PASS;
-
 		printf("Success :: '%s'\n", "<sys/mnttab.h>");
-
 	}  else  {
-
 		have_sys_mnt_tab_h = TEST_FAIL;
-
 		printf("Failed  :: '%s'\n", "<sys/mnttab.h>");
 	}
 
@@ -431,13 +420,9 @@ int main(int argc, char** argv)
 	if (_PKGMAN_HAS_SYS_MOUNT_H == TEST_PASS)
 	{
 		have_sys_mount_h = TEST_PASS;
-
 		printf("Success :: '%s'\n", "<sys/mount.h>");
-
 	}  else  {
-
 		have_sys_mount_h = TEST_FAIL;
-
     	printf("Failed  :: '%s'\n", "<sys/mount.h>");
 	}
 
@@ -445,13 +430,9 @@ int main(int argc, char** argv)
 	if (_PKGMAN_HAS_SYS_PARAM_H == TEST_PASS)
 	{
 		have_sys_param_h = TEST_PASS;
-
 		printf("Success :: '%s'\n", "<sys/param.h>");
-
 	}  else  {
-
 		have_sys_param_h = TEST_FAIL;
-
 		printf("Failed  :: '%s'\n", "<sys/param.h>");
 	}
 
@@ -459,13 +440,9 @@ int main(int argc, char** argv)
 	if (_PKGMAN_HAS_SYS_RESOURCE_H == TEST_PASS)
 	{
 		have_sys_resource_h = TEST_PASS;
-
 		printf("Success :: '%s'\n", "<sys/resource.h>");
-
 	}  else  {
-
 		have_sys_resource_h = TEST_FAIL;
-
 		printf("Failed  :: '%s'\n", "<sys/resource.h>");
 	}
 
@@ -473,13 +450,9 @@ int main(int argc, char** argv)
 	if (_PKGMAN_HAS_SYS_STAT_H == TEST_PASS)
 	{
 		have_sys_stat_h = TEST_PASS;
-
 		printf("Success :: '%s'\n", "<sys/stat.h>");
-
 	}  else  {
-
 		have_sys_stat_h = TEST_FAIL;
-
 		printf("Failed  :: '%s'\n", "<sys/stat.h>");
 	}
 
@@ -487,39 +460,27 @@ int main(int argc, char** argv)
 	if (_PKGMAN_HAS_SYS_STATFS_H == TEST_PASS)
 	{
 		have_sys_statfs_h = TEST_PASS;
-
 		printf("Success :: '%s'\n", "<sys/statfs.h>");
-
 	}  else  {
-
 		have_sys_statfs_h = TEST_FAIL;
-
 		printf("Failed  :: '%s'\n", "<sys/statfs.h>");
 	}
 
 	if (_PKGMAN_HAS_SYS_STATVFS_H == TEST_PASS)
 	{
 		have_sys_statvfs_h = TEST_PASS;
-
 		printf("Success :: '%s'\n", "<sys/statvfs.h>");
-
 	}  else  {
-
 		have_sys_statvfs_h = TEST_FAIL;
-
 		printf("Failed  :: '%s'\n", "<sys/statvfs.h>");
 	}
 
 	if (_PKGMAN_HAS_SYS_TIME_H == TEST_PASS)
 	{
 		have_sys_time_h = TEST_PASS;
-
 		printf("Success :: '%s'\n", "<sys/time.h>");
-
 	}  else  {
-
 		have_sys_time_h = TEST_FAIL;
-
 		printf("Failed  :: '%s'\n", "<sys/time.h>");
 	}
 
@@ -527,13 +488,9 @@ int main(int argc, char** argv)
 	if (_PKGMAN_HAS_SYS_TYPES_H == TEST_PASS)
 	{
 		have_sys_types_h = TEST_PASS;
-
 		printf("Success :: '%s'\n", "<sys/types.h>");
-
 	}  else  {
-
 		have_sys_types_h = TEST_FAIL;
-
 		printf("Failed  :: '%s'\n", "<sys/types.h>");
 	}
 
@@ -541,26 +498,18 @@ int main(int argc, char** argv)
 	if (_PKGMAN_HAS_SYS_UCRED_H == TEST_PASS)
 	{
 		have_sys_ucred_h = TEST_PASS;
-
 		printf("Success :: '%s'\n", "<sys/ucred.h>");
-
 	}  else  {
-
 		have_sys_ucred_h = TEST_FAIL;
-
 		printf("Failed  :: '%s'\n", "<sys/ucred.h>");
 	}
 
 	if (_PKGMAN_HAS_TERMIOS_H == TEST_PASS)
 	{
 		have_termios_h = TEST_PASS;
-
 		printf("Success :: '%s'\n", "<termios.h>");
-
 	}  else  {
-
 		have_termios_h = TEST_FAIL;
-
 		printf("Failed  :: '%s'\n", "<termios.h>");
 	}
 
@@ -571,7 +520,6 @@ int main(int argc, char** argv)
 	struct pkgman_required_libs* PkgmanGetLibs = &PkgmanLibs;
 
 	enum pkgman_test_result have_libc_lib 						= PkgmanGetLibs->has_libc_lib;
-
 	enum pkgman_test_result have_libarchive_lib 				= PkgmanGetLibs->has_libarchive_lib;
 	enum pkgman_test_result have_libcrypto_lib 					= PkgmanGetLibs->has_libcrypto_lib;
 	enum pkgman_test_result have_libcurl_lib 					= PkgmanGetLibs->has_libcurl_lib;
@@ -632,23 +580,21 @@ int main(int argc, char** argv)
 	printf("Checking for required functions...\n");
 	printf("\n");
 
+/**
 #if defined(__CYGWIN__) && CYGWIN_VERSION_API_MINOR < 262
 	void *libc = dlopen ("cygwin1.dll", 0);
 	struct mntent *(*getmntent_r) (FILE *, struct mntent *, char *, int) = dlsym (libc, "getmntent_r");
 #endif
+*/
 
 	char* error;
 	void* libc;
 
 	#if defined(PKGMAN_PLATFORM_IS_MSYS)
-
 		libc = dlopen ("msys-2.0.dll", 0);
-
 	#elif defined(PKGMAN_PLATFORM_IS_CYGWIN)
-
 		libc = dlopen ("cygwin1.dll", 0);
 	#else
-
 		libc = dlopen ("msvcrt.dll", 0); /** 'msvcrt.dll' or 'ucrtbase.dll'... */
 	#endif
 

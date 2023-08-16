@@ -1,8 +1,302 @@
 # MSYS2-libconfig
 
-A configuration header/library/executable to make it easier to build arch-linux 'pacman'-derived projects, thanks to modern C.
+A configuration header/library/executable to make it easier to build arch-linux 'pacman/alpm'-derived projects, thanks to modern C.
 
 ## latest...
+
+## 16.08.23
+
+How cool is C though? This is really my first contact with a project primarily written in (procedural) C, and I feel that having already battled both C++ and Javascript - and their individual foibles, quirks, and strengths - I really enjoy C as a powerful system-level tool that is necessarily both primitive, *and* strict.
+
+Experience was suggesting to me that I probably had excessive allocations in 'main()', and uncertain code paths due to over-reliance on pre-processor 'ifdef's.
+
+Furthermore, 'stringizing' using the classic preprocessor macro function sure is handy, but it doesn't null-terminate itself; nor really should it, if you're concatenating as much as we are here. Ignoring null-termination of these strings leaves us wide open to blowing holes in our memory allocations, even if we're passing to 'char array[]' of size '[FILENAME_MAX]' or so forth; the lack of null termination results in the remainder of the array being filled with zero's, meaning wasting a lot of memory footprint that we never actually needed anyway.
+
+Considering that we would also like to be able to override many of these variables on the command line - which is tricky to stringify using macro functions combined with fallback cases - it would seem to make sense to investigate a new approach from the ground up, which fully incorporates the requirements.
+
+Lastly, global variables are generally questionable practice when sharing code downstream with other projects. Even worse when they have very generic names, such as 'prefix'...
+
+To this end, I refactored the configuration header to provide 'pkgman_*' structs; data structures which group together all of the various project-required information, such as taking our 'const char* prefix = PREFIX' and morphing it into something you can call, like 'pkgman_config::prefix' which is a (null-terminated!) char array.
+
+The expectation is that one can allocate one of these structs on the stack (i.e., inside a function call, probably 'main()'), perform a set of checks, an pass the check results (by reference!) back to the struct's members. Null-termination of computed strings would get taken care of tat the point of allocation. The populated struct can then be called from wherever, for example when another section of code requires the 'prefix' variable.
+
+As a means of comparison, here is a short 'before/after' of the overall design so far.
+
+Simple approach:
+
+```
+
+#if __has_include(<stdio.h>)
+  /**
+   * Get 'printf()'
+   */
+#  include <stdio.h>
+#  define HAS_STDIO_H 1
+#else
+#  define HAS_STDIO_H 0
+#endif
+
+/**
+ * Stringify function macro (and sub-function)
+ */
+#define __STRINGIFY(X) #X
+#define STRINGIFY(X) __STRINGIFY(X)
+
+#ifndef PREFIX
+#define PREFIX STRINGIFY(/usr)
+#endif
+
+/**
+ * Use the value of 'HAS_STDIO_H' to determine if can use 'printf()'
+ */
+#define PRINT_PREFIX HAS_STDIO_H
+
+/**
+ * Assign 'PREFIX' to a global char array of system-dependent size '[PATH_MAX]'
+ */
+char prefix[PATH_MAX] = { PREFIX };
+
+int main()
+{
+
+#if (PRINT_PREFIX == 1)
+
+	printf("%s", prefix)
+
+	return(0);
+
+#else
+
+	/**
+	 * Error: Nothing to do...
+	 */
+
+	 return(1);
+
+#endif
+
+}
+```
+
+If the above actually compiles (I suspect it won't in many cases) and runs, it will print the value contained in the 'prefix' array to the console before exiting (as long as 'PRINT_PREFIX' == 1).
+
+There are quite a few code smells in this approach.
+
+The array size is whatever '[PATH_MAX]' is - it might be 96 unsigned ints, it might be 4096. We've placed the string "/usr" into it using the classic stringify preprocessor macro. This definition does not contain a null-terminating char, i.e. '\0'. The resulting char array would be something like:
+
+```
+char prefix[4096] = { '/', 'u', 's', 'r', '000', '000', '000', '000', '000', '000', '000', '000', '000', '000', '000', '000', '000','000', '000','000', '000', '000', (repeat until all 4096 values are filled)... }
+```
+
+... meaning, regardless if we actually *see* these zeros in our printout, they are certainly there, filling up all the remaining memory allocations out of 4096 ints (which are at least 4 bytes each, usually).
+
+Running a debugger on the above code will also be hampered quite a bit by the use of (compile time!) preprocessor 'ifdef's to handle our (runtime!) control-flow logic. There is quite a bit of documentation and discussion online on the pitfalls of using preprocessor logic for runtime behaviour. Preprocessor 'ifdef'-style logical behaviour is fine *for managing preprocessor definitions*, not for managing runtime flow - we have standard 'if/else' for that :)
+
+Once the program becomes heavily populated with assignments and other operations ('printf()') that become repititious in their style, we can save a lot of time by functionizing. Great approach, but not without considerations: particularly, knowing where memory allocations might get duplicated, and how to use compiler optimizations to keep the make certain that our memory footprint is actually what we might *assume* it to be. Looking at you, copy by reference!
+
+
+Of course, all of the above is just normal C stuff, which I'm going through the motions of become familiar with.
+
+Some reflection on the above points has led our refactor to incorporate some simple data structures that each resemble aspects of the project's requirements. We can allocate structs of known size and type, use more refined/modern testing approaches to populate the data, and pass this data to our allocated struct(s) using pointers to memory, possibly by use of a function wherever possible to guarantee conformity of conventions.
+
+The 'after' approach, as of today;
+```
+#if __has_include(<stdio.h>)
+#  include <stdio.h>
+#  define HAS_STDIO_H 1
+#endif
+
+#define PRINT_PREFIX HAS_STDIO_H
+
+/**
+ * Set some sort of flag to check if a new definition was passed in... we can use the result in our runtime logic.
+ */
+#ifdef (PREFIX)
+#  define __CHANGE_PREFIX 1
+#else
+#  define __CHANGE_PREFIX 0
+#endif
+
+struct configuration
+{
+	char prefix [PATH_MAX];
+
+} sConfiguration = {
+	.prefix = { '/', 'u', 's', 'r', '\0' };
+};
+
+/**
+ * The code below the struct instantiates a 'struct configuration' named 'sConfiguration', which we can check/populate by reference.
+ */
+
+int main()
+{
+	/**
+	 * We need a pointer to our instantiated struct, let's call it 'GetConfig'...
+	 */
+	struct configuration* GetConfig = &sConfiguration;
+
+	/**
+	 * Now we use the pointer to access the member(s) of the struct... let's call it 'Prefix'
+	 */
+	char Prefix[PATH_MAX] = GetConfig->prefix;
+
+	if (__CHANGE_PREFIX == 1)
+	{
+		Prefix = { PREFIX, '\0' };
+	}
+
+	if (HAS_STDIO_H)
+	{
+		printf("%s", Prefix);
+
+		return (0);
+	}
+
+	/** Error: Nothing to do... */
+	return (1);
+
+}
+```
+
+That is a quite minimalized version of affairs that aims to demonstrate some of the backend changes that have occured, while the frontend/UI has continued to progress as before, but with fewer changes to report.
+
+Nonetheless, here is a readout and build task of writing (this time built under msys64 UCRT64 subsystem and running in Windows Powershell; the binary seems to run in pretty much any terminal..?):
+
+```
+> .\"out\ucrt64\bin\pkgman_config.exe"
+
+pkgman_config v6.0.2-6eca3e5d40d128e0fc4231d2c7bef45f6b2c8262
+
+Checking for msys installation...
+
+Success :: 'C:/msys64/msys2_shell.cmd'
+Success :: 'C:/msys64/autorebase.bat'
+
+Checking for required system headers...
+
+Failed  :: '<mntent.h>'
+Failed  :: '<sys/mnttab.h>'
+Failed  :: '<sys/mount.h>'
+Success :: '<sys/param.h>'
+Failed  :: '<sys/resource.h>'
+Success :: '<sys/stat.h>'
+Failed  :: '<sys/statfs.h>'
+Failed  :: '<sys/statvfs.h>'
+Success :: '<sys/time.h>'
+Success :: '<sys/types.h>'
+Failed  :: '<sys/ucred.h>'
+Failed  :: '<termios.h>'
+
+Checking for required library dependencies...
+
+Success :: 'msvcrt.dll'
+Success :: 'libarchive-13.dll'
+Success :: 'libcrypto-3-x64.dll'
+Success :: 'libcurl-4.dll'
+Success :: 'libgpgme-11.dll'
+Success :: 'libintl-8.dll'
+
+Checking for required functions...
+
+Failed  :: 'getmntent()'
+Failed  :: 'getmntinfo()'
+Failed  :: 'strndup()'
+Success :: 'strnlen()'
+Success :: 'strsep()'
+Success :: 'swprintf()'
+Failed  :: 'tcflush()'
+
+Checking for required struct members...
+
+Failed  :: 'struct stat::st_blksize'
+Failed  :: 'struct statvfs::f_flag'
+Failed  :: 'struct statfs::f_flags'
+
+Checking for required typedefs...
+
+
+Build information:
+
+prefix                  : C:\msys64\usr
+sysconfdir              : C:\msys64\etc
+conf file               : C:\msys64\etc\pkgman.conf
+localstatedir           : C:\msys64\var
+database dir            : C:\msys64\var\lib\pkgman\
+cache dir               : C:\msys64\var\cache\pkgman\pkg\
+compiler                : GNU 13.2.0
+
+Architecture            : @0@'.(carch)
+Host Type               : @0@'.(chost)
+File inode command      : @0@'.(inodecmd)
+File seccomp command    : @0@'.(filecmd)
+libalpm version         : 13.0.2
+pacman version          : 6.0.2
+
+Directory and file information:
+
+root working directory  : C:\
+package extension       : .pkg.tar.gz
+source pkg extension    : .src.tar.gz
+build script name       : PKGBUILD
+template directory      : C:\msys64\usr\share\makepkg-template
+
+Compilation options:
+
+i18n support            : @0@'.(get_option('i18n'))
+Build docs              : @0@'.(build_doc)
+debug build             : false
+Use libcurl             : true
+Use GPGME               : true
+Use OpenSSL             : true
+Use nettle              : false
+
+pkgman_config v6.0.2-6eca3e5d40d128e0fc4231d2c7bef45f6b2c8262
+Copyright (C) 2023 Nathan J. Hood (StoneyDSP) <nathanjhood@googlemail.com>
+
+License GPLv2: <https://gnu.org/licenses/gpl.htm>
+This software comes with ABSOLUTELY NO WARRANTY; This is free software, and you are free to change and redistribute it.
+
+Home page URL: https://github.com/StoneyDSP/msys2-libconfig.git
+Bug reports: https://github.com/StoneyDSP/msys2-libconfig/issues
+```
+
+```
+C:/msys64/ucrt64/bin/x86_64-w64-mingw32-gcc.exe \
+  -D_FILE_OFFSET_BITS=64 \
+  -D_GNU_SOURCE=1 \
+  -D_DEFAULT_SOURCE=1 \
+  -D_XOPEN_SOURCE=700 \
+  -D_XOPEN_SOURCE_EXTENDED \
+  -D__USE_MINGW_ANSI_STDIO \
+  -IC:/msys64/ucrt64/include \
+  -IC:/msys64/ucrt64/include/curl \
+  -IC:/msys64/ucrt64/lib/gcc/x86_64-w64-mingw32/13.2.0/include \
+  -I${workspaceFolder}/include \
+  -LC:/msys64/ucrt64/lib/gcc/x86_64-w64-mingw32/13.2.0 \
+  -LC:/msys64/ucrt64/lib \
+  -LC:/msys64/ucrt64/bin \
+  -lucrtbase \
+  -lkernel32 \
+  -ladvapi32 \
+  -lshell32 \
+  -luser32 \
+  -larchive \
+  -lcurl \
+  -lgpgme \
+  -lintl \
+  -m64 \
+  -save-temps \
+  -Og \
+  ${path/to/repo}/dlfcn-win32/dlfcn.c \
+  ${workspaceFolder}/src/pkgman_config.c \
+  -o \
+  ${workspaceFolder}/out/ucrt64/bin/pkgman_config.exe
+```
+
+Note the updated library linkages, and the inclusion of 'dlgcn-win32' as mentioned in a previous post - because the UCRT64 subsystem doesn't have this function natively, it must be installed using a package manager, then added to the compile line as above.
+
+Probably our header should provide an 'interface library' (really just a header for inclusion) that can power 'pacman'-derived project builds, and the source file could compile into a library for downstream linkage. The compiled lib can link an executable for the user frontend, a la 'curl_config', 'LLVM-config', and so on. That is more 'seperation of concerns' than we currently have, but where we shall likely end up.
 
 ## 14.08.23
 

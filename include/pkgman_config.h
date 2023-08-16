@@ -28,7 +28,7 @@
 #define PKGMAN_VERSION_MAJOR 6
 #define PKGMAN_VERSION_MINOR 0
 #define PKGMAN_VERSION_PATCH 2
-#define PKGMAN_VERSION_TWEAK __PM_STRING(6eca3e5d40d128e0fc4231d2c7bef45f6b2c8262)
+#define PKGMAN_VERSION_TWEAK __PM_STRING(56e06a1bd2641464b42b06a224e467d960725648)
 #define PKGMAN_VERSION (PKGMAN_VERSION_MAJOR * 10000 + PKGMAN_VERSION_MINOR * 100 + PKGMAN_VERSION_PATCH)
 
 /***************************************************************************//**
@@ -1154,7 +1154,11 @@
 #  define CRYPTO_H_PATH INCLUDEDIR, PATH_SEPERATOR, 'n', 'e', 't', 't', 'l', 'e'
 #endif
 
-#define LIBCRYPTO_LIB SHARED_LIBRARY_PREFIX, 'c', 'r', 'y', 'p', 't', 'o', '-', '3', '-', 'x', '6', '4', SHARED_LIBRARY_SUFFIX
+#if defined(PKGMAN_PLATFORM_IS_CYGWIN)
+#  define LIBCRYPTO_LIB SHARED_LIBRARY_PREFIX, 'c', 'r', 'y', 'p', 't', 'o', '-', '3', SHARED_LIBRARY_SUFFIX
+#else
+#  define LIBCRYPTO_LIB SHARED_LIBRARY_PREFIX, 'c', 'r', 'y', 'p', 't', 'o', '-', '3', '-', 'x', '6', '4', SHARED_LIBRARY_SUFFIX
+#endif
 
 /***************************************************************************//**
  *

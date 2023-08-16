@@ -16,13 +16,13 @@ Considering that we would also like to be able to override many of these variabl
 
 Lastly, global variables are generally questionable practice when sharing code downstream with other projects. Even worse when they have very generic names, such as 'prefix'...
 
-To this end, I refactored the configuration header to provide 'pkgman_*' structs; data structures which group together all of the various project-required information, such as taking our 'const char* prefix = PREFIX' and morphing it into something you can call, like 'pkgman_config::prefix' which is a (null-terminated!) char array.
+To this end, I refactored the configuration header to provide 'pkgman_\*' structs; data structures which group together all of the various project-required information, such as taking our 'const char* prefix = PREFIX' and morphing it into something you can call, like 'pkgman_config::prefix' which is a (null-terminated!) char array.
 
 The expectation is that one can allocate one of these structs on the stack (i.e., inside a function call, probably 'main()'), perform a set of checks, an pass the check results (by reference!) back to the struct's members. Null-termination of computed strings would get taken care of tat the point of allocation. The populated struct can then be called from wherever, for example when another section of code requires the 'prefix' variable.
 
 As a means of comparison, here is a short 'before/after' of the overall design so far.
 
-Simple approach:
+Simple (before) approach, bugs'n'all:
 
 ```
 

@@ -1154,7 +1154,11 @@
 #  define CRYPTO_H_PATH INCLUDEDIR, PATH_SEPERATOR, 'n', 'e', 't', 't', 'l', 'e'
 #endif
 
-#define LIBCRYPTO_LIB SHARED_LIBRARY_PREFIX, 'c', 'r', 'y', 'p', 't', 'o', '-', '3', '-', 'x', '6', '4', SHARED_LIBRARY_SUFFIX
+#if defined(PKGMAN_PLATFORM_IS_CYGWIN)
+#  define LIBCRYPTO_LIB SHARED_LIBRARY_PREFIX, 'c', 'r', 'y', 'p', 't', 'o', '-', '3', SHARED_LIBRARY_SUFFIX
+#else
+#  define LIBCRYPTO_LIB SHARED_LIBRARY_PREFIX, 'c', 'r', 'y', 'p', 't', 'o', '-', '3', '-', 'x', '6', '4', SHARED_LIBRARY_SUFFIX
+#endif
 
 /***************************************************************************//**
  *

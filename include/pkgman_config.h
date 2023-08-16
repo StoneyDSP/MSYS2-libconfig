@@ -610,22 +610,22 @@
 #endif
 
 #if PKGMAN_HAS_INCLUDE(<archive.h>)
-#  include <archive.h>
+/** #  include <archive.h> */
 #  define HAVE_ARCHIVE_H 1
 #endif
 
 #if PKGMAN_HAS_INCLUDE(<curl/curl.h>)
-#  include <curl/curl.h>
+/** #  include <curl/curl.h> */
 #  define HAVE_CURL_CURL_H 1
 #endif
 
 #if PKGMAN_HAS_INCLUDE(<gpgme.h>)
-#  include <gpgme.h>
+/** #  include <gpgme.h> */
 #  define HAVE_GPGME_H 1
 #endif
 
 #if PKGMAN_HAS_INCLUDE(<libintl.h>)
-#  include <libintl.h>
+/** #  include <libintl.h> */
 #  define HAVE_LIBINTL_H 1
 #endif
 

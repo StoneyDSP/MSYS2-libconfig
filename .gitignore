@@ -8,3 +8,5 @@ usr
 bin
 lib
 out
+
+vcpkg_installed

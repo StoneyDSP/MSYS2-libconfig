@@ -1,0 +1,68 @@
+{
+	"$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+	"name": "msys2-libconfig",
+	"version-semver": "6.0.2-56e06a1bd2641464b42b06a224e467d960725648",
+	"builtin-baseline": "57fee154cc4068542740b4b5775343d9fd83413e",
+	"supports": "!ios",
+	"features": {
+		"backend": {
+			"description": "pkgman configuration library backend"
+		},
+		"frontend": {
+			"description": "pkgman configuration binary frontend",
+			"dependencies": [
+				{
+					"name": "dlfcn-win32",
+					"platform": "windows"
+				}
+			]
+		}
+	},
+	"dependencies": [
+		{
+			"name": "curl",
+			"features": [
+				"openssl"
+			]
+		},
+		{
+			"name": "libarchive",
+			"features": [
+				"crypto",
+				"openssl"
+			]
+		},
+		{
+			"name": "gpgme"
+		},
+		{
+			"name": "gettext",
+			"features": [
+				"tools",
+				"runtime-tools"
+			]
+		},
+		{
+			"name": "gettext-libintl"
+		},
+		{
+			"name": "openssl",
+			"features": [
+				"tools"
+			]
+		},
+		{
+			"name": "nettle",
+			"features": [
+				"tools"
+			]
+		},
+		{
+			"name": "libssh",
+			"features": [
+				"crypto",
+				"openssl"
+			]
+		}
+	]
+}

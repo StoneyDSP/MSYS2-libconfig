@@ -39,7 +39,7 @@
 
 #include "pkgman_config.h"
 #ifndef PKGMAN_CONFIGURATION_H
-# error "No config header found?"
+#  error "No config header found?"
 #endif
 
 /**
@@ -338,6 +338,11 @@ int checkForLib(const char* libName)
 	return (0);
 }
 
+PKGMAN_BEGIN_DECLS
+void* voidPtr;
+#define __SIZEOF_VOID_P sizeof(voidPtr)
+int size_void_ptr = __SIZEOF_VOID_P;
+PKGMAN_END_DECLS
 
 #if (__CYGWIN__)
 #  if defined(__CLASSIC_C__)
@@ -358,6 +363,21 @@ int main(int argc, char** argv)
 	 * for (i = 0; i < argc; i++) printf("%s\n", argv[i]);
 	 *
 	*/
+
+	printf("size of void pointer = %d\n", size_void_ptr);
+
+	char* error;
+	void* libc;
+
+	#if defined(PKGMAN_PLATFORM_IS_MSYS)
+		libc = dlopen ("msys-2.0.dll", 0);
+	#elif defined(PKGMAN_PLATFORM_IS_CYGWIN)
+		libc = dlopen ("cygwin1.dll", 0);
+	#elif defined(PKGMAN_PLATFORM_IS_WINDOWS)
+		libc = dlopen ("msvcrt.dll", 0); /** 'msvcrt.dll' or 'ucrtbase.dll'... */
+	#else
+		libc = dlopen ("libc6.so", 0);
+	#endif
 
 	printf("\n");
 	printf("pkgman_config");
@@ -587,16 +607,7 @@ int main(int argc, char** argv)
 #endif
 */
 
-	char* error;
-	void* libc;
 
-	#if defined(PKGMAN_PLATFORM_IS_MSYS)
-		libc = dlopen ("msys-2.0.dll", 0);
-	#elif defined(PKGMAN_PLATFORM_IS_CYGWIN)
-		libc = dlopen ("cygwin1.dll", 0);
-	#else
-		libc = dlopen ("msvcrt.dll", 0); /** 'msvcrt.dll' or 'ucrtbase.dll'... */
-	#endif
 
 	struct pkgman_required_symbols* PkgmanGetSymbols = &PkgmanSymbols;
 

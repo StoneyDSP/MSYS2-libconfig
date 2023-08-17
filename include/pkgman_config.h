@@ -677,6 +677,10 @@
 #	define HAVE_STRSEP 1
 #endif
 
+#if PKGMAN_HAS_BUILTIN(__builtin_strcspn)
+#	define HAVE_STRCSPAN 1
+#endif
+
 #if PKGMAN_HAS_BUILTIN(__builtin_swprintf)
 #	define HAVE_SWPRINTF 1
 #endif
@@ -729,7 +733,7 @@
   #  define _INT64_T_REQUIRED
   #endif
 
-#elif (PKGMAN_PLATFORM_IS_LINUX) /** !(PKGMAN_PLATFORM_IS_MSYS) */
+#elif (PKGMAN_PLATFORM_IS_LINUX)
 
   #if !defined(__mode_t_defined)
   #  define	_MODE_T_REQUIRED
@@ -801,20 +805,16 @@
 #if !defined(PATH_SEPERATOR)
 #  if defined(PKGMAN_PLATFORM_IS_WINDOWS)
 #    define PATH_SEPERATOR '\\' /** @name PATH_SEPERATOR @details This quote keeps the code intact :) */
-/** #    define PATH_SEPERATOR __PM_STRING(\\) */ /** @name PATH_SEPERATOR @details This quote keeps the code intact :) */
 #  elif defined(PKGMAN_PLATFORM_IS_UNIX)
 #    define PATH_SEPERATOR '/' /** @name PATH_SEPERATOR @details This quote keeps the code intact :) */
-/** #    define PATH_SEPERATOR __PM_STRING(/) */ /** @name PATH_SEPERATOR @details This quote keeps the code intact :) */
 #  endif
 #endif
 
 #if !defined(STRING_SEPERATOR)
 #  if defined(PKGMAN_PLATFORM_IS_WINDOWS)
 #    define STRING_SEPERATOR ';' /** @name STRING_SEPERATOR @details This quote keeps the code intact :) */
-/** #    define STRING_SEPERATOR __PM_STRING(;) */ /** @name STRING_SEPERATOR @details This quote keeps the code intact :) */
 #  elif defined(PKGMAN_PLATFORM_IS_UNIX)
 #    define STRING_SEPERATOR ':' /** @name STRING_SEPERATOR @details This quote keeps the code intact :) */
-/** #    define STRING_SEPERATOR __PM_STRING(:) */ /** @name STRING_SEPERATOR @details This quote keeps the code intact :) */
 #  endif
 #endif
 
@@ -826,7 +826,6 @@
 #if !defined(HOMEDRIVE)
 #  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
 #    define HOMEDRIVE 'C', ':' /** @name HOMEDRIVE @details This quote keeps the code intact :) */
-/** #    define HOMEDRIVE __PM_STRING(C:) */ /** @name HOMEDRIVE @details This quote keeps the code intact :) */
 #  else
 #    define HOMEDRIVE PATH_SEPERATOR /** @name HOMEDRIVE @details This quote keeps the code intact :) */
 #  endif
@@ -843,7 +842,6 @@
 #if !defined(SYSROOT)
 #  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
 #    define SYSROOT HOMEDRIVE, PATH_SEPERATOR, 'm', 's', 'y', 's', '6', '4', PATH_SEPERATOR
-/** #    define SYSROOT HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR */
 #  else
 #    define SYSROOT HOMEDRIVE
 #  endif
@@ -852,30 +850,24 @@
 #if !defined(PREFIX)
 #  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
 #    define PREFIX HOMEDRIVE, PATH_SEPERATOR, 'm', 's', 'y', 's', '6', '4', PATH_SEPERATOR, 'u', 's', 'r' /** (default value for Win32/MinGW). */
-/** #    define PREFIX HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR __PM_STRING(usr) */ /** (default value for Win32/MinGW). */
 #  else
 #    define PREFIX SYSROOT, 'u', 's', 'r'
-/** #    define PREFIX SYSROOT __PM_STRING(usr)   */
 #  endif
 #endif
 
 #if !defined(SYSCONFDIR)
 #  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
 #    define SYSCONFDIR HOMEDRIVE, PATH_SEPERATOR, 'm', 's', 'y', 's', '6', '4', PATH_SEPERATOR, 'e', 't', 'c'
-/** #    define SYSCONFDIR HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR __PM_STRING(etc) */
 #  else
 #    define SYSCONFDIR HOMEDRIVE, 'e', 't', 'c'
-/** #    define SYSCONFDIR HOMEDRIVE __PM_STRING(etc) */
 #  endif
 #endif
 
 #if !defined(LOCALSTATEDIR)
 #  if defined(WIN32) || defined(_WIN32) || defined(MINGW)
 #    define LOCALSTATEDIR HOMEDRIVE, PATH_SEPERATOR, 'm', 's', 'y', 's', '6', '4', PATH_SEPERATOR, 'v', 'a', 'r' /** (default value for Win32/MinGW). */
-/** #    define LOCALSTATEDIR HOMEDRIVE PATH_SEPERATOR __PM_STRING(msys64) PATH_SEPERATOR __PM_STRING(var) */ /** (default value for Win32/MinGW). */
 #  else
 #    define LOCALSTATEDIR HOMEDRIVE, 'v', 'a', 'r'
-/** #    define LOCALSTATEDIR HOMEDRIVE __PM_STRING(var)   */
 #  endif
 #endif
 
@@ -900,7 +892,6 @@
 
 #if !defined(PACKAGE_VERSION)
 #  define PACKAGE_VERSION PKGMAN_VERSION_MAJOR, '.', PKGMAN_VERSION_MINOR, '.', PKGMAN_VERSION_PATCH
-/** #  define PACKAGE_VERSION __PM_STRING(PKGMAN_VERSION_MAJOR) __PM_STRING(.) __PM_STRING(PKGMAN_VERSION_MINOR) __PM_STRING(.) __PM_STRING(PKGMAN_VERSION_PATCH) */
 #endif
 
 #if !defined(INCLUDEDIR)
@@ -917,27 +908,22 @@
 
 #if !defined(BINDIR)
 #  define BINDIR EXEC_PREFIX, PATH_SEPERATOR, 'b', 'i', 'n'
-/** #  define BINDIR EXEC_PREFIX PATH_SEPERATOR __PM_STRING(bin) */
 #endif
 
 #if !defined(SBINDIR)
 #  define SBINDIR EXEC_PREFIX, PATH_SEPERATOR, 's', 'b', 'i', 'n'
-/** #  define SBINDIR EXEC_PREFIX PATH_SEPERATOR __PM_STRING(sbin) */
 #endif
 
 #if !defined(LIBDIR)
 #  define LIBDIR EXEC_PREFIX, PATH_SEPERATOR, 'l', 'i', 'b'
-/** #  define LIBDIR EXEC_PREFIX PATH_SEPERATOR __PM_STRING(lib) */
 #endif
 
 #if !defined(LIBEXECDIR)
 #  define LIBEXECDIR EXEC_PREFIX, PATH_SEPERATOR, 'l', 'i', 'b', 'e', 'x', 'e', 'c'
-/** #  define LIBEXECDIR EXEC_PREFIX PATH_SEPERATOR __PM_STRING(libexec) */
 #endif
 
 #if !defined(DATAROOTDIR)
 #  define DATAROOTDIR PREFIX, PATH_SEPERATOR, 's', 'h', 'a', 'r', 'e'
-/** #  define DATAROOTDIR PREFIX PATH_SEPERATOR __PM_STRING(share) */
 #endif
 
 #if !defined(DATADIR)
@@ -946,27 +932,22 @@
 
 #if !defined(DOCDIR)
 #  define DOCDIR DATAROOTDIR, PATH_SEPERATOR, 'i', 'n', 'f', 'o'
-/** #  define DOCDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(info) */
 #endif
 
 #if !defined(INFODIR)
 #  define INFODIR DATAROOTDIR, PATH_SEPERATOR, 'i', 'n', 'f', 'o'
-/** #  define INFODIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(info) */
 #endif
 
 #if !defined(LOCALEDIR)
 #  define LOCALEDIR DATAROOTDIR, PATH_SEPERATOR, 'l', 'o', 'c', 'a', 'l', 'e'
-/** #  define LOCALEDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(locale) */
 #endif
 
 #if !defined(MANDIR)
 #  define MANDIR DATAROOTDIR, PATH_SEPERATOR, 'd', 'o', 'c', PATH_SEPERATOR, PACKAGE
-/** #  define MANDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(doc) PATH_SEPERATOR __PM_STRING(pkgman) */
 #endif
 
 #if !defined(RUNSTATEDIR)
 #  define RUNSTATEDIR LOCALSTATEDIR, PATH_SEPERATOR, 'r', 'u', 'n'
-/** #  define RUNSTATEDIR LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(run) */
 #endif
 
 /***************************************************************************//**
@@ -977,67 +958,67 @@
 
 #if defined(PKGMAN_PLATFORM_IS_MSYS)
 
-  #define STATIC_LIBRARY_SUFFIX '.', 'l', 'i', 'b'
-  #define IMPORT_LIBRARY_SUFFIX '.', 'd', 'l', 'l', '.', 'a'
-  #define SHARED_LIBRARY_SUFFIX '.', 'd', 'l', 'l'
   #define STATIC_LIBRARY_PREFIX ""
   #define SHARED_LIBRARY_PREFIX 'm', 's', 'y', 's', '-'
   #define SHARED_IMPORT_PREFIX 'l', 'i', 'b'
-  #define PKGMAN_FIND_LIBRARY_SUFFIXES '.', 'd', 'l', 'l', '.', 'a', STRING_SEPERATOR, '.', 'a'
+  #define STATIC_LIBRARY_SUFFIX '.', 'l', 'i', 'b'
+  #define IMPORT_LIBRARY_SUFFIX '.', 'd', 'l', 'l', '.', 'a'
+  #define SHARED_LIBRARY_SUFFIX '.', 'd', 'l', 'l'
   #define PKGMAN_FIND_LIBRARY_PREFIXES 'l', 'i', 'b'
+  #define PKGMAN_FIND_LIBRARY_SUFFIXES '.', 'd', 'l', 'l', '.', 'a', STRING_SEPERATOR, '.', 'a'
 
 #elif defined(PKGMAN_PLATFORM_IS_CYGWIN)
 
-  #define STATIC_LIBRARY_SUFFIX '.', 'l', 'i', 'b'
-  #define IMPORT_LIBRARY_SUFFIX '.', 'd', 'l', 'l', '.', 'a'
-  #define SHARED_LIBRARY_SUFFIX '.', 'd', 'l', 'l'
   #define STATIC_LIBRARY_PREFIX ""
   #define SHARED_LIBRARY_PREFIX 'c', 'y', 'g'
   #define SHARED_IMPORT_PREFIX 'l', 'i', 'b'
-  #define PKGMAN_FIND_LIBRARY_SUFFIXES '.', 'd', 'l', 'l', '.', 'a', STRING_SEPERATOR, '.', 'a'
+  #define STATIC_LIBRARY_SUFFIX '.', 'l', 'i', 'b'
+  #define SHARED_LIBRARY_SUFFIX '.', 'd', 'l', 'l'
   #define PKGMAN_FIND_LIBRARY_PREFIXES 'l', 'i', 'b'
+  #define IMPORT_LIBRARY_SUFFIX '.', 'd', 'l', 'l', '.', 'a'
+  #define PKGMAN_FIND_LIBRARY_SUFFIXES '.', 'd', 'l', 'l', '.', 'a', STRING_SEPERATOR, '.', 'a'
 
 #elif defined(PKGMAN_PLATFORM_IS_MINGW)
 
-  #define STATIC_LIBRARY_SUFFIX '.', 'a'
-  #define IMPORT_LIBRARY_SUFFIX '.', 'd', 'l', 'l', '.', 'a'
-  #define SHARED_LIBRARY_SUFFIX '.', 'd', 'l', 'l'
   #define STATIC_LIBRARY_PREFIX 'l', 'i', 'b'
   #define SHARED_LIBRARY_PREFIX 'l', 'i', 'b'
   #define SHARED_IMPORT_PREFIX 'l', 'i', 'b'
-  #define PKGMAN_FIND_LIBRARY_SUFFIXES '.', 'd', 'l', 'l', STRING_SEPERATOR, '.', 'd', 'l', 'l', '.', 'a', STRING_SEPERATOR, '.', 'a', STRING_SEPERATOR, '.', 'l', 'i', 'b'
+  #define STATIC_LIBRARY_SUFFIX '.', 'a'
+  #define SHARED_LIBRARY_SUFFIX '.', 'd', 'l', 'l'
+  #define IMPORT_LIBRARY_SUFFIX '.', 'd', 'l', 'l', '.', 'a'
   #define PKGMAN_FIND_LIBRARY_PREFIXES 'l', 'i', 'b', STRING_SEPERATOR, ""
+  #define PKGMAN_FIND_LIBRARY_SUFFIXES '.', 'd', 'l', 'l', STRING_SEPERATOR, '.', 'd', 'l', 'l', '.', 'a', STRING_SEPERATOR, '.', 'a', STRING_SEPERATOR, '.', 'l', 'i', 'b'
 
 #elif defined(PKGMAN_PLATFORM_IS_WINDOWS)
 
-  #define STATIC_LIBRARY_SUFFIX '.', 'l', 'i', 'b'
-  #define IMPORT_LIBRARY_SUFFIX '.', 'l', 'i', 'b'
-  #define SHARED_LIBRARY_SUFFIX '.', 'd', 'l', 'l'
   #define STATIC_LIBRARY_PREFIX ""
   #define SHARED_LIBRARY_PREFIX ""
   #define SHARED_IMPORT_PREFIX ""
-  #define PKGMAN_FIND_LIBRARY_SUFFIXES '.', 'l', 'i', 'b', STRING_SEPERATOR, '.', 'd', 'l', 'l'
+  #define STATIC_LIBRARY_SUFFIX '.', 'l', 'i', 'b'
+  #define IMPORT_LIBRARY_SUFFIX '.', 'l', 'i', 'b'
+  #define SHARED_LIBRARY_SUFFIX '.', 'd', 'l', 'l'
   #define PKGMAN_FIND_LIBRARY_PREFIXES "", STRING_SEPERATOR, 'l', 'i', 'b'
+  #define PKGMAN_FIND_LIBRARY_SUFFIXES '.', 'l', 'i', 'b', STRING_SEPERATOR, '.', 'd', 'l', 'l'
 
 #elif defined(PKGMAN_PLATFORM_IS_OSX)
 
+  #define STATIC_LIBRARY_PREFIX 'l', 'i', 'b'
+  #define SHARED_LIBRARY_PREFIX 'l', 'i', 'b'
   #define STATIC_LIBRARY_SUFFIX '.', 'a'
   #define IMPORT_LIBRARY_SUFFIX ""
   #define SHARED_LIBRARY_SUFFIX '.', 'd', 'y', 'l', 'i', 'b'
-  #define STATIC_LIBRARY_PREFIX 'l', 'i', 'b'
-  #define SHARED_LIBRARY_PREFIX 'l', 'i', 'b'
-  #define PKGMAN_FIND_LIBRARY_SUFFIXES '.', 't', 'b', 'd', STRING_SEPERATOR, '.', 'd', 'y', 'l', 'i', 'b', STRING_SEPERATOR, '.', 's', 'o', STRING_SEPERATOR, '.', 'a'
   #define PKGMAN_FIND_LIBRARY_PREFIXES 'l', 'i', 'b', STRING_SEPERATOR, ""
+  #define PKGMAN_FIND_LIBRARY_SUFFIXES '.', 't', 'b', 'd', STRING_SEPERATOR, '.', 'd', 'y', 'l', 'i', 'b', STRING_SEPERATOR, '.', 's', 'o', STRING_SEPERATOR, '.', 'a'
 
 #else
 
+  #define STATIC_LIBRARY_PREFIX 'l', 'i', 'b'
+  #define SHARED_LIBRARY_PREFIX 'l', 'i', 'b'
   #define STATIC_LIBRARY_SUFFIX '.', 'a'
   #define IMPORT_LIBRARY_SUFFIX ""
   #define SHARED_LIBRARY_SUFFIX '.', 's', 'o'
-  #define STATIC_LIBRARY_PREFIX 'l', 'i', 'b'
-  #define SHARED_LIBRARY_PREFIX 'l', 'i', 'b'
-  #define PKGMAN_FIND_LIBRARY_SUFFIXES '.', 's', 'o', STRING_SEPERATOR, '.', 'a'
   #define PKGMAN_FIND_LIBRARY_PREFIXES 'l', 'i', 'b', STRING_SEPERATOR, ""
+  #define PKGMAN_FIND_LIBRARY_SUFFIXES '.', 's', 'o', STRING_SEPERATOR, '.', 'a'
 
 #endif
 
@@ -1049,77 +1030,62 @@
 
 #if !defined(LDCONFIG)
 #  define LDCONFIG SBINDIR, PATH_SEPERATOR, 'l', 'd', 'c', 'o', 'n', 'f', 'i', 'g'
-/** #  define LDCONFIG SBINDIR PATH_SEPERATOR __PM_STRING(ldconfig) */
 #endif
 
 #if !defined(SCRIPTLET_SHELL)
 #  define SCRIPTLET_SHELL BINDIR, PATH_SEPERATOR, 's', 'h'
-/** #  define SCRIPTLET_SHELL BINDIR PATH_SEPERATOR __PM_STRING(sh) */
 #endif
 
 #if !defined(BUILDSCRIPT)
 #  define BUILDSCRIPT 'P', 'K', 'G', 'B', 'U', 'I', 'L', 'D'
-/** #  define BUILDSCRIPT __PM_STRING(PKGBUILD) */
 #endif
 
 #if !defined(LIBMAKEPKGDIR)
 #  define LIBMAKEPKGDIR DATAROOTDIR, PATH_SEPERATOR, 'm', 'a', 'k', 'e', 'p', 'k', 'g'
-/** #  define LIBMAKEPKGDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(makepkg) */
 #endif
 
 #if !defined(SYSHOOKDIR)
 #  define SYSHOOKDIR DATAROOTDIR, PATH_SEPERATOR, 'l', 'i', 'b', 'a', 'l', 'p', 'm', PATH_SEPERATOR, 'h', 'o', 'o', 'k', 's', PATH_SEPERATOR
-/** #  define SYSHOOKDIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(libalpm) PATH_SEPERATOR __PM_STRING(hooks) PATH_SEPERATOR */
 #endif
 
 #if !defined(CONFFILE)
 #  define CONFFILE SYSCONFDIR, PATH_SEPERATOR, PACKAGE, '.', 'c', 'o', 'n', 'f'
-/** #  define CONFFILE SYSCONFDIR PATH_SEPERATOR __PM_STRING(pkgman.conf) */
 #endif
 
 #if !defined(DBPATH)
 #  define DBPATH LOCALSTATEDIR, PATH_SEPERATOR, 'l', 'i', 'b', PATH_SEPERATOR, PACKAGE, PATH_SEPERATOR
-/** #  define DBPATH LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(lib) PATH_SEPERATOR __PM_STRING(pkgman) PATH_SEPERATOR */
 #endif
 
 #if !defined(GPGDIR)
 #  define GPGDIR SYSCONFDIR, PATH_SEPERATOR, 'p', 'a', 'c', 'm', 'a', 'n', '.', 'd', PATH_SEPERATOR, 'g', 'n', 'u', 'p', 'g', PATH_SEPERATOR
-/** #  define GPGDIR SYSCONFDIR PATH_SEPERATOR __PM_STRING(pacman.d) PATH_SEPERATOR __PM_STRING(gnupg) PATH_SEPERATOR */
 #endif
 
 #if !defined(CACHEDIR)
 #  define CACHEDIR LOCALSTATEDIR, PATH_SEPERATOR, 'c', 'a', 'c', 'h', 'e', PATH_SEPERATOR, PACKAGE, PATH_SEPERATOR, 'p', 'k', 'g', PATH_SEPERATOR
-/** #  define CACHEDIR LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(cache) PATH_SEPERATOR __PM_STRING(pacman) PATH_SEPERATOR __PM_STRING(pkg) PATH_SEPERATOR */
 #endif
 
 #if !defined(LOGFILE)
 #  define LOGFILE LOCALSTATEDIR, PATH_SEPERATOR, 'l', 'o', 'g', PATH_SEPERATOR, PACKAGE, '.', 'l', 'o', 'g'
-/** #  define LOGFILE LOCALSTATEDIR PATH_SEPERATOR __PM_STRING(log) PATH_SEPERATOR __PM_STRING(pkgman.log) */
 #endif
 
 #if !defined(HOOKDIR)
 #  define HOOKDIR SYSCONFDIR, PATH_SEPERATOR, PACKAGE, '.', 'd', PATH_SEPERATOR, 'h', 'o', 'o', 'k', 's', PATH_SEPERATOR
-/** #  define HOOKDIR SYSCONFDIR PATH_SEPERATOR __PM_STRING(pacman.d) PATH_SEPERATOR __PM_STRING(hooks) PATH_SEPERATOR */
 #endif
 
 #if !defined(MAKEPKG_TEMPLATE_DIR)
 #  define MAKEPKG_TEMPLATE_DIR DATAROOTDIR, PATH_SEPERATOR, 'm', 'a', 'k', 'e', 'p', 'k', 'g', '-', 't', 'e', 'm', 'p', 'l', 'a', 't', 'e'
-/** #  define MAKEPKG_TEMPLATE_DIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(makepkg-template) */
 #endif
 
 #if !defined(PKGDATADIR)
 #  define PKGDATADIR DATAROOTDIR, PATH_SEPERATOR, PACKAGE
-/** #  define PKGDATADIR DATAROOTDIR PATH_SEPERATOR __PM_STRING(pkgman) */
 #endif
 
 #if !defined(PKGEXT)
 #  define PKGEXT '.', 'p', 'k', 'g', '.', 't', 'a', 'r', '.', 'g', 'z'
-/** #  define PKGEXT __PM_STRING(.) __PM_STRING(pkg) __PM_STRING(.) __PM_STRING(tar) __PM_STRING(.) __PM_STRING(gz) */
 #endif
 
 #if !defined(SRCEXT)
 #  define SRCEXT '.', 's', 'r', 'c', '.', 't', 'a', 'r', '.', 'g', 'z'
-/** #  define SRCEXT __PM_STRING(.) __PM_STRING(src) __PM_STRING(.) __PM_STRING(tar) __PM_STRING(.) __PM_STRING(gz) */
 #endif
 
 /***************************************************************************//**
@@ -1146,8 +1112,10 @@
 #  define PKGMAN_LIBC_LIB 'm', 's', 'y', 's', '-', '2', '.', '0','.', 'd', 'l', 'l'
 #elif defined(PKGMAN_PLATFORM_IS_CYGWIN)
 #  define PKGMAN_LIBC_LIB 'c', 'y', 'g', 'w', 'i', 'n', '1', '.', 'd', 'l', 'l'
-#else
+#elif defined(PKGMAN_PLATFORM_IS_WINDOWS)
 #  define PKGMAN_LIBC_LIB 'm', 's', 'v', 'c', 'r', 't', '.', 'd', 'l', 'l' /** 'msvcrt.dll' or 'ucrtbase.dll'... */
+#else
+#  define PKGMAN_LIBC_LIB 'l', 'i', 'b', 'c', '.', 's', 'o', '.', '6'
 #endif
 
 /***************************************************************************//**
@@ -1306,6 +1274,10 @@ extern "C" {
 		return count;
 	}
 #  define HAVE_STRNLEN 1
+#endif
+
+#ifndef HAVE_STRCSPAN
+
 #endif
 
 enum pkgman_test_result

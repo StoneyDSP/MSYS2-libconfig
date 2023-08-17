@@ -783,7 +783,7 @@ int main(int argc, char** argv)
 
 	printf("Architecture            : @0@'.(carch)\n");
   	printf("Host Type               : @0@'.(chost)\n");
-  	printf("File inode command      : @0@'.(inodecmd)\n");
+  	printf("File inode command      : %s\n", 									PkgmanGetSettings->inodecmd);
   	printf("File seccomp command    : %s\n", 									PkgmanGetSettings->filecmd);
   	printf("libalpm version         : %s\n", 									PkgmanGetConf->libalpm_version);
     printf("pacman version          : %s\n", 									PkgmanGetSettings->pkgman_version);

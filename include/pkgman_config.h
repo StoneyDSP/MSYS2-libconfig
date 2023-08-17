@@ -689,6 +689,14 @@
 #	define HAVE_TCFLUSH 1
 #endif
 
+#if PKGMAN_HAS_BUILTIN(__builtin_gettext)
+#  define HAVE_GETTEXT 1
+#endif
+
+#if PKGMAN_HAS_BUILTIN(__builtin_ngettext)
+#  define HAVE_NGETTEXT 1
+#endif
+
 /***************************************************************************//**
  *
  *  ... Required type definitions

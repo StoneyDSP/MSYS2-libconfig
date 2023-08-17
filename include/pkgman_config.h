@@ -225,6 +225,10 @@
 #  define PKGMAN_PLATFORM_IS_WINDOWS 1
 #endif
 
+#if  defined(__linux__) || defined(__linux) || defined(linux)
+#  define PKGMAN_PLATFORM_IS_LINUX 1
+#endif
+
 #if  defined(__unix__) || defined(__unix) || defined(unix)
 #  define PKGMAN_PLATFORM_IS_UNIX 1
 #endif

@@ -1178,6 +1178,9 @@
  *
  ******************************************************************************/
 
+/**
+ * We could swap the below ifdef for a simple 'PKGMAN_BEGIN_DECLS' if we want...
+ */
 #ifdef PKGMAN_CPLUSPLUS
 extern "C" {
 #endif
@@ -1632,6 +1635,9 @@ int main(int argc, char** argv);
 #  endif
 #endif
 
+/**
+ * We could swap the below ifdef for a simple 'PKGMAN_END_DECLS' if we want...
+ */
 #ifdef PKGMAN_CPLUSPLUS
 }
 #endif

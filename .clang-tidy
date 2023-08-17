@@ -1,5 +1,5 @@
 ---
-Checks: ''
+Checks: '*,bugprone-*'
 WarningsAsErrors: ''
 HeaderFileExtensions: ['h', 'hh', 'hpp', 'h++', 'hxx']
 ImplementationFileExtensions: ['c', 'cc', 'cpp', 'c++', 'cxx', 'cppm']

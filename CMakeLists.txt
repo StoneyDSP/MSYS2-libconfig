@@ -7,9 +7,9 @@ enable_language(C)
 
 include(GNUInstallDirs)
 
-add_library (pkgman_config_lib	                                     	STATIC)
-add_library (pkgman_config::pkgman_config_lib                	ALIAS pkgman_config_lib)
-add_library (pkgman::pkgman_config::pkgman_config_lib                	ALIAS pkgman_config_lib)
+add_library (pkgman_config_lib	                                     			STATIC)
+add_library (pkgman_config::pkgman_config_lib                					ALIAS pkgman_config_lib)
+add_library (pkgman::pkgman_config::pkgman_config_lib                			ALIAS pkgman_config_lib)
 
 target_sources(pkgman_config_lib
 
@@ -31,14 +31,14 @@ target_sources (pkgman_config_lib
             $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
             $<INSTALL_INTERFACE:include>
         FILES
-            # include/pkgman/pkgman_config.h
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/pkgman/pkgman_config.h>
-            $<INSTALL_INTERFACE:include/pkgman/pkgman_config.h>
+            # include/pkgman_config.h
+            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/pkgman_config.h>
+            $<INSTALL_INTERFACE:include/pkgman_config.h>
 )
 
 target_sources (pkgman_config_lib
 	PRIVATE
-		"src/pkgman/pkgman_config.c"
+		"src/pkgman_config.c"
 )
 
 
@@ -68,7 +68,7 @@ target_compile_definitions(pkgman_config_lib
 		_DEFAULT_SOURCE
 )
 
-file(COPY include/pkgman/pkgman_config.h DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/include/pkgman")
+file(COPY include/pkgman_config.h DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/include")
 
 install(
 	TARGETS pkgman_config_lib

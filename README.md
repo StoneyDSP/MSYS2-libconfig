@@ -282,19 +282,19 @@ C:/msys64/ucrt64/bin/x86_64-w64-mingw32-gcc.exe \
   -lshell32 \
   -luser32 \
   -larchive \
+  -ldl \
   -lcurl \
   -lgpgme \
   -lintl \
   -m64 \
   -save-temps \
   -Og \
-  ${path/to/repo}/dlfcn-win32/dlfcn.c \
   ${workspaceFolder}/src/pkgman_config.c \
   -o \
   ${workspaceFolder}/out/ucrt64/bin/pkgman_config.exe
 ```
 
-Note the updated library linkages, and the inclusion of 'dlgcn-win32' as mentioned in a previous post - because the UCRT64 subsystem doesn't have this function natively, it must be installed using a package manager, then added to the compile line as above.
+Note the updated library linkages, and the inclusion of '-ldl' (dlgcn-win32 for non-linux/cygwin systems) as mentioned in a previous post - because the UCRT64 subsystem doesn't have this function natively, it must be installed using a package manager, then added to the compile line as above. The actual file on disk is 'libdl.dll'
 
 Probably our header should provide an 'interface library' (really just a header for inclusion) that can power 'pacman'-derived project builds, and the source file could compile into a library for downstream linkage. The compiled lib can link an executable for the user frontend, a la 'curl_config', 'LLVM-config', and so on. That is more 'seperation of concerns' than we currently have, but where we shall likely end up.
 

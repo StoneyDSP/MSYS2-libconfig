@@ -729,6 +729,36 @@
   #  define _INT64_T_REQUIRED
   #endif
 
+#elif (PKGMAN_PLATFORM_IS_LINUX) /** !(PKGMAN_PLATFORM_IS_MSYS) */
+
+  #if !defined(__mode_t_defined)
+  #  define	_MODE_T_REQUIRED
+  #endif
+
+  #if !defined(__uid_t_defined)
+  #  define _UID_T_REQUIRED
+  #endif
+
+  #if !defined(__off_t_defined)
+  #  define _OFF_T_REQUIRED
+  #endif
+
+  #if !defined(__pid_t_defined)
+  #  define _PID_T_REQUIRED
+  #endif
+
+  #if !defined(_SIZE_T)
+  #  define _SIZE_T_REQUIRED
+  #endif
+
+  #if !defined(__ssize_t_defined)
+  #  define _SSIZE_T_REQUIRED
+  #endif
+
+  #if !defined(__int64)
+  #  define _INT64_T_REQUIRED
+  #endif
+
 #else /** !(PKGMAN_PLATFORM_IS_MSYS) */
 
   #if !defined(_MODE_T_)

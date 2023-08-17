@@ -1086,6 +1086,8 @@
 
 #if !defined(SRCEXT)
 #  define SRCEXT '.', 's', 'r', 'c', '.', 't', 'a', 'r', '.', 'g', 'z'
+#if !defined(FILECMD)
+#  define FILECMD 'f', 'i', 'l', 'e'
 #endif
 
 /***************************************************************************//**
@@ -1546,6 +1548,7 @@ struct pkgman_settings
 	.path_seperator 					= { PATH_SEPERATOR, '\0' },
 	.pkg_ext 							= { PKGEXT, '\0' },
 	.src_ext 							= { SRCEXT, '\0' },
+	.filecmd 							= { FILECMD, '\0' },
 	.pkgman_c_compiler 					= PKGMAN_C_COMPILER,
 	.pkgman_version 					= { PACKAGE_VERSION, '\0' },
 	.sbindir 							= { SBINDIR, '\0' },

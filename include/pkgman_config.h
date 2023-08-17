@@ -1545,6 +1545,8 @@ struct pkgman_settings
 
 	char pkg_ext 						[PATH_MAX];
 	char src_ext 						[PATH_MAX];
+	char inodecmd 						[FILENAME_MAX];
+	char filecmd 						[FILENAME_MAX];
 
 } PkgmanSettings = {
 

@@ -980,34 +980,34 @@
 
 #elif defined(PKGMAN_PLATFORM_IS_WINDOWS)
 
-  #define STATIC_LIBRARY_SUFFIX ".lib"
-  #define IMPORT_LIBRARY_SUFFIX ".lib"
-  #define SHARED_LIBRARY_SUFFIX ".dll"
+  #define STATIC_LIBRARY_SUFFIX '.', 'l', 'i', 'b'
+  #define IMPORT_LIBRARY_SUFFIX '.', 'l', 'i', 'b'
+  #define SHARED_LIBRARY_SUFFIX '.', 'd', 'l', 'l'
   #define STATIC_LIBRARY_PREFIX ""
   #define SHARED_LIBRARY_PREFIX ""
   #define SHARED_IMPORT_PREFIX ""
-  #define PKGMAN_FIND_LIBRARY_SUFFIXES ".lib" STRING_SEPERATOR ".dll")
-  #define PKGMAN_FIND_LIBRARY_PREFIXES "" STRING_SEPERATOR "lib")
+  #define PKGMAN_FIND_LIBRARY_SUFFIXES '.', 'l', 'i', 'b', STRING_SEPERATOR, '.', 'd', 'l', 'l'
+  #define PKGMAN_FIND_LIBRARY_PREFIXES "", STRING_SEPERATOR, 'l', 'i', 'b'
 
 #elif defined(PKGMAN_PLATFORM_IS_OSX)
 
-  #define STATIC_LIBRARY_SUFFIX ".a"
+  #define STATIC_LIBRARY_SUFFIX '.', 'a'
   #define IMPORT_LIBRARY_SUFFIX ""
-  #define SHARED_LIBRARY_SUFFIX ".dylib")
-  #define STATIC_LIBRARY_PREFIX "lib"
-  #define SHARED_LIBRARY_PREFIX "lib"
-  #define PKGMAN_FIND_LIBRARY_SUFFIXES ".tbd" STRING_SEPERATOR ".dylib" STRING_SEPERATOR ".so" STRING_SEPERATOR ".a")
-  #define PKGMAN_FIND_LIBRARY_PREFIXES "lib" STRING_SEPERATOR ""
+  #define SHARED_LIBRARY_SUFFIX '.', 'd', 'y', 'l', 'i', 'b'
+  #define STATIC_LIBRARY_PREFIX 'l', 'i', 'b'
+  #define SHARED_LIBRARY_PREFIX 'l', 'i', 'b'
+  #define PKGMAN_FIND_LIBRARY_SUFFIXES '.', 't', 'b', 'd', STRING_SEPERATOR, '.', 'd', 'y', 'l', 'i', 'b', STRING_SEPERATOR, '.', 's', 'o', STRING_SEPERATOR, '.', 'a'
+  #define PKGMAN_FIND_LIBRARY_PREFIXES 'l', 'i', 'b', STRING_SEPERATOR, ""
 
 #else
 
-  #define STATIC_LIBRARY_SUFFIX ".a"
+  #define STATIC_LIBRARY_SUFFIX '.', 'a'
   #define IMPORT_LIBRARY_SUFFIX ""
-  #define SHARED_LIBRARY_SUFFIX ".so"
-  #define STATIC_LIBRARY_PREFIX "lib"
-  #define SHARED_LIBRARY_PREFIX "lib"
-  #define PKGMAN_FIND_LIBRARY_SUFFIXES ".so" STRING_SEPERATOR ".a"
-  #define PKGMAN_FIND_LIBRARY_PREFIXES "lib" STRING_SEPERATOR ""
+  #define SHARED_LIBRARY_SUFFIX '.', 's', 'o'
+  #define STATIC_LIBRARY_PREFIX 'l', 'i', 'b'
+  #define SHARED_LIBRARY_PREFIX 'l', 'i', 'b'
+  #define PKGMAN_FIND_LIBRARY_SUFFIXES '.', 's', 'o', STRING_SEPERATOR, '.', 'a'
+  #define PKGMAN_FIND_LIBRARY_PREFIXES 'l', 'i', 'b', STRING_SEPERATOR, ""
 
 #endif
 

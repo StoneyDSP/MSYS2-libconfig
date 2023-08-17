@@ -805,11 +805,12 @@ int main(int argc, char** argv)
 	printf("i18n support            : @0@'.(get_option('i18n'))\n");
     printf("Build docs              : @0@'.(build_doc)\n");
 
-#if (PKGMAN_DEBUG == 1)
-  	printf("debug build             : %s\n", "true");
-#else
-  	printf("debug build             : %s\n", "false");
-#endif
+	if (PKGMAN_DEBUG == 1)
+	{
+		printf("debug build             : %s\n", "true");
+	}  else  {
+		printf("debug build             : %s\n", "false");
+	}
 
 	if (have_libcurl_lib == TEST_PASS)
 	{
